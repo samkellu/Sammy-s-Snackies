@@ -39,4 +39,8 @@ public class Slot {
 
         return this.name;
     }
+
+    public int getCount(){
+        return this.count;
+    }
 }
