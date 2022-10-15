@@ -4,11 +4,12 @@
 package Sammys.Snackies;
 
 public class App {
-    public String getGreeting() {
-        return "Hello World!";
-    }
 
     public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+
+        VendingMachine vm = new VendingMachine();
+
+        vm.readFromFile("testRead.json");
+        System.out.println(vm.toString());
     }
 }
