@@ -9,6 +9,7 @@ public class FoodItem {
     private String name;
     private float price;
     private Category category;
+
     public FoodItem(String name, float price, Category category){
         this.name = name;
         this.price = price;
@@ -25,6 +26,10 @@ public class FoodItem {
 
     public String toString(){
         return this.name + " $" + String.format("%.2f", this.price);
+    }
+
+    public Category getCategory() {
+        return this.category;
     }
 
     public boolean isCategory(Category cat){
