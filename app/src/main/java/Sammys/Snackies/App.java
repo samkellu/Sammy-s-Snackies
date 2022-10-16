@@ -1,6 +1,7 @@
 package Sammys.Snackies;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class App {
@@ -66,7 +67,7 @@ public class App {
         int[] denoms = new int[11];
         double totalGiven = 0.00;
         if (cash) {
-            ArrayList<String> inputDenoms = inputs.subList(4, inputs.size()-1);
+            ArrayList<String> inputDenoms = new ArrayList<String>(inputs.subList(4, inputs.size()-1));
 
             for (String s : inputDenoms) {
                 String[] values = s.split("*");
@@ -78,16 +79,21 @@ public class App {
                 
                 String v = values[0];
                 String amount = values[1];
-                int amt;
+                int amt = -1;
                 
                 try {
-                    amt = (int)amount;
-                } catch (ClassCastException e) {
+                    amt = Integer.parseInt(amount);
+                } catch (NumberFormatException e) {
                     System.out.println("Please ensure the amount is a positive integer.");
                     return;
+                } finally {
+                    if (amt <= 0) {
+                        System.out.println("Please ensure the amount is a positive integer.");
+                        return;
+                    }
                 }
 
-                int value = parseDenom(v);
+                double value = parseDenom(v);
                 if (value == -1) return;
 
                 totalGiven += value*amt;
@@ -128,53 +134,53 @@ public class App {
         if (inputs.size() >= 2) {
             switch(inputs.get(1).toLowerCase()) {
                 case "buyer":
-                    System.out.println("Use this command to buy a product from the vending machine.");
+                    System.out.println("\nUse this command to buy a product from the vending machine.");
                     System.out.println("Usage:");
-                    System.out.println("buyer <cash/card> <product> <amount> [denominations...]");
+                    System.out.println("buyer <cash/card> <product> <amount> [denominations...]\n");
                 break;
                 case "seller":
-                    System.out.println("Use this command to TODO");
+                    System.out.println("\nUse this command to TODO");
                     System.out.println("Usage:");
-                    System.out.println("seller TODO");
+                    System.out.println("seller TODO\n");
                 break;
                 case "owner":
-                    System.out.println("Use this command to TODO");
+                    System.out.println("\nUse this command to TODO");
                     System.out.println("Usage:");
-                    System.out.println("owner TODO");
+                    System.out.println("owner TODO\n");
                 break;
                 case "supplier":
-                    System.out.println("Use this command to TODO");
+                    System.out.println("\nUse this command to TODO");
                     System.out.println("Usage:");
-                    System.out.println("supplier TODO");
+                    System.out.println("supplier TODO\n");
                 break;
                 case "login":
-                    System.out.println("Use this command to log in to a supplier/owner/seller account.");
+                    System.out.println("\nUse this command to log in to a supplier/owner/seller account.");
                     System.out.println("Usage:");
-                    System.out.println("login <username> <password>");
+                    System.out.println("login <username> <password>\n");
                 break;
                 case "help":
-                    System.out.println("Use this command to see available commands or for more information on a command");
+                    System.out.println("\nUse this command to see available commands or for more information on a command");
                     System.out.println("Usage:");
-                    System.out.println("help [command]");
+                    System.out.println("help [command]\n");
                 break;
                 case "quit":
-                    System.out.println("Use this command to quit the program.");
+                    System.out.println("\nUse this command to quit the program.");
                     System.out.println("Usage:");
-                    System.out.println("quit");
+                    System.out.println("quit\n");
                 break;
                 default:
-                    System.out.println(String.format("Unrecognised command: %s", inputs.get(1)));
+                    System.out.println(String.format("\nUnrecognised command: %s\n", inputs.get(1)));
                 break;
             }
         } else {
-            System.out.println("Available Commands:");
+            System.out.println("\nAvailable Commands:");
             System.out.println("buyer - buy a product");
             System.out.println("seller - TODO"); // TODO
             System.out.println("owner - TODO"); // TODO
             System.out.println("supplier - TODO"); // TODO
             System.out.println("login - login to a supplier/owner/seller account");
             System.out.println("help - display this screen");
-            System.out.println("quit - quit the program");
+            System.out.println("quit - quit the program\n");
         }
     }
 
@@ -191,42 +197,45 @@ public class App {
         
         Scanner s = new Scanner(System.in);
 
-        // TODO
-        // maybe make a global var for vending machine?
-        // TODO
+        // VendingMachine vm = new VendingMachine();
 
 
-        String input = s.nextLine();
-        ArrayList<String> inputs = input.split(" ");
-        String cmd = inputs.get(0);
+        for (;;) {
+            String input = s.nextLine();
+            String[] userInput = input.split(" ");
+            ArrayList<String> inputs = new ArrayList<String>(Arrays.asList(userInput));
+            String cmd = inputs.get(0);
 
-        switch(cmd.toLowerCase()) {
+            switch(cmd.toLowerCase()) {
 
-            case "buyer":
-                buyer(inputs);
-            break;
-            case "seller":
-                seller(inputs);
-            break;
-            case "supplier":
-                supplier(inputs);
-            break;
-            case "owner":
-                owner(inputs);
-            break;
-            case "login":
-                userLogin(inputs);
-            break;
-            case "help":
-                helpCommand();
-            break;
-            case "quit":
-                endProgram();
-                return;
-            break;
-            default:
-                unknownCommand(inputs);
-            break;
+                case "buyer":
+                    buyer(inputs);
+                break;
+                case "seller":
+                    seller(inputs);
+                break;
+                case "supplier":
+                    supplier(inputs);
+                break;
+                case "owner":
+                    owner(inputs);
+                break;
+                case "login":
+                    userLogin(inputs);
+                break;
+                case "help":
+                    helpCommand(inputs);
+                break;
+                case "quit":
+                    endProgram();
+                    s.close();
+                    return;
+                default:
+                    unknownCommand(inputs);
+                break;
+            }
         }
+
     }
+
 }
