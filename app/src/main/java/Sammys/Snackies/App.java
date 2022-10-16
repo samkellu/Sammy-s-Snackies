@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class App {
-    public String getGreeting() {
-        return "Hello World!";
-    }
 
     private static double parseDenom(String s) {
 
@@ -188,6 +185,7 @@ public class App {
     private static void unknownCommand(ArrayList<String> inputs) {
         System.out.println("Unknown Command, use the help command to see available commands");
     }
+
 
     public static void main(String[] args) {
         
