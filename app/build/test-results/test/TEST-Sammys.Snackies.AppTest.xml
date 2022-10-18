@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="Sammys.Snackies.AppTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2022-10-18T13:23:11" hostname="BMO" time="0.081">
+  <properties/>
+  <testcase name="appHasAGreeting()" classname="Sammys.Snackies.AppTest" time="0.081"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

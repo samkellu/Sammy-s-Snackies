@@ -44,6 +44,10 @@ public class VendingMachine {
         this.currencyCounts.put(currencyName, currencyCount + this.currencyCounts.get(currencyName));
     }
 
+    public HashMap<String, Integer> getCurrencyCounts() {
+        return this.currencyCounts;
+    }
+
     public String toString(){
         StringBuilder output = new StringBuilder();
         for (Slot currentSlot : this.allSlots.values()){
@@ -69,6 +73,14 @@ public class VendingMachine {
             Object obj = parser.parse(fr);
             JSONArray jsonData = (JSONArray) obj;
 
+            JSONObject currencies = (JSONObject) jsonData.remove(0);
+
+            for (String key : currencyNames) {
+
+
+                this.currencyCounts.put(key, ((Long)(currencies.get(key))).intValue());
+            }
+
             for (Object value : jsonData) {
                 JSONObject jObj = (JSONObject) value;
                 String slotName = (String) jObj.get("slotName");
@@ -91,6 +103,13 @@ public class VendingMachine {
 
         ArrayList<HashMap<String, Object>> jsonData = new ArrayList<>();
         
+        HashMap<String, Object> currencyData = new HashMap<String, Object>();
+        for (String key : currencyCounts.keySet()) {
+
+            currencyData.put(key, (Object) currencyCounts.get(key));
+        }
+        jsonData.add(currencyData);
+
         for (Slot slot : allSlots.values()) {
             HashMap<String, Object> slotData = new HashMap<String, Object>();
             slotData.put("slotName", slot.getName());
@@ -100,7 +119,7 @@ public class VendingMachine {
             slotData.put("slotCount", slot.getCount());
             jsonData.add(slotData);
         }
-
+        
         // Attempts to write the JSONArray to file
         try (FileWriter fw = new FileWriter(fPath)) {
             org.json.simple.JSONArray.writeJSONString(jsonData, fw);
