@@ -199,42 +199,45 @@ public class App {
 
         // VendingMachine vm = new VendingMachine();
 
-
-        for (;;) {
-            String input = s.nextLine();
-            String[] userInput = input.split(" ");
-            ArrayList<String> inputs = new ArrayList<String>(Arrays.asList(userInput));
-            String cmd = inputs.get(0);
-
-            switch(cmd.toLowerCase()) {
-
-                case "buyer":
-                    buyer(inputs);
-                break;
-                case "seller":
-                    seller(inputs);
-                break;
-                case "supplier":
-                    supplier(inputs);
-                break;
-                case "owner":
-                    owner(inputs);
-                break;
-                case "login":
-                    userLogin(inputs);
-                break;
-                case "help":
-                    helpCommand(inputs);
-                break;
-                case "quit":
-                    endProgram();
-                    s.close();
-                    return;
-                default:
-                    unknownCommand(inputs);
-                break;
+        System.out.println("Welcome to Sammy's Snackies!");
+        while (true){
+            while(s.hasNextLine()){
+                String input = s.nextLine();
+                String[] userInput = input.split(" ");
+                ArrayList<String> inputs = new ArrayList<String>(Arrays.asList(userInput));
+                String cmd = inputs.get(0);
+    
+                switch(cmd.toLowerCase()) {
+    
+                    case "buyer":
+                        buyer(inputs);
+                    break;
+                    case "seller":
+                        seller(inputs);
+                    break;
+                    case "supplier":
+                        supplier(inputs);
+                    break;
+                    case "owner":
+                        owner(inputs);
+                    break;
+                    case "login":
+                        userLogin(inputs);
+                    break;
+                    case "help":
+                        helpCommand(inputs);
+                    break;
+                    case "quit":
+                        endProgram();
+                        s.close();
+                        return;
+                    default:
+                        unknownCommand(inputs);
+                    break;
+                }
             }
         }
+
 
     }
 
