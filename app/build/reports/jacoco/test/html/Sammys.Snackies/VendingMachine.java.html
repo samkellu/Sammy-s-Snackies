@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>VendingMachine.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">Sammys.Snackies</a> &gt; <span class="el_source">VendingMachine.java</span></div><h1>VendingMachine.java</h1><pre class="source lang-java linenums">package Sammys.Snackies;
+
+import java.util.HashMap;
+import java.util.NoSuchElementException;
+import java.util.ArrayList;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.FileWriter;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+public class VendingMachine {
+    private HashMap&lt;String, Slot&gt; allSlots;
+    private HashMap&lt;String, Integer&gt; currencyCounts;
+<span class="fc" id="L17">    private final String[] currencyNames = {&quot;5c&quot;, &quot;10c&quot;, &quot;20c&quot;, &quot;50c&quot;, &quot;$1&quot;, &quot;$2&quot;, &quot;$5&quot;, &quot;$10&quot;, &quot;$20&quot;, &quot;$50&quot;, &quot;$100&quot;};</span>
+<span class="fc" id="L18">    private final String fp = &quot;data.json&quot;;</span>
+
+<span class="fc" id="L20">    public VendingMachine(){</span>
+<span class="fc" id="L21">        this.allSlots = new HashMap&lt;String, Slot&gt;();</span>
+<span class="fc" id="L22">        this.currencyCounts = new HashMap&lt;String, Integer&gt;();</span>
+<span class="fc bfc" id="L23" title="All 2 branches covered.">        for (String currency : currencyNames){</span>
+<span class="fc" id="L24">            this.currencyCounts.put(currency, 5);</span>
+        }
+<span class="fc" id="L26">    }</span>
+
+    public void addSlot(String slotName, FoodItem slotContents, int contentCount){
+<span class="fc" id="L29">        this.allSlots.put(slotName, new Slot(slotName, slotContents, contentCount));</span>
+<span class="fc" id="L30">    }</span>
+
+    public void addCurrencyCount(String currencyName, int currencyCount) throws NoSuchElementException{
+<span class="nc" id="L33">        boolean currencyFound = false;</span>
+<span class="nc bnc" id="L34" title="All 2 branches missed.">        for (String name : this.currencyNames){</span>
+<span class="nc bnc" id="L35" title="All 2 branches missed.">            if (currencyName.equals(name)){</span>
+<span class="nc" id="L36">                currencyFound = true;</span>
+<span class="nc" id="L37">                break;</span>
+            }
+        }
+<span class="nc bnc" id="L40" title="All 2 branches missed.">        if (!currencyFound){</span>
+<span class="nc" id="L41">            throw new NoSuchElementException(&quot;Incorrect denomination parsed! (&quot; + currencyName + &quot;)&quot;);</span>
+        }
+<span class="nc" id="L43">        this.currencyCounts.put(currencyName, currencyCount + this.currencyCounts.get(currencyName));</span>
+<span class="nc" id="L44">    }</span>
+
+    public HashMap&lt;String, Integer&gt; getCurrencyCounts() {
+<span class="fc" id="L47">        return this.currencyCounts;</span>
+    }
+
+    public String toString(){
+<span class="fc" id="L51">        StringBuilder output = new StringBuilder();</span>
+<span class="fc bfc" id="L52" title="All 2 branches covered.">        for (Slot currentSlot : this.allSlots.values()){</span>
+<span class="fc" id="L53">            output.append(currentSlot.getName() + &quot; &quot; + currentSlot.getContents() + &quot;\n&quot;);</span>
+<span class="fc" id="L54">        }</span>
+<span class="fc" id="L55">        return output.toString();</span>
+    }
+
+    public int getContentCount(String slotName) throws NoSuchElementException{
+<span class="nc bnc" id="L59" title="All 2 branches missed.">        if (this.allSlots.containsKey(slotName)){</span>
+<span class="nc" id="L60">            return this.allSlots.get(slotName).getCount();</span>
+        }
+
+<span class="nc" id="L63">        throw new NoSuchElementException(&quot;Can not find a slot &quot; + slotName);</span>
+    }
+
+    public void readFromFile(String fPath) {
+
+<span class="fc" id="L68">        this.allSlots = new HashMap&lt;String, Slot&gt;();</span>
+<span class="fc" id="L69">        JSONParser parser = new JSONParser();</span>
+
+<span class="fc" id="L71">        try (FileReader fr = new FileReader(fPath)) {</span>
+<span class="fc" id="L72">            Object obj = parser.parse(fr);</span>
+<span class="fc" id="L73">            JSONArray jsonData = (JSONArray) obj;</span>
+
+<span class="fc" id="L75">            JSONObject currencies = (JSONObject) jsonData.remove(0);</span>
+
+<span class="fc bfc" id="L77" title="All 2 branches covered.">            for (String key : currencyNames) {</span>
+
+
+<span class="fc" id="L80">                this.currencyCounts.put(key, ((Long)(currencies.get(key))).intValue());</span>
+            }
+
+<span class="fc bfc" id="L83" title="All 2 branches covered.">            for (Object value : jsonData) {</span>
+<span class="fc" id="L84">                JSONObject jObj = (JSONObject) value;</span>
+<span class="fc" id="L85">                String slotName = (String) jObj.get(&quot;slotName&quot;);</span>
+<span class="fc" id="L86">                String itemName = (String) jObj.get(&quot;itemName&quot;);</span>
+<span class="fc" id="L87">                float itemPrice = ((Double) jObj.get(&quot;itemPrice&quot;)).floatValue();</span>
+<span class="fc" id="L88">                Category itemCategory = Category.valueOf((String) jObj.get(&quot;itemCategory&quot;));</span>
+<span class="fc" id="L89">                int slotCount = ((Long) jObj.get(&quot;slotCount&quot;)).intValue();</span>
+
+<span class="fc" id="L91">                this.allSlots.put(slotName, new Slot(slotName, new FoodItem(itemName, itemPrice, itemCategory), slotCount));</span>
+<span class="fc" id="L92">            }</span>
+
+<span class="nc" id="L94">        } catch(IOException e) {</span>
+<span class="nc" id="L95">            e.printStackTrace();</span>
+<span class="nc" id="L96">        } catch(ParseException e) {</span>
+<span class="nc" id="L97">            e.printStackTrace();</span>
+<span class="pc" id="L98">        }</span>
+<span class="fc" id="L99">    }</span>
+
+    public void writeToFile(String fPath) {
+
+<span class="fc" id="L103">        ArrayList&lt;HashMap&lt;String, Object&gt;&gt; jsonData = new ArrayList&lt;&gt;();</span>
+        
+<span class="fc" id="L105">        HashMap&lt;String, Object&gt; currencyData = new HashMap&lt;String, Object&gt;();</span>
+<span class="fc bfc" id="L106" title="All 2 branches covered.">        for (String key : currencyCounts.keySet()) {</span>
+
+<span class="fc" id="L108">            currencyData.put(key, (Object) currencyCounts.get(key));</span>
+<span class="fc" id="L109">        }</span>
+<span class="fc" id="L110">        jsonData.add(currencyData);</span>
+
+<span class="fc bfc" id="L112" title="All 2 branches covered.">        for (Slot slot : allSlots.values()) {</span>
+<span class="fc" id="L113">            HashMap&lt;String, Object&gt; slotData = new HashMap&lt;String, Object&gt;();</span>
+<span class="fc" id="L114">            slotData.put(&quot;slotName&quot;, slot.getName());</span>
+<span class="fc" id="L115">            slotData.put(&quot;itemName&quot;, slot.getContents().getName());</span>
+<span class="fc" id="L116">            slotData.put(&quot;itemPrice&quot;, slot.getContents().getPrice());</span>
+<span class="fc" id="L117">            slotData.put(&quot;itemCategory&quot;, slot.getContents().getCategory().toString());</span>
+<span class="fc" id="L118">            slotData.put(&quot;slotCount&quot;, slot.getCount());</span>
+<span class="fc" id="L119">            jsonData.add(slotData);</span>
+<span class="fc" id="L120">        }</span>
+        
+        // Attempts to write the JSONArray to file
+<span class="fc" id="L123">        try (FileWriter fw = new FileWriter(fPath)) {</span>
+<span class="fc" id="L124">            org.json.simple.JSONArray.writeJSONString(jsonData, fw);</span>
+<span class="fc" id="L125">            fw.flush();</span>
+<span class="fc" id="L126">            fw.close();</span>
+<span class="nc" id="L127">        } catch(IOException e) {</span>
+<span class="nc" id="L128">            System.out.println(&quot;Failed to write to file&quot;);</span>
+<span class="nc" id="L129">            e.printStackTrace();</span>
+<span class="fc" id="L130">        }</span>
+<span class="fc" id="L131">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
