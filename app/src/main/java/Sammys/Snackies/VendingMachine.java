@@ -13,14 +13,34 @@ import org.json.simple.parser.ParseException;
 
 public class VendingMachine {
     private HashMap<String, Slot> allSlots;
+    private HashMap<String, Integer> currencyCounts;
+    private final String[] currencyNames = {"5c", "10c", "20c", "50c", "$1", "$2", "$5", "$10", "$20", "$50", "$100"};
     private final String fp = "data.json";
 
     public VendingMachine(){
         this.allSlots = new HashMap<String, Slot>();
+        this.currencyCounts = new HashMap<String, Integer>();
+        for (String currency : currencyNames){
+            this.currencyCounts.put(currency, 5);
+        }
     }
 
     public void addSlot(String slotName, FoodItem slotContents, int contentCount){
         this.allSlots.put(slotName, new Slot(slotName, slotContents, contentCount));
+    }
+
+    public void addCurrencyCount(String currencyName, int currencyCount) throws NoSuchElementException{
+        boolean currencyFound = false;
+        for (String name : this.currencyNames){
+            if (currencyName.equals(name)){
+                currencyFound = true;
+                break;
+            }
+        }
+        if (!currencyFound){
+            throw new NoSuchElementException("Incorrect denomination parsed! (" + currencyName + ")");
+        }
+        this.currencyCounts.put(currencyName, currencyCount + this.currencyCounts.get(currencyName));
     }
 
     public String toString(){
