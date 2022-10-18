@@ -15,6 +15,7 @@ public class VendingMachine {
     private HashMap<String, Slot> allSlots;
     private HashMap<String, Integer> currencyCounts;
     private final String[] currencyNames = {"5c", "10c", "20c", "50c", "$1", "$2", "$5", "$10", "$20", "$50", "$100"};
+    private final double[] currencyValues = {0.05, 0.10, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100};
     private final String fp = "data.json";
 
     public VendingMachine(){
@@ -109,5 +110,26 @@ public class VendingMachine {
             System.out.println("Failed to write to file");
             e.printStackTrace();
         }
+    }
+
+    public int[] getChangeFromCash(double totalGiven) throws IndexOutOfBoundsException{
+        double currentTotal = totalGiven;
+        int currentCurrency = currencyNames.length-1;
+        int[] retval = new int[currencyNames.length];
+        while (currentCurrency > 0){
+            double currentValue = currencyValues[currentCurrency];
+            int currentValueCount = (int)(currentTotal / currentValue);
+            if (currentValueCount > this.currencyCounts.get(currencyNames[currentCurrency])){
+                currentTotal = (currentTotal % currentValue) +  this.currencyCounts.get(currencyNames[currentCurrency])-currentValueCount;
+                currentValueCount = this.currencyCounts.get(currencyNames[currentCurrency]);
+            } else {
+                currentTotal = currentTotal % currentValue;
+            }
+            retval[currentCurrency] = currentValueCount;
+        }
+        if (currentTotal <= 0.04){
+            return retval;
+        }
+        throw new IndexOutOfBoundsException("The vending machine does not have sufficient change");
     }
 }
