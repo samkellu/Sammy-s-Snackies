@@ -3,6 +3,7 @@ package Sammys.Snackies;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.HashMap;
 
 public class App {
 
@@ -35,6 +36,68 @@ public class App {
                 System.out.println("Please enter a valid monetary denomination.");
                 return -1;
         }
+    }
+
+    private static HashMap<String, Integer> getDenominations(double totalGiven){
+        HashMap<String, Integer> denominations = new HashMap<String, Integer>();
+        denominations.put("5c", 0);
+        denominations.put("10c", 0);
+        denominations.put("20c", 0);
+        denominations.put("50c", 0);
+        denominations.put("$1", 0);
+        denominations.put("$2", 0);
+        denominations.put("$5", 0);
+        denominations.put("$10", 0);
+        denominations.put("$20", 0);
+        denominations.put("$50", 0);
+        denominations.put("$100", 0);
+
+        while( totalGiven >= 100){
+            totalGiven =- 100;
+            denominations.put("$100", denominations.get("$100")+ 1);
+        }
+        while( totalGiven >= 50){
+            totalGiven =- 50;
+            denominations.put("$50", denominations.get("$50")+ 1);
+        }
+        while( totalGiven >= 20){
+            totalGiven =- 20;
+            denominations.put("$20", denominations.get("$20")+ 1);
+        }
+        while( totalGiven >= 10){
+            totalGiven =- 10;
+            denominations.put("$10", denominations.get("$10")+ 1);
+        }
+        while( totalGiven >= 5){
+            totalGiven =- 5;
+            denominations.put("$5", denominations.get("$5")+ 1);
+        }
+        while( totalGiven >= 2){
+            totalGiven =- 2;
+            denominations.put("$2", denominations.get("$2")+ 1);
+        }
+        while( totalGiven >= 1){
+            totalGiven =- 1;
+            denominations.put("$1", denominations.get("$1")+ 1);
+        }
+        while( totalGiven >= 0.50){
+            totalGiven =- 0.50;
+            denominations.put("50c", denominations.get("50c")+ 1);
+        }
+        while( totalGiven >= 0.20){
+            totalGiven =- 0.20;
+            denominations.put("20c", denominations.get("20c")+ 1);
+        }
+        while( totalGiven >= 0.10){
+            totalGiven =- 0.10;
+            denominations.put("10c", denominations.get("10c")+ 1);
+        }
+        while( totalGiven >= 0.05){
+            totalGiven =- 0.05;
+            denominations.put("5c", denominations.get("5c")+ 1);
+        }
+
+        return denominations;
     }
 
     private static void buyer(ArrayList<String> inputs) {
@@ -98,8 +161,10 @@ public class App {
 
                 totalGiven += value*amt;
 
-                // TODO
-                // add amt to the right denom in the array. 
+                //Returns the denominations in a hashmap of the change
+                HashMap<String, Integer> ChangeDenominations = getDenominations(totalGiven);
+
+                
             }
         }
 
