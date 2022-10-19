@@ -265,13 +265,15 @@ public class App {
         // VendingMachine vm = new VendingMachine();
 
         System.out.println("Welcome to Sammy's Snackies!");
+        System.out.print("> ");
         while (true){
             while(s.hasNextLine()){
+                
                 String input = s.nextLine();
                 String[] userInput = input.split(" ");
                 ArrayList<String> inputs = new ArrayList<String>(Arrays.asList(userInput));
                 String cmd = inputs.get(0);
-    
+                
                 switch(cmd.toLowerCase()) {
     
                     case "buyer":
@@ -300,6 +302,7 @@ public class App {
                         unknownCommand(inputs);
                     break;
                 }
+                System.out.print("> ");
             }
         }
 
