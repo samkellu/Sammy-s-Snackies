@@ -145,6 +145,7 @@ public class VendingMachine {
                 currentTotal = currentTotal % currentValue;
             }
             retval[currentCurrency] = currentValueCount;
+            currentCurrency--;
         }
         if (currentTotal <= 0.04){
             return retval;
