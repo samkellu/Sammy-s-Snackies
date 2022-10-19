@@ -101,13 +101,13 @@ public class App {
     }
 
     private static void buyer(ArrayList<String> inputs) {
-
+        System.out.println(inputs);
         // ensure enough arguments
-        if (inputs.size() < 5) {
+        if ((inputs.size() != 5) & !((inputs.size() == 4) & (inputs.get(1).equals("card"))) ) {
             System.out.println("Not enough arguments. Use \"help buyer\" to see required arguments");
             return;
         }
-
+        System.out.println("passed");
         // check cash or card
         boolean cash = false;
         if (inputs.get(1).toLowerCase().equals("cash"))
