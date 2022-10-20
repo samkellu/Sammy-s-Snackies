@@ -7,10 +7,10 @@ enum Category {
 public class FoodItem {
 
     private String name;
-    private float price;
+    private double price;
     private Category category;
 
-    public FoodItem(String name, float price, Category category){
+    public FoodItem(String name, double price, Category category){
         this.name = name;
         this.price = price;
         this.category = category;
@@ -20,7 +20,7 @@ public class FoodItem {
         return this.name;
     }
 
-    public float getPrice(){
+    public double getPrice(){
         return this.price;
     }
 
@@ -35,4 +35,5 @@ public class FoodItem {
     public boolean isCategory(Category cat){
         return cat == this.category;
     }
+
 }
