@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>App.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">Sammys.Snackies</a> &gt; <span class="el_source">App.java</span></div><h1>App.java</h1><pre class="source lang-java linenums">package Sammys.Snackies;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Scanner;
+import java.util.HashMap;
+
+<span class="fc" id="L8">public class App {</span>
+
+    private static double parseDenom(String s) {
+
+<span class="nc bnc" id="L12" title="All 12 branches missed.">        switch (s) {</span>
+            case &quot;5c&quot;:
+<span class="nc" id="L14">                return 0.05;</span>
+            case &quot;10c&quot;:
+<span class="nc" id="L16">                return 0.10;</span>
+            case &quot;20c&quot;:
+<span class="nc" id="L18">                return 0.20;</span>
+            case &quot;50c&quot;:
+<span class="nc" id="L20">                return 0.50;</span>
+            case &quot;$1&quot;:
+<span class="nc" id="L22">                return 1.00;</span>
+            case &quot;$2&quot;:
+<span class="nc" id="L24">                return 2.00;</span>
+            case &quot;$5&quot;:
+<span class="nc" id="L26">                return 5.00;</span>
+            case &quot;$10&quot;:
+<span class="nc" id="L28">                return 10.00;</span>
+            case &quot;$20&quot;:
+<span class="nc" id="L30">                return 20.00;</span>
+            case &quot;$50&quot;:
+<span class="nc" id="L32">                return 50.00;</span>
+            case &quot;$100&quot;:
+<span class="nc" id="L34">                return 100.00;</span>
+            default:
+<span class="nc" id="L36">                System.out.println(&quot;Please enter a valid monetary denomination.&quot;);</span>
+<span class="nc" id="L37">                return -1;</span>
+        }
+    }
+
+    private static HashMap&lt;String, Integer&gt; getDenominations(double totalGiven){
+<span class="nc" id="L42">        HashMap&lt;String, Integer&gt; denominations = new HashMap&lt;String, Integer&gt;();</span>
+<span class="nc" id="L43">        denominations.put(&quot;5c&quot;, 0);</span>
+<span class="nc" id="L44">        denominations.put(&quot;10c&quot;, 0);</span>
+<span class="nc" id="L45">        denominations.put(&quot;20c&quot;, 0);</span>
+<span class="nc" id="L46">        denominations.put(&quot;50c&quot;, 0);</span>
+<span class="nc" id="L47">        denominations.put(&quot;$1&quot;, 0);</span>
+<span class="nc" id="L48">        denominations.put(&quot;$2&quot;, 0);</span>
+<span class="nc" id="L49">        denominations.put(&quot;$5&quot;, 0);</span>
+<span class="nc" id="L50">        denominations.put(&quot;$10&quot;, 0);</span>
+<span class="nc" id="L51">        denominations.put(&quot;$20&quot;, 0);</span>
+<span class="nc" id="L52">        denominations.put(&quot;$50&quot;, 0);</span>
+<span class="nc" id="L53">        denominations.put(&quot;$100&quot;, 0);</span>
+
+<span class="nc bnc" id="L55" title="All 2 branches missed.">        while( totalGiven &gt;= 100){</span>
+<span class="nc" id="L56">            totalGiven =- 100;</span>
+<span class="nc" id="L57">            denominations.put(&quot;$100&quot;, denominations.get(&quot;$100&quot;)+ 1);</span>
+        }
+<span class="nc bnc" id="L59" title="All 2 branches missed.">        while( totalGiven &gt;= 50){</span>
+<span class="nc" id="L60">            totalGiven =- 50;</span>
+<span class="nc" id="L61">            denominations.put(&quot;$50&quot;, denominations.get(&quot;$50&quot;)+ 1);</span>
+        }
+<span class="nc bnc" id="L63" title="All 2 branches missed.">        while( totalGiven &gt;= 20){</span>
+<span class="nc" id="L64">            totalGiven =- 20;</span>
+<span class="nc" id="L65">            denominations.put(&quot;$20&quot;, denominations.get(&quot;$20&quot;)+ 1);</span>
+        }
+<span class="nc bnc" id="L67" title="All 2 branches missed.">        while( totalGiven &gt;= 10){</span>
+<span class="nc" id="L68">            totalGiven =- 10;</span>
+<span class="nc" id="L69">            denominations.put(&quot;$10&quot;, denominations.get(&quot;$10&quot;)+ 1);</span>
+        }
+<span class="nc bnc" id="L71" title="All 2 branches missed.">        while( totalGiven &gt;= 5){</span>
+<span class="nc" id="L72">            totalGiven =- 5;</span>
+<span class="nc" id="L73">            denominations.put(&quot;$5&quot;, denominations.get(&quot;$5&quot;)+ 1);</span>
+        }
+<span class="nc bnc" id="L75" title="All 2 branches missed.">        while( totalGiven &gt;= 2){</span>
+<span class="nc" id="L76">            totalGiven =- 2;</span>
+<span class="nc" id="L77">            denominations.put(&quot;$2&quot;, denominations.get(&quot;$2&quot;)+ 1);</span>
+        }
+<span class="nc bnc" id="L79" title="All 2 branches missed.">        while( totalGiven &gt;= 1){</span>
+<span class="nc" id="L80">            totalGiven =- 1;</span>
+<span class="nc" id="L81">            denominations.put(&quot;$1&quot;, denominations.get(&quot;$1&quot;)+ 1);</span>
+        }
+<span class="nc bnc" id="L83" title="All 2 branches missed.">        while( totalGiven &gt;= 0.50){</span>
+<span class="nc" id="L84">            totalGiven =- 0.50;</span>
+<span class="nc" id="L85">            denominations.put(&quot;50c&quot;, denominations.get(&quot;50c&quot;)+ 1);</span>
+        }
+<span class="nc bnc" id="L87" title="All 2 branches missed.">        while( totalGiven &gt;= 0.20){</span>
+<span class="nc" id="L88">            totalGiven =- 0.20;</span>
+<span class="nc" id="L89">            denominations.put(&quot;20c&quot;, denominations.get(&quot;20c&quot;)+ 1);</span>
+        }
+<span class="nc bnc" id="L91" title="All 2 branches missed.">        while( totalGiven &gt;= 0.10){</span>
+<span class="nc" id="L92">            totalGiven =- 0.10;</span>
+<span class="nc" id="L93">            denominations.put(&quot;10c&quot;, denominations.get(&quot;10c&quot;)+ 1);</span>
+        }
+<span class="nc bnc" id="L95" title="All 2 branches missed.">        while( totalGiven &gt;= 0.05){</span>
+<span class="nc" id="L96">            totalGiven =- 0.05;</span>
+<span class="nc" id="L97">            denominations.put(&quot;5c&quot;, denominations.get(&quot;5c&quot;)+ 1);</span>
+        }
+
+<span class="nc" id="L100">        return denominations;</span>
+    }
+
+    private static void buyer(ArrayList&lt;String&gt; inputs) {
+
+        // ensure enough arguments
+<span class="nc bnc" id="L106" title="All 2 branches missed.">        if (inputs.size() &lt; 5) {</span>
+<span class="nc" id="L107">            System.out.println(&quot;Not enough arguments. Use \&quot;help buyer\&quot; to see required arguments&quot;);</span>
+<span class="nc" id="L108">            return;</span>
+        }
+
+        // check cash or card
+<span class="nc" id="L112">        boolean cash = false;</span>
+<span class="nc bnc" id="L113" title="All 2 branches missed.">        if (inputs.get(1).toLowerCase().equals(&quot;cash&quot;))</span>
+<span class="nc" id="L114">            cash = true;</span>
+<span class="nc bnc" id="L115" title="All 2 branches missed.">        else if (!inputs.get(1).toLowerCase().equals(&quot;card&quot;)) {</span>
+<span class="nc" id="L116">            System.out.println(&quot;Please specify payment type (cash or card).&quot;);</span>
+<span class="nc" id="L117">            return;</span>
+        }
+
+        // TODO
+        // check product validity, need vending machine to know what's there
+
+        // TODO
+        // check product quantity, need vending machine to know the quantity
+
+        // TODO
+        // if cash, check denominations
+        // get totalOwed
+        
+<span class="nc" id="L130">        int[] denoms = new int[11];</span>
+<span class="nc" id="L131">        double totalGiven = 0.00;</span>
+<span class="nc bnc" id="L132" title="All 2 branches missed.">        if (cash) {</span>
+<span class="nc" id="L133">            ArrayList&lt;String&gt; inputDenoms = new ArrayList&lt;String&gt;(inputs.subList(4, inputs.size()-1));</span>
+
+<span class="nc bnc" id="L135" title="All 2 branches missed.">            for (String s : inputDenoms) {</span>
+<span class="nc" id="L136">                String[] values = s.split(&quot;*&quot;);</span>
+
+<span class="nc bnc" id="L138" title="All 2 branches missed.">                if (values.length != 2) {</span>
+<span class="nc" id="L139">                    System.out.println(&quot;Unrecognisable denomination.\nPlease use the format &lt;value&gt;*&lt;amount&gt;, where value can be 50c, $2, $5 etc. and amount is a positive integer.&quot;);</span>
+<span class="nc" id="L140">                    return;</span>
+                }
+                
+<span class="nc" id="L143">                String v = values[0];</span>
+<span class="nc" id="L144">                String amount = values[1];</span>
+<span class="nc" id="L145">                int amt = -1;</span>
+                
+                try {
+<span class="nc" id="L148">                    amt = Integer.parseInt(amount);</span>
+<span class="nc" id="L149">                } catch (NumberFormatException e) {</span>
+<span class="nc" id="L150">                    System.out.println(&quot;Please ensure the amount is a positive integer.&quot;);</span>
+<span class="nc" id="L151">                    return;</span>
+                } finally {
+<span class="nc bnc" id="L153" title="All 2 branches missed.">                    if (amt &lt;= 0) {</span>
+<span class="nc" id="L154">                        System.out.println(&quot;Please ensure the amount is a positive integer.&quot;);</span>
+<span class="nc" id="L155">                        return;</span>
+                    }
+                }
+
+<span class="nc" id="L159">                double value = parseDenom(v);</span>
+<span class="nc bnc" id="L160" title="All 2 branches missed.">                if (value == -1) return;</span>
+
+<span class="nc" id="L162">                totalGiven += value*amt;</span>
+
+                //Returns the denominations in a hashmap of the change
+<span class="nc" id="L165">                HashMap&lt;String, Integer&gt; ChangeDenominations = getDenominations(totalGiven);</span>
+
+                
+<span class="nc" id="L168">            }</span>
+        }
+
+        // TODO
+        // ensure enough money given, need the vending machine to know the price.
+<span class="nc" id="L173">    }</span>
+
+    private static void seller(ArrayList&lt;String&gt; inputs) {
+
+<span class="nc" id="L177">    }</span>
+
+    private static void supplier(ArrayList&lt;String&gt; inputs) {
+
+<span class="nc" id="L181">    }</span>
+
+    private static void owner(ArrayList&lt;String&gt; inputs) {
+
+<span class="nc" id="L185">    }</span>
+
+    private static void products(VendingMachine v) {
+
+<span class="nc" id="L189">        System.out.println(&quot;\nProducts available:&quot;);</span>
+<span class="nc" id="L190">        boolean noProducts = true;</span>
+<span class="nc bnc" id="L191" title="All 2 branches missed.">        for (String key : v.getSlots().keySet()) {</span>
+<span class="nc bnc" id="L192" title="All 2 branches missed.">            if (v.getSlots().get(key).getCount() &gt; 0) {</span>
+<span class="nc" id="L193">                System.out.println(v.getSlots().get(key));</span>
+<span class="nc" id="L194">                noProducts = false;</span>
+            }
+<span class="nc" id="L196">        }</span>
+
+<span class="nc bnc" id="L198" title="All 2 branches missed.">        if (noProducts) System.out.println(&quot;\nSorry, there are no products available in this machine.&quot;);</span>
+<span class="nc" id="L199">        System.out.print(&quot;\n&quot;);</span>
+<span class="nc" id="L200">    }</span>
+
+    private static void userLogin(ArrayList&lt;String&gt; inputs) {
+
+<span class="nc bnc" id="L204" title="All 2 branches missed.">        if (inputs.size() != 3) {</span>
+<span class="nc" id="L205">            System.out.println(&quot;\nIncorrect number of parameters. Use \&quot;help login\&quot; for more information.\n&quot;);</span>
+<span class="nc" id="L206">            return;</span>
+        }
+
+        // TODO
+        // check login, maybe we use a file of users and pwds?
+<span class="nc" id="L211">    }</span>
+
+    private static void helpCommand(ArrayList&lt;String&gt; inputs) {
+<span class="nc bnc" id="L214" title="All 4 branches missed.">        if (inputs != null &amp;&amp; inputs.size() &gt;= 2) {</span>
+<span class="nc bnc" id="L215" title="All 9 branches missed.">            switch(inputs.get(1).toLowerCase()) {</span>
+                case &quot;buyer&quot;:
+                case &quot;buy&quot;:
+<span class="nc" id="L218">                    System.out.println(&quot;\nUse this command to buy a product from the vending machine.&quot;);</span>
+<span class="nc" id="L219">                    System.out.println(&quot;Usage:&quot;);</span>
+<span class="nc" id="L220">                    System.out.println(&quot;buyer &lt;cash/card&gt; &lt;product&gt; &lt;amount&gt; [denominations...]\n&quot;);</span>
+<span class="nc" id="L221">                break;</span>
+                case &quot;seller&quot;:
+                case &quot;sell&quot;:
+<span class="nc" id="L224">                    System.out.println(&quot;\nUse this command to TODO&quot;);</span>
+<span class="nc" id="L225">                    System.out.println(&quot;Usage:&quot;);</span>
+<span class="nc" id="L226">                    System.out.println(&quot;seller TODO\n&quot;);</span>
+<span class="nc" id="L227">                break;</span>
+                case &quot;owner&quot;:
+<span class="nc" id="L229">                    System.out.println(&quot;\nUse this command to TODO&quot;);</span>
+<span class="nc" id="L230">                    System.out.println(&quot;Usage:&quot;);</span>
+<span class="nc" id="L231">                    System.out.println(&quot;owner TODO\n&quot;);</span>
+<span class="nc" id="L232">                break;</span>
+                case &quot;supplier&quot;:
+<span class="nc" id="L234">                    System.out.println(&quot;\nUse this command to TODO&quot;);</span>
+<span class="nc" id="L235">                    System.out.println(&quot;Usage:&quot;);</span>
+<span class="nc" id="L236">                    System.out.println(&quot;supplier TODO\n&quot;);</span>
+<span class="nc" id="L237">                break;</span>
+                case &quot;products&quot;:
+                case &quot;product&quot;:
+<span class="nc" id="L240">                    System.out.println(&quot;\nUse this command to list all products in the vending machine.&quot;);</span>
+<span class="nc" id="L241">                    System.out.println(&quot;Usage:&quot;);</span>
+<span class="nc" id="L242">                    System.out.println(&quot;products\n&quot;);</span>
+<span class="nc" id="L243">                break;</span>
+                case &quot;login&quot;:
+<span class="nc" id="L245">                    System.out.println(&quot;\nUse this command to log in to a supplier/owner/seller account.&quot;);</span>
+<span class="nc" id="L246">                    System.out.println(&quot;Usage:&quot;);</span>
+<span class="nc" id="L247">                    System.out.println(&quot;login &lt;username&gt; &lt;password&gt;\n&quot;);</span>
+<span class="nc" id="L248">                break;</span>
+                case &quot;help&quot;:
+<span class="nc" id="L250">                    System.out.println(&quot;\nUse this command to see available commands or for more information on a command&quot;);</span>
+<span class="nc" id="L251">                    System.out.println(&quot;Usage:&quot;);</span>
+<span class="nc" id="L252">                    System.out.println(&quot;help [command]\n&quot;);</span>
+<span class="nc" id="L253">                break;</span>
+                case &quot;quit&quot;:
+<span class="nc" id="L255">                    System.out.println(&quot;\nUse this command to quit the program.&quot;);</span>
+<span class="nc" id="L256">                    System.out.println(&quot;Usage:&quot;);</span>
+<span class="nc" id="L257">                    System.out.println(&quot;quit\n&quot;);</span>
+<span class="nc" id="L258">                break;</span>
+                default:
+<span class="nc" id="L260">                    System.out.println(String.format(&quot;\nUnrecognised command: %s\n&quot;, inputs.get(1)));</span>
+<span class="nc" id="L261">                break;</span>
+            }
+        } else {
+<span class="nc" id="L264">            System.out.println(&quot;\nAvailable Commands:&quot;);</span>
+<span class="nc" id="L265">            System.out.println(&quot;buyer - buy a product&quot;);</span>
+<span class="nc" id="L266">            System.out.println(&quot;seller - TODO&quot;); // TODO</span>
+<span class="nc" id="L267">            System.out.println(&quot;owner - TODO&quot;); // TODO</span>
+<span class="nc" id="L268">            System.out.println(&quot;supplier - TODO&quot;); // TODO</span>
+<span class="nc" id="L269">            System.out.println(&quot;products - list available products in the vending machine&quot;);</span>
+<span class="nc" id="L270">            System.out.println(&quot;login - login to a supplier/owner/seller account&quot;);</span>
+<span class="nc" id="L271">            System.out.println(&quot;help - display this screen&quot;);</span>
+<span class="nc" id="L272">            System.out.println(&quot;quit - quit the program\n&quot;);</span>
+        }
+<span class="nc" id="L274">    }</span>
+
+    private static void endProgram() {
+<span class="nc" id="L277">        System.out.println(&quot;Quitting...&quot;);</span>
+<span class="nc" id="L278">    }</span>
+
+    private static void unknownCommand(ArrayList&lt;String&gt; inputs) {
+<span class="nc" id="L281">        System.out.println(&quot;Unknown Command, use the help command to see available commands&quot;);</span>
+<span class="nc" id="L282">    }</span>
+
+
+    public static void main(String[] args) {
+        
+<span class="nc" id="L287">        Scanner s = new Scanner(System.in);</span>
+
+<span class="nc" id="L289">        VendingMachine vm = new VendingMachine();</span>
+<span class="nc" id="L290">        FoodItem f = new FoodItem(&quot;water&quot;, 1.50, Category.DRINK);</span>
+<span class="nc" id="L291">        vm.addSlot(&quot;A1&quot;, f, 5);</span>
+
+<span class="nc" id="L293">        System.out.println(&quot;Welcome to Sammy's Snackies!&quot;);</span>
+<span class="nc" id="L294">        helpCommand(null);</span>
+
+        while (true){
+<span class="nc bnc" id="L297" title="All 2 branches missed.">            while(s.hasNextLine()){</span>
+<span class="nc" id="L298">                String input = s.nextLine();</span>
+<span class="nc" id="L299">                String[] userInput = input.split(&quot; &quot;);</span>
+<span class="nc" id="L300">                ArrayList&lt;String&gt; inputs = new ArrayList&lt;String&gt;(Arrays.asList(userInput));</span>
+<span class="nc" id="L301">                String cmd = inputs.get(0);</span>
+    
+<span class="nc bnc" id="L303" title="All 9 branches missed.">                switch(cmd.toLowerCase()) {</span>
+    
+                    case &quot;buyer&quot;:
+<span class="nc" id="L306">                        buyer(inputs);</span>
+<span class="nc" id="L307">                    break;</span>
+                    case &quot;seller&quot;:
+<span class="nc" id="L309">                        seller(inputs);</span>
+<span class="nc" id="L310">                    break;</span>
+                    case &quot;supplier&quot;:
+<span class="nc" id="L312">                        supplier(inputs);</span>
+<span class="nc" id="L313">                    break;</span>
+                    case &quot;owner&quot;:
+<span class="nc" id="L315">                        owner(inputs);</span>
+<span class="nc" id="L316">                    break;</span>
+                    case &quot;login&quot;:
+<span class="nc" id="L318">                        userLogin(inputs);</span>
+<span class="nc" id="L319">                    break;</span>
+                    case &quot;products&quot;:
+<span class="nc" id="L321">                        products(vm);</span>
+<span class="nc" id="L322">                    break;</span>
+                    case &quot;help&quot;:
+<span class="nc" id="L324">                        helpCommand(inputs);</span>
+<span class="nc" id="L325">                    break;</span>
+                    case &quot;quit&quot;:
+<span class="nc" id="L327">                        endProgram();</span>
+<span class="nc" id="L328">                        s.close();</span>
+<span class="nc" id="L329">                        return;</span>
+                    default:
+<span class="nc" id="L331">                        unknownCommand(inputs);</span>
+                    break;
+                }
+<span class="nc" id="L334">            }</span>
+        }
+
+
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
