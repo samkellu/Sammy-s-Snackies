@@ -1,0 +1,9 @@
+Sammys/Snackies/FoodItem.java
+ Sammys.Snackies.Category
+ Sammys.Snackies.FoodItem
+Sammys/Snackies/App.java
+ Sammys.Snackies.App
+Sammys/Snackies/VendingMachine.java
+ Sammys.Snackies.VendingMachine
+Sammys/Snackies/Slot.java
+ Sammys.Snackies.Slot

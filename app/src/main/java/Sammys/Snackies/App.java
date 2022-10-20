@@ -184,10 +184,25 @@ public class App {
 
     }
 
+    private static void products(VendingMachine v) {
+
+        System.out.println("\nProducts available:");
+        boolean noProducts = true;
+        for (String key : v.getSlots().keySet()) {
+            if (v.getSlots().get(key).getCount() > 0) {
+                System.out.println(v.getSlots().get(key));
+                noProducts = false;
+            }
+        }
+
+        if (noProducts) System.out.println("\nSorry, there are no products available in this machine.");
+        System.out.print("\n");
+    }
+
     private static void userLogin(ArrayList<String> inputs) {
 
         if (inputs.size() != 3) {
-            System.out.println("Incorrect number of parameters. Use \"help login\" for more information.");
+            System.out.println("\nIncorrect number of parameters. Use \"help login\" for more information.\n");
             return;
         }
 
@@ -199,11 +214,13 @@ public class App {
         if (inputs.size() >= 2) {
             switch(inputs.get(1).toLowerCase()) {
                 case "buyer":
+                case "buy":
                     System.out.println("\nUse this command to buy a product from the vending machine.");
                     System.out.println("Usage:");
                     System.out.println("buyer <cash/card> <product> <amount> [denominations...]\n");
                 break;
                 case "seller":
+                case "sell":
                     System.out.println("\nUse this command to TODO");
                     System.out.println("Usage:");
                     System.out.println("seller TODO\n");
@@ -217,6 +234,12 @@ public class App {
                     System.out.println("\nUse this command to TODO");
                     System.out.println("Usage:");
                     System.out.println("supplier TODO\n");
+                break;
+                case "products":
+                case "product":
+                    System.out.println("\nUse this command to list all products in the vending machine.");
+                    System.out.println("Usage:");
+                    System.out.println("products\n");
                 break;
                 case "login":
                     System.out.println("\nUse this command to log in to a supplier/owner/seller account.");
@@ -243,6 +266,7 @@ public class App {
             System.out.println("seller - TODO"); // TODO
             System.out.println("owner - TODO"); // TODO
             System.out.println("supplier - TODO"); // TODO
+            System.out.println("products - list available products in the vending machine");
             System.out.println("login - login to a supplier/owner/seller account");
             System.out.println("help - display this screen");
             System.out.println("quit - quit the program\n");
@@ -262,7 +286,9 @@ public class App {
         
         Scanner s = new Scanner(System.in);
 
-        // VendingMachine vm = new VendingMachine();
+        VendingMachine vm = new VendingMachine();
+        FoodItem f = new FoodItem("water", 1.50, Category.DRINK);
+        vm.addSlot("A1", f, 5);
 
         System.out.println("Welcome to Sammy's Snackies!");
         while (true){
@@ -288,6 +314,9 @@ public class App {
                     break;
                     case "login":
                         userLogin(inputs);
+                    break;
+                    case "products":
+                        products(vm);
                     break;
                     case "help":
                         helpCommand(inputs);

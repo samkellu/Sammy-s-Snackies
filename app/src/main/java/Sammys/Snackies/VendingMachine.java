@@ -48,6 +48,10 @@ public class VendingMachine {
         return this.currencyCounts;
     }
 
+    public HashMap<String, Slot> getSlots() {
+        return allSlots;
+    }
+
     public String toString(){
         StringBuilder output = new StringBuilder();
         for (Slot currentSlot : this.allSlots.values()){

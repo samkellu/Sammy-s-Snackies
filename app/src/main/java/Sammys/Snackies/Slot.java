@@ -43,4 +43,8 @@ public class Slot {
     public int getCount(){
         return this.count;
     }
+
+    public String toString() {
+        return String.format("%s    | %s    | %d    | $%.2f |", name, contents.getName(), count, contents.getPrice());
+    }
 }
