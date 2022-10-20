@@ -211,7 +211,7 @@ public class App {
     }
 
     private static void helpCommand(ArrayList<String> inputs) {
-        if (inputs.size() >= 2) {
+        if (inputs != null && inputs.size() >= 2) {
             switch(inputs.get(1).toLowerCase()) {
                 case "buyer":
                 case "buy":
@@ -291,6 +291,8 @@ public class App {
         vm.addSlot("A1", f, 5);
 
         System.out.println("Welcome to Sammy's Snackies!");
+        helpCommand(null);
+
         while (true){
             while(s.hasNextLine()){
                 String input = s.nextLine();
