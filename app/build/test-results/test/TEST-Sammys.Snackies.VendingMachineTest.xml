@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="Sammys.Snackies.VendingMachineTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2022-10-20T08:36:40" hostname="BMO" time="0.07">
-  <properties/>
-  <testcase name="writeToFile()" classname="Sammys.Snackies.VendingMachineTest" time="0.045"/>
-  <testcase name="readFromFile()" classname="Sammys.Snackies.VendingMachineTest" time="0.024"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>
