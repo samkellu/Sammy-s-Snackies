@@ -26,6 +26,22 @@ public class Transaction {
         return this.transactionID;
     }
 
+    public String getPaymentMethod() {
+        return this.paymentMethod;
+    }
+
+    public Integer getQty() {
+        return this.qty;
+    }
+
+    public Double getTotalAmount() {
+        return this.totalAmount;
+    }
+
+    public FoodItem getProductBought() {
+        return this.productBought;
+    }
+
     // Genereates a receipt of the transaction
     public String toString() {
         return transactionID + "," + paymentMethod + "," + productBought.getName() + "," + qty;
