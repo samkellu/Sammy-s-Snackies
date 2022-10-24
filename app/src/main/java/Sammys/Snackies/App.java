@@ -104,6 +104,22 @@ public class App {
         return denominations;
     }
 
+
+    private static void products(VendingMachine v) {
+
+        System.out.println("\nProducts available:");
+        boolean noProducts = true;
+        for (String key : v.getSlots().keySet()) {
+            if (v.getSlots().get(key).getCount() > 0) {
+                System.out.println(v.getSlots().get(key));
+                noProducts = false;
+
+            }
+        }
+        if (noProducts) System.out.println("\nSorry, there are no products available in this machine.");
+        System.out.print("\n");
+    }
+
     private static void buyer(ArrayList<String> inputs, VendingMachine vm) {
 
 
@@ -145,12 +161,17 @@ public class App {
 
         // check the machine has sufficient quantity 
         if (slot.getCount() < Integer.valueOf(inputs.get(3))) {
-            System.out.println("Unfortunately, this machine only has " + slot.getCount() + "x " + slot.getContents().toString() + " available.\n");
+            if (slot.getCount() == 0){
+                System.out.println("Unfortunately, this machine is all out of stock of " + slot.getContents());
+            } else {
+                System.out.println("Unfortunately, this machine only has " + slot.getCount() + "x " + slot.getContents().toString() + " available.\n");
+            }
             return;
         } else if (Integer.valueOf(inputs.get(3)) <= 0) {
             System.out.println("Please enter at least one for quantity.\n");
             return;
         }
+
 
         // TODO
         // if cash, check denominations
@@ -273,12 +294,13 @@ public class App {
     }
 
     private static void helpCommand(ArrayList<String> inputs) {
-         if (inputs == null) {
+         if (inputs==null || inputs.size() == 1) {
             System.out.println("\nAvailable Commands:");
             System.out.println("buyer - buy a product");
             System.out.println("seller - TODO"); // TODO
             System.out.println("owner - TODO"); // TODO
             System.out.println("cashier - TODO"); // TODO
+            System.out.println("products - list available products in the vending machine");
             System.out.println("login - login to a cashier/owner/seller account");
             System.out.println("help - display this screen");
             System.out.println("quit - quit the program\n");
@@ -317,6 +339,12 @@ public class App {
                     System.out.println("Usage:");
                     System.out.println("login <username> <password>\n");
                 break;
+                case "products":
+                case "product":
+                System.out.println("\nUse this command to list all products in the vending machine.");
+                System.out.println("Usage:");
+                System.out.println("products\n");
+                break;
                 case "help":
                     System.out.println("\nUse this command to see available commands or for more information on a command");
                     System.out.println("Usage:");
@@ -331,7 +359,7 @@ public class App {
                     System.out.println(String.format("\nUnrecognised command: %s\n", inputs.get(1)));
                 break;
             }
-        }
+        } 
     }
 
     private static void endProgram(VendingMachine vm) {
@@ -388,6 +416,9 @@ public class App {
                     break;
                     case "login":
                         userLogin(inputs);
+                    break;
+                    case "products":
+                        products(vm);
                     break;
                     case "help":
                         helpCommand(inputs);
