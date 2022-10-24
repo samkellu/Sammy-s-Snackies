@@ -466,13 +466,13 @@ public class App {
                         if(currentType != UserType.CASHIER){
                             unknownCommand(inputs);
                         }
-                        
+                        cashAdd(vm, inputs);
                     break;
                     case "cashremove":
                         if(currentType != UserType.CASHIER){
                             unknownCommand(inputs);
                         }
-                        
+                        cashRemove(vm, inputs);
                     break;
                     case "quit":
                         endProgram(vm);
