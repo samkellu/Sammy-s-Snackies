@@ -7,7 +7,7 @@ import java.util.HashMap;
 
 public class App {
 
-    private final String saveFilePath = "saveFile.json";
+    private static final String saveFilePath = "saveFile.json";
     private static UserType currentType = UserType.BUYER;
     private static ArrayList<UserLogin> userLogins;
     private static final String userLoginFilepath = "userLogins.json";
@@ -221,6 +221,8 @@ public class App {
 
         System.out.println("You recieved " + inputs.get(3) + "x " + slot.getContents().toString() + ".\nYou paid $" + slot.getContents().getPrice() * Integer.valueOf(inputs.get(3)) + ".\nThank you for shopping at Sammy's Snackies!\n");
         slot.sellContents(Integer.valueOf(inputs.get(3)));
+
+        vm.addTransaction(inputs.get(1).toLowerCase(), slot.getContents(), Integer.valueOf(inputs.get(3)));
         // TODO
         // ensure enough money given, need the vending machine to know the price.
     }
@@ -364,7 +366,7 @@ public class App {
 
     private static void endProgram(VendingMachine vm) {
         // UNCOMMENT WHEN YOU WANT TO SAVE EVERY QUIT
-        // vm.writeToFile(saveFilePath);
+        vm.writeToFile(saveFilePath);
         System.out.println("Quitting...");
     }
 
@@ -372,7 +374,7 @@ public class App {
         System.out.println("System Starting...");
         VendingMachine vm = new VendingMachine();
         // UNCOMMENT WHEN YOU WANT TO LOAD EVERY START
-        // vm.readFromFile(saveFilePath);
+        vm.readFromFile(saveFilePath);
         System.out.println("Welcome to Sammy's Snackies!");
         helpCommand(null);
         return vm;
