@@ -22,9 +22,13 @@ public class Transaction {
 <span class="nc" id="L22">        totalAmount = productBought.getPrice() * qty;</span>
 <span class="nc" id="L23">    }</span>
 
+    public Integer getID() {
+<span class="nc" id="L26">        return this.transactionID;</span>
+    }
+
     // Genereates a receipt of the transaction
     public String toString() {
-<span class="nc" id="L27">        return &quot;Transaction #&quot; + transactionID + &quot;\n&quot; + productBought.getName() + &quot; x&quot; + qty + &quot;\nTotal: $&quot; + totalAmount + &quot;\nPayment Method: &quot; + paymentMethod;</span>
+<span class="nc" id="L31">        return transactionID + &quot;,&quot; + paymentMethod + &quot;,&quot; + productBought.toString() + &quot;,&quot; + qty;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

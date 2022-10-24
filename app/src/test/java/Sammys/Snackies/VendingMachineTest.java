@@ -11,7 +11,7 @@ import java.io.FileWriter;
 class VendingMachineTest {
 
     // Tests the file writing module by creating a machine, and making it write its state to file.
-    @Test void writeToFile() {
+    @Test void writeToFileNoTransactions() {
 
         String fp = "testWrite.json";
 
@@ -48,7 +48,7 @@ class VendingMachineTest {
             assertEquals(false, true, "Failed to write");
         }
 
-        String control = "[{\"$5\":777,\"$20\":999,\"$10\":888,\"10c\":222,\"20c\":333,\"50c\":444,\"$100\":2222,\"$1\":555,\"5c\":111,\"$2\":666,\"$50\":1111},{\"slotName\":\"A1\",\"itemName\":\"Mars Bar\",\"itemCategory\":\"CHOCOLATE\",\"slotCount\":9,\"itemPrice\":1.0199999809265137},{\"slotName\":\"A2\",\"itemName\":\"Sprite\",\"itemCategory\":\"DRINK\",\"slotCount\":200,\"itemPrice\":2.0},{\"slotName\":\"A3\",\"itemName\":\"Doritos\",\"itemCategory\":\"CHIPS\",\"slotCount\":55,\"itemPrice\":221.0}]";
+        String control = "[{\"$5\":777,\"$20\":999,\"$10\":888,\"10c\":222,\"20c\":333,\"50c\":444,\"$100\":2222,\"$1\":555,\"5c\":111,\"$2\":666,\"$50\":1111},{},{\"slotName\":\"A1\",\"itemName\":\"Mars Bar\",\"itemCategory\":\"CHOCOLATE\",\"slotCount\":9,\"itemPrice\":1.0199999809265137},{\"slotName\":\"A2\",\"itemName\":\"Sprite\",\"itemCategory\":\"DRINK\",\"slotCount\":200,\"itemPrice\":2.0},{\"slotName\":\"A3\",\"itemName\":\"Doritos\",\"itemCategory\":\"CHIPS\",\"slotCount\":55,\"itemPrice\":221.0}]";
 
         // Checks actual file contents against the control string
         try (FileReader fr = new FileReader(fp)) {
@@ -58,18 +58,17 @@ class VendingMachineTest {
             assertEquals(control, String.valueOf(buf),"Written successfully");
         } catch(IOException e) {
             e.printStackTrace();
-            assertEquals(false, true, "Failed to write");
+            assertEquals(false, true, "Failed to read");
         }
-
     }
 
 
     // Tests the file reading function by reading a set vending machine state from a file
-    @Test void readFromFile() {
+    @Test void readFromFileNoTransactions() {
 
         // Writes the set vending machine state to file
         String fp = "testRead.json";
-        String toWrite = "[{\"$5\":777,\"$20\":999,\"$10\":888,\"10c\":222,\"20c\":333,\"50c\":444,\"$100\":2222,\"$1\":555,\"5c\":111,\"$2\":666,\"$50\":1111},{\"slotName\":\"A1\",\"itemName\":\"Mars Bar\",\"itemCategory\":\"CHOCOLATE\",\"slotCount\":9,\"itemPrice\":1.02},{\"slotName\":\"A2\",\"itemName\":\"Sprite\",\"itemCategory\":\"DRINK\",\"slotCount\":200,\"itemPrice\":2.0},{\"slotName\":\"A3\",\"itemName\":\"Doritos\",\"itemCategory\":\"CHIPS\",\"slotCount\":55,\"itemPrice\":221.0}]";
+        String toWrite = "[{\"$5\":777,\"$20\":999,\"$10\":888,\"10c\":222,\"20c\":333,\"50c\":444,\"$100\":2222,\"$1\":555,\"5c\":111,\"$2\":666,\"$50\":1111},{},{\"slotName\":\"A1\",\"itemName\":\"Mars Bar\",\"itemCategory\":\"CHOCOLATE\",\"slotCount\":9,\"itemPrice\":1.0199999809265137},{\"slotName\":\"A2\",\"itemName\":\"Sprite\",\"itemCategory\":\"DRINK\",\"slotCount\":200,\"itemPrice\":2.0},{\"slotName\":\"A3\",\"itemName\":\"Doritos\",\"itemCategory\":\"CHIPS\",\"slotCount\":55,\"itemPrice\":221.0}]";
         // Attempts to write the JSONArray to file
         try (FileWriter fw = new FileWriter(fp)) {
             fw.write(toWrite);
@@ -100,5 +99,6 @@ class VendingMachineTest {
         assertEquals(999,currencyCounts.get("$20"));
         assertEquals(1111,currencyCounts.get("$50"));
         assertEquals(2222,currencyCounts.get("$100"));
+        assertEquals(0, vm.getTransactions().size());
     }
 }

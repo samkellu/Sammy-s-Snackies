@@ -3,6 +3,8 @@
 import java.util.HashMap;
 import java.util.NoSuchElementException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Arrays;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.FileWriter;
@@ -14,149 +16,171 @@ import org.json.simple.parser.ParseException;
 public class VendingMachine {
     private HashMap&lt;String, Slot&gt; allSlots;
     private HashMap&lt;String, Integer&gt; currencyCounts;
-<span class="fc" id="L17">    private final String[] currencyNames = {&quot;5c&quot;, &quot;10c&quot;, &quot;20c&quot;, &quot;50c&quot;, &quot;$1&quot;, &quot;$2&quot;, &quot;$5&quot;, &quot;$10&quot;, &quot;$20&quot;, &quot;$50&quot;, &quot;$100&quot;};</span>
-<span class="fc" id="L18">    private final double[] currencyValues = {0.05, 0.10, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100};</span>
-<span class="fc" id="L19">    private final String fp = &quot;data.json&quot;;</span>
-<span class="fc" id="L20">    private Integer currentTransactionID = 0;</span>
+<span class="fc" id="L19">    private final String[] currencyNames = {&quot;5c&quot;, &quot;10c&quot;, &quot;20c&quot;, &quot;50c&quot;, &quot;$1&quot;, &quot;$2&quot;, &quot;$5&quot;, &quot;$10&quot;, &quot;$20&quot;, &quot;$50&quot;, &quot;$100&quot;};</span>
+<span class="fc" id="L20">    private final double[] currencyValues = {0.05, 0.10, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100};</span>
+<span class="fc" id="L21">    private final String fp = &quot;data.json&quot;;</span>
+<span class="fc" id="L22">    private Integer currentTransactionID = 0;</span>
     private ArrayList&lt;Transaction&gt; transactions;
 
-<span class="fc" id="L23">    public VendingMachine(){</span>
-<span class="fc" id="L24">        this.allSlots = new HashMap&lt;String, Slot&gt;();</span>
-<span class="fc" id="L25">        this.currencyCounts = new HashMap&lt;String, Integer&gt;();</span>
-<span class="fc bfc" id="L26" title="All 2 branches covered.">        for (String currency : currencyNames){</span>
-<span class="fc" id="L27">            this.currencyCounts.put(currency, 5);</span>
+<span class="fc" id="L25">    public VendingMachine(){</span>
+<span class="fc" id="L26">        this.allSlots = new HashMap&lt;String, Slot&gt;();</span>
+<span class="fc" id="L27">        this.currencyCounts = new HashMap&lt;String, Integer&gt;();</span>
+<span class="fc bfc" id="L28" title="All 2 branches covered.">        for (String currency : currencyNames){</span>
+<span class="fc" id="L29">            this.currencyCounts.put(currency, 5);</span>
         }
-<span class="fc" id="L29">    }</span>
+<span class="fc" id="L31">        this.transactions = new ArrayList&lt;Transaction&gt;();</span>
+<span class="fc" id="L32">    }</span>
+
+    public ArrayList&lt;Transaction&gt; getTransactions() {
+<span class="fc" id="L35">        return this.transactions;</span>
+    }
 
     public void addSlot(String slotName, FoodItem slotContents, int contentCount){
-<span class="fc" id="L32">        this.allSlots.put(slotName, new Slot(slotName, slotContents, contentCount));</span>
-<span class="fc" id="L33">    }</span>
+<span class="fc" id="L39">        this.allSlots.put(slotName, new Slot(slotName, slotContents, contentCount));</span>
+<span class="fc" id="L40">    }</span>
 
     public void addCurrencyCount(String currencyName, int currencyCount) throws NoSuchElementException{
-<span class="nc" id="L36">        boolean currencyFound = false;</span>
-<span class="nc bnc" id="L37" title="All 2 branches missed.">        for (String name : this.currencyNames){</span>
-<span class="nc bnc" id="L38" title="All 2 branches missed.">            if (currencyName.equals(name)){</span>
-<span class="nc" id="L39">                currencyFound = true;</span>
-<span class="nc" id="L40">                break;</span>
+<span class="nc" id="L43">        boolean currencyFound = false;</span>
+<span class="nc bnc" id="L44" title="All 2 branches missed.">        for (String name : this.currencyNames){</span>
+<span class="nc bnc" id="L45" title="All 2 branches missed.">            if (currencyName.equals(name)){</span>
+<span class="nc" id="L46">                currencyFound = true;</span>
+<span class="nc" id="L47">                break;</span>
             }
         }
-<span class="nc bnc" id="L43" title="All 2 branches missed.">        if (!currencyFound){</span>
-<span class="nc" id="L44">            throw new NoSuchElementException(&quot;Incorrect denomination parsed! (&quot; + currencyName + &quot;)&quot;);</span>
+<span class="nc bnc" id="L50" title="All 2 branches missed.">        if (!currencyFound){</span>
+<span class="nc" id="L51">            throw new NoSuchElementException(&quot;Incorrect denomination parsed! (&quot; + currencyName + &quot;)&quot;);</span>
         }
-<span class="nc" id="L46">        this.currencyCounts.put(currencyName, currencyCount + this.currencyCounts.get(currencyName));</span>
-<span class="nc" id="L47">    }</span>
+<span class="nc" id="L53">        this.currencyCounts.put(currencyName, currencyCount + this.currencyCounts.get(currencyName));</span>
+<span class="nc" id="L54">    }</span>
 
     public HashMap&lt;String, Integer&gt; getCurrencyCounts() {
-<span class="fc" id="L50">        return this.currencyCounts;</span>
+<span class="fc" id="L57">        return this.currencyCounts;</span>
     }
 
     public HashMap&lt;String, Slot&gt; getSlots() {
-<span class="nc" id="L54">        return allSlots;</span>
+<span class="nc" id="L61">        return allSlots;</span>
     }
 
     public String toString(){
-<span class="fc" id="L58">        StringBuilder output = new StringBuilder();</span>
-<span class="fc bfc" id="L59" title="All 2 branches covered.">        for (Slot currentSlot : this.allSlots.values()){</span>
-<span class="fc" id="L60">            output.append(currentSlot.getName() + &quot; &quot; + currentSlot.getContents() + &quot;\n&quot;);</span>
-<span class="fc" id="L61">        }</span>
-<span class="fc" id="L62">        return output.toString();</span>
+<span class="fc" id="L65">        StringBuilder output = new StringBuilder();</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">        for (Slot currentSlot : this.allSlots.values()){</span>
+<span class="fc" id="L67">            output.append(currentSlot.getName() + &quot; &quot; + currentSlot.getContents() + &quot;\n&quot;);</span>
+<span class="fc" id="L68">        }</span>
+<span class="fc" id="L69">        return output.toString();</span>
     }
 
     public int getContentCount(String slotName) throws NoSuchElementException{
-<span class="nc bnc" id="L66" title="All 2 branches missed.">        if (this.allSlots.containsKey(slotName)){</span>
-<span class="nc" id="L67">            return this.allSlots.get(slotName).getCount();</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">        if (this.allSlots.containsKey(slotName)){</span>
+<span class="nc" id="L74">            return this.allSlots.get(slotName).getCount();</span>
         }
 
-<span class="nc" id="L70">        throw new NoSuchElementException(&quot;Can not find a slot &quot; + slotName);</span>
+<span class="nc" id="L77">        throw new NoSuchElementException(&quot;Can not find a slot &quot; + slotName);</span>
     }
 
     public void readFromFile(String fPath) {
 
-<span class="fc" id="L75">        this.allSlots = new HashMap&lt;String, Slot&gt;();</span>
-<span class="fc" id="L76">        JSONParser parser = new JSONParser();</span>
+<span class="fc" id="L82">        this.allSlots = new HashMap&lt;String, Slot&gt;();</span>
+<span class="fc" id="L83">        JSONParser parser = new JSONParser();</span>
 
-<span class="fc" id="L78">        try (FileReader fr = new FileReader(fPath)) {</span>
-<span class="fc" id="L79">            Object obj = parser.parse(fr);</span>
-<span class="fc" id="L80">            JSONArray jsonData = (JSONArray) obj;</span>
+<span class="fc" id="L85">        try (FileReader fr = new FileReader(fPath)) {</span>
+<span class="fc" id="L86">            Object obj = parser.parse(fr);</span>
+<span class="fc" id="L87">            JSONArray jsonData = (JSONArray) obj;</span>
 
-<span class="fc" id="L82">            JSONObject currencies = (JSONObject) jsonData.remove(0);</span>
+<span class="fc" id="L89">            JSONObject currencies = (JSONObject) jsonData.remove(0);</span>
 
-<span class="fc bfc" id="L84" title="All 2 branches covered.">            for (String key : currencyNames) {</span>
-
-
-<span class="fc" id="L87">                this.currencyCounts.put(key, ((Long)(currencies.get(key))).intValue());</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">            for (String key : currencyNames) {</span>
+<span class="fc" id="L92">                this.currencyCounts.put(key, ((Long)(currencies.get(key))).intValue());</span>
             }
 
-<span class="fc bfc" id="L90" title="All 2 branches covered.">            for (Object value : jsonData) {</span>
-<span class="fc" id="L91">                JSONObject jObj = (JSONObject) value;</span>
-<span class="fc" id="L92">                String slotName = (String) jObj.get(&quot;slotName&quot;);</span>
-<span class="fc" id="L93">                String itemName = (String) jObj.get(&quot;itemName&quot;);</span>
-<span class="fc" id="L94">                float itemPrice = ((Double) jObj.get(&quot;itemPrice&quot;)).floatValue();</span>
-<span class="fc" id="L95">                Category itemCategory = Category.valueOf((String) jObj.get(&quot;itemCategory&quot;));</span>
-<span class="fc" id="L96">                int slotCount = ((Long) jObj.get(&quot;slotCount&quot;)).intValue();</span>
+<span class="fc" id="L95">            JSONObject transactionData = (JSONObject) jsonData.remove(0);</span>
 
-<span class="fc" id="L98">                this.allSlots.put(slotName, new Slot(slotName, new FoodItem(itemName, itemPrice, itemCategory), slotCount));</span>
-<span class="fc" id="L99">            }</span>
+<span class="fc bfc" id="L97" title="All 2 branches covered.">            for (Object value : jsonData) {</span>
+<span class="fc" id="L98">                JSONObject jObj = (JSONObject) value;</span>
+<span class="fc" id="L99">                String slotName = (String) jObj.get(&quot;slotName&quot;);</span>
+<span class="fc" id="L100">                String itemName = (String) jObj.get(&quot;itemName&quot;);</span>
+<span class="fc" id="L101">                float itemPrice = ((Double) jObj.get(&quot;itemPrice&quot;)).floatValue();</span>
+<span class="fc" id="L102">                Category itemCategory = Category.valueOf((String) jObj.get(&quot;itemCategory&quot;));</span>
+<span class="fc" id="L103">                int slotCount = ((Long) jObj.get(&quot;slotCount&quot;)).intValue();</span>
 
-<span class="nc" id="L101">        } catch(IOException e) {</span>
-<span class="nc" id="L102">            e.printStackTrace();</span>
-<span class="nc" id="L103">        } catch(ParseException e) {</span>
-<span class="nc" id="L104">            e.printStackTrace();</span>
-<span class="pc" id="L105">        }</span>
-<span class="fc" id="L106">    }</span>
+<span class="fc" id="L105">                allSlots.put(slotName, new Slot(slotName, new FoodItem(itemName, itemPrice, itemCategory), slotCount));</span>
+<span class="fc" id="L106">            }</span>
+
+<span class="pc bpc" id="L108" title="1 of 2 branches missed.">            for (Object key : transactionData.keySet()) {</span>
+<span class="nc" id="L109">                List&lt;String&gt; l = Arrays.asList(((String) transactionData.get(Integer.valueOf(String.valueOf(key)))).split(&quot;\\s*,\\s*&quot;));</span>
+
+<span class="nc" id="L111">                FoodItem foodItem = null;</span>
+<span class="nc bnc" id="L112" title="All 2 branches missed.">                for (Slot s : allSlots.values()) {</span>
+<span class="nc bnc" id="L113" title="All 2 branches missed.">                    if (s.getContents().toString() == l.get(2)) {</span>
+<span class="nc" id="L114">                        foodItem = s.getContents();</span>
+                    }
+<span class="nc" id="L116">                }</span>
+<span class="nc" id="L117">                this.transactions.add(new Transaction(Integer.valueOf(l.get(0)), l.get(1), foodItem, Integer.valueOf(l.get(3))));</span>
+<span class="nc" id="L118">            }</span>
+
+<span class="nc" id="L120">        } catch(IOException e) {</span>
+<span class="nc" id="L121">            e.printStackTrace();</span>
+<span class="nc" id="L122">        } catch(ParseException e) {</span>
+<span class="nc" id="L123">            e.printStackTrace();</span>
+<span class="pc" id="L124">        }</span>
+<span class="fc" id="L125">    }</span>
 
     public void writeToFile(String fPath) {
 
-<span class="fc" id="L110">        ArrayList&lt;HashMap&lt;String, Object&gt;&gt; jsonData = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L129">        ArrayList&lt;HashMap&lt;String, Object&gt;&gt; jsonData = new ArrayList&lt;&gt;();</span>
         
-<span class="fc" id="L112">        HashMap&lt;String, Object&gt; currencyData = new HashMap&lt;String, Object&gt;();</span>
-<span class="fc bfc" id="L113" title="All 2 branches covered.">        for (String key : currencyCounts.keySet()) {</span>
+<span class="fc" id="L131">        HashMap&lt;String, Object&gt; currencyData = new HashMap&lt;String, Object&gt;();</span>
+<span class="fc bfc" id="L132" title="All 2 branches covered.">        for (String key : currencyCounts.keySet()) {</span>
+<span class="fc" id="L133">            currencyData.put(key, (Object) currencyCounts.get(key));</span>
+<span class="fc" id="L134">        }</span>
+<span class="fc" id="L135">        jsonData.add(currencyData);</span>
 
-<span class="fc" id="L115">            currencyData.put(key, (Object) currencyCounts.get(key));</span>
-<span class="fc" id="L116">        }</span>
-<span class="fc" id="L117">        jsonData.add(currencyData);</span>
+<span class="fc" id="L137">        HashMap&lt;String, Object&gt; transactionData = new HashMap&lt;String, Object&gt;();</span>
+<span class="pc bpc" id="L138" title="1 of 2 branches missed.">        for (Transaction transaction : transactions) {</span>
+<span class="nc" id="L139">            transactionData.put(String.valueOf(transaction.getID()), transaction.toString());</span>
+<span class="nc" id="L140">        }</span>
+<span class="fc" id="L141">        jsonData.add(transactionData);</span>
 
-<span class="fc bfc" id="L119" title="All 2 branches covered.">        for (Slot slot : allSlots.values()) {</span>
-<span class="fc" id="L120">            HashMap&lt;String, Object&gt; slotData = new HashMap&lt;String, Object&gt;();</span>
-<span class="fc" id="L121">            slotData.put(&quot;slotName&quot;, slot.getName());</span>
-<span class="fc" id="L122">            slotData.put(&quot;itemName&quot;, slot.getContents().getName());</span>
-<span class="fc" id="L123">            slotData.put(&quot;itemPrice&quot;, slot.getContents().getPrice());</span>
-<span class="fc" id="L124">            slotData.put(&quot;itemCategory&quot;, slot.getContents().getCategory().toString());</span>
-<span class="fc" id="L125">            slotData.put(&quot;slotCount&quot;, slot.getCount());</span>
-<span class="fc" id="L126">            jsonData.add(slotData);</span>
-<span class="fc" id="L127">        }</span>
+<span class="fc bfc" id="L143" title="All 2 branches covered.">        for (Slot slot : allSlots.values()) {</span>
+<span class="fc" id="L144">            HashMap&lt;String, Object&gt; slotData = new HashMap&lt;String, Object&gt;();</span>
+<span class="fc" id="L145">            slotData.put(&quot;slotName&quot;, slot.getName());</span>
+<span class="fc" id="L146">            slotData.put(&quot;itemName&quot;, slot.getContents().getName());</span>
+<span class="fc" id="L147">            slotData.put(&quot;itemPrice&quot;, slot.getContents().getPrice());</span>
+<span class="fc" id="L148">            slotData.put(&quot;itemCategory&quot;, slot.getContents().getCategory().toString());</span>
+<span class="fc" id="L149">            slotData.put(&quot;slotCount&quot;, slot.getCount());</span>
+<span class="fc" id="L150">            jsonData.add(slotData);</span>
+<span class="fc" id="L151">        }</span>
         
         // Attempts to write the JSONArray to file
-<span class="fc" id="L130">        try (FileWriter fw = new FileWriter(fPath)) {</span>
-<span class="fc" id="L131">            org.json.simple.JSONArray.writeJSONString(jsonData, fw);</span>
-<span class="fc" id="L132">            fw.flush();</span>
-<span class="fc" id="L133">            fw.close();</span>
-<span class="nc" id="L134">        } catch(IOException e) {</span>
-<span class="nc" id="L135">            System.out.println(&quot;Failed to write to file&quot;);</span>
-<span class="nc" id="L136">            e.printStackTrace();</span>
-<span class="fc" id="L137">        }</span>
-<span class="fc" id="L138">    }</span>
+<span class="fc" id="L154">        try (FileWriter fw = new FileWriter(fPath)) {</span>
+<span class="fc" id="L155">            org.json.simple.JSONArray.writeJSONString(jsonData, fw);</span>
+<span class="fc" id="L156">            fw.flush();</span>
+<span class="fc" id="L157">            fw.close();</span>
+<span class="nc" id="L158">        } catch(IOException e) {</span>
+<span class="nc" id="L159">            System.out.println(&quot;Failed to write to file&quot;);</span>
+<span class="nc" id="L160">            e.printStackTrace();</span>
+<span class="fc" id="L161">        }</span>
+<span class="fc" id="L162">    }</span>
 
     public int[] getChangeFromCash(double totalGiven) throws IndexOutOfBoundsException{
-<span class="nc" id="L141">        double currentTotal = totalGiven;</span>
-<span class="nc" id="L142">        int currentCurrency = currencyNames.length-1;</span>
-<span class="nc" id="L143">        int[] retval = new int[currencyNames.length];</span>
-<span class="nc bnc" id="L144" title="All 2 branches missed.">        while (currentCurrency &gt; 0){</span>
-<span class="nc" id="L145">            double currentValue = currencyValues[currentCurrency];</span>
-<span class="nc" id="L146">            int currentValueCount = (int)(currentTotal / currentValue);</span>
-<span class="nc bnc" id="L147" title="All 2 branches missed.">            if (currentValueCount &gt; this.currencyCounts.get(currencyNames[currentCurrency])){</span>
-<span class="nc" id="L148">                currentTotal = (currentTotal % currentValue) +  this.currencyCounts.get(currencyNames[currentCurrency])-currentValueCount;</span>
-<span class="nc" id="L149">                currentValueCount = this.currencyCounts.get(currencyNames[currentCurrency]);</span>
+<span class="nc" id="L165">        double currentTotal = totalGiven;</span>
+<span class="nc" id="L166">        int currentCurrency = currencyNames.length-1;</span>
+<span class="nc" id="L167">        int[] retval = new int[currencyNames.length];</span>
+<span class="nc bnc" id="L168" title="All 2 branches missed.">        while (currentCurrency &gt; 0){</span>
+<span class="nc" id="L169">            double currentValue = currencyValues[currentCurrency];</span>
+<span class="nc" id="L170">            int currentValueCount = (int)(currentTotal / currentValue);</span>
+<span class="nc bnc" id="L171" title="All 2 branches missed.">            if (currentValueCount &gt; this.currencyCounts.get(currencyNames[currentCurrency])){</span>
+<span class="nc" id="L172">                currentTotal = (currentTotal % currentValue) +  this.currencyCounts.get(currencyNames[currentCurrency])-currentValueCount;</span>
+<span class="nc" id="L173">                currentValueCount = this.currencyCounts.get(currencyNames[currentCurrency]);</span>
             } else {
-<span class="nc" id="L151">                currentTotal = currentTotal % currentValue;</span>
+<span class="nc" id="L175">                currentTotal = currentTotal % currentValue;</span>
             }
-<span class="nc" id="L153">            retval[currentCurrency] = currentValueCount;</span>
-<span class="nc" id="L154">            currentCurrency--;</span>
-<span class="nc" id="L155">        }</span>
-<span class="nc bnc" id="L156" title="All 2 branches missed.">        if (currentTotal &lt;= 0.04){</span>
-<span class="nc" id="L157">            return retval;</span>
+<span class="nc" id="L177">            retval[currentCurrency] = currentValueCount;</span>
+<span class="nc" id="L178">            currentCurrency--;</span>
+<span class="nc" id="L179">        }</span>
+<span class="nc bnc" id="L180" title="All 2 branches missed.">        if (currentTotal &lt;= 0.04){</span>
+<span class="nc" id="L181">            return retval;</span>
         }
-<span class="nc" id="L159">        throw new IndexOutOfBoundsException(&quot;The vending machine does not have sufficient change&quot;);</span>
+<span class="nc" id="L183">        throw new IndexOutOfBoundsException(&quot;The vending machine does not have sufficient change&quot;);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

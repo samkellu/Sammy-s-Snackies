@@ -22,9 +22,12 @@ public class Transaction {
         totalAmount = productBought.getPrice() * qty;
     }
 
+    public Integer getID() {
+        return this.transactionID;
+    }
+
     // Genereates a receipt of the transaction
     public String toString() {
-        // Could add cash denominations here for cash payments buy idc
-        return "Transaction #" + transactionID + "\n" + productBought.getName() + " x" + qty + "\nTotal: $" + totalAmount + "\nPayment Method: " + paymentMethod;
+        return transactionID + "," + paymentMethod + "," + productBought.toString() + "," + qty;
     }
 }
