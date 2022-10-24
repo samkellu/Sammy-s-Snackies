@@ -34,6 +34,10 @@ public class VendingMachine {
     public ArrayList<Transaction> getTransactions() {
         return this.transactions;
     }
+    
+    public void addTransaction(String paymentMethod, FoodItem productBought, Integer qty) {
+        transactions.add(new Transaction(currentTransactionID++, paymentMethod, productBought, qty));
+    }
 
     public void addSlot(String slotName, FoodItem slotContents, int contentCount){
         this.allSlots.put(slotName, new Slot(slotName, slotContents, contentCount));
@@ -106,6 +110,7 @@ public class VendingMachine {
             }
 
             for (Object key : transactionData.keySet()) {
+                this.currentTransactionID = Integer.valueOf(String.valueOf(key)) + 1;
                 List<String> l = Arrays.asList(((String) transactionData.get(Integer.valueOf(String.valueOf(key)))).split("\\s*,\\s*"));
 
                 FoodItem foodItem = null;
