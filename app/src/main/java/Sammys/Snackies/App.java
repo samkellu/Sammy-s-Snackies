@@ -145,7 +145,11 @@ public class App {
 
         // check the machine has sufficient quantity 
         if (slot.getCount() < Integer.valueOf(inputs.get(3))) {
-            System.out.println("Unfortunately, this machine only has " + slot.getCount() + "x " + slot.getContents().toString() + " available.\n");
+            if (slot.getCount() == 0){
+                System.out.println("Unfortunately, this machine is all out of stock of " + slot.getContents());
+            } else {
+                System.out.println("Unfortunately, this machine only has " + slot.getCount() + "x " + slot.getContents().toString() + " available.\n");
+            }
             return;
         } else if (Integer.valueOf(inputs.get(3)) <= 0) {
             System.out.println("Please enter at least one for quantity.\n");
@@ -273,7 +277,7 @@ public class App {
     }
 
     private static void helpCommand(ArrayList<String> inputs) {
-         if (inputs == null) {
+         if (inputs==null || inputs.size() == 1) {
             System.out.println("\nAvailable Commands:");
             System.out.println("buyer - buy a product");
             System.out.println("seller - TODO"); // TODO
@@ -331,7 +335,7 @@ public class App {
                     System.out.println(String.format("\nUnrecognised command: %s\n", inputs.get(1)));
                 break;
             }
-        }
+        } 
     }
 
     private static void endProgram(VendingMachine vm) {
