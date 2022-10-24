@@ -55,6 +55,27 @@ public class VendingMachine {
             throw new NoSuchElementException("Incorrect denomination parsed! (" + currencyName + ")");
         }
         this.currencyCounts.put(currencyName, currencyCount + this.currencyCounts.get(currencyName));
+
+    }
+
+    public void removeCurrencyCount(String currencyName, int currencyCount) throws NoSuchElementException{
+        boolean currencyFound = false;
+        for (String name : this.currencyNames){
+            if (currencyName.equals(name)){
+                currencyFound = true;
+                break;
+            }
+        }
+        if (!currencyFound){
+            System.out.println("Incorrect denomination parsed! (" + currencyName + ")");
+            throw new NoSuchElementException();
+        }
+        if(this.currencyCounts.get(currencyName) < currencyCount){
+            System.out.println("Not enough of this denomination in the machine");
+            throw new NoSuchElementException();
+        }
+        this.currencyCounts.put(currencyName, this.currencyCounts.get(currencyName) - currencyCount);
+        
     }
 
     public HashMap<String, Integer> getCurrencyCounts() {
