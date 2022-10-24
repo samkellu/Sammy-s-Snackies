@@ -244,6 +244,26 @@ public class App {
             System.out.println("help - display this screen");
             System.out.println("quit - quit the program\n");
 
+            if(currentType == UserType.SELLER){
+                System.out.println("---------------Seller Commands-------------");
+
+            }
+            if(currentType == UserType.CASHIER){
+                System.out.println("---------------Cashier Commands-------------");
+                System.out.println("CashCheck - Returns the current denominations of all cash in the machines");
+                System.out.println("CashAdd - Add a number of a denomination into the machine");
+                System.out.println("CashRemove - Remove a number of a denomination into the machine");
+            }
+            if(currentType == UserType.OWNER){
+                System.out.println("---------------Owner Commands-------------");
+                System.out.println("addUser - TODO");
+                System.out.println("removeUser - TODO");
+                
+            }
+
+
+
+
         } else if (inputs.size() >= 2) {
 
             switch(inputs.get(1).toLowerCase()) {
@@ -294,11 +314,83 @@ public class App {
                     System.out.println("Usage:");
                     System.out.println("quit\n");
                 break;
+                case "cashcheck":
+                System.out.println("\nCASHIER USE ONLY: Returns the denominations fo coins currently in the machine");
+                System.out.println("Usage:");
+                System.out.println("cashremove\n");
+                break;
+                case "cashadd":
+                System.out.println("\nCASHIER USE ONLY: Use this command to add money to the machine");
+                System.out.println("Usage:");
+                System.out.println("cashadd [num] [denomination]\n");
+                break;
+                case "cashremove":
+                    System.out.println("\nCASHIER USE ONLY: Use this command to remove money from the machine");
+                    System.out.println("Usage:");
+                    System.out.println("cashremove [num] [denomination]\n");
+                break;
                 default:
                     System.out.println(String.format("\nUnrecognised command: %s\n", inputs.get(1)));
                 break;
             }
         } 
+    }
+
+    private static void cashCheck(VendingMachine vm){
+        HashMap<String, Integer> currencyCounts = vm.getCurrencyCounts();
+        System.out.println("Currency : Number");
+        for(String currency : currencyCounts.keySet()){
+            System.out.println(currency + ":" + currencyCounts.get(currency));
+        }
+    }
+
+    private static void cashAdd(VendingMachine vm, ArrayList<String> inputs){
+        if(inputs.size() != 3){
+            System.out.println("Incorrect number of parameters. Use \"help cashadd\" for more information.");
+            return;
+        }
+        int num=0;
+        String denomination = inputs.get(2);
+        try{
+            num = Integer.parseInt(inputs.get(1));
+        }
+        catch(Exception e){
+            System.out.println("2nd element is not a valid number. Use \"help cashadd\" for more information.");
+            return;
+        }
+        try{
+            vm.addCurrencyCount(denomination, num);
+        }
+        catch(Exception e){
+            System.out.println("Incorrect Currency name parsed");
+            return;
+        }
+        System.out.println("Currency successful added");
+
+    }
+
+    private static void cashRemove(VendingMachine vm, ArrayList<String> inputs){
+        if(inputs.size() != 3){
+            System.out.println("Incorrect number of parameters. Use \"help cashadd\" for more information.");
+            return;
+        }
+        int num=0;
+        String denomination = inputs.get(2);
+        try{
+            num = Integer.parseInt(inputs.get(1));
+        }
+        catch(Exception e){
+            System.out.println("2nd element is not a valid number. Use \"help cashadd\" for more information.");
+            return;
+        }
+        try{
+            vm.removeCurrencyCount(denomination, num);
+        }
+        catch(Exception e){
+            return;
+        }
+        System.out.println("Currency successful removed");
+
     }
 
     private static void endProgram(VendingMachine vm) {
@@ -361,6 +453,26 @@ public class App {
                     break;
                     case "help":
                         helpCommand(inputs);
+                    break;
+                    case "cashcheck":
+                        if(currentType != UserType.CASHIER){
+                            unknownCommand(inputs);
+                        }
+                        else{
+                            cashCheck(vm);
+                        }
+                    break;
+                    case "cashadd":
+                        if(currentType != UserType.CASHIER){
+                            unknownCommand(inputs);
+                        }
+                        
+                    break;
+                    case "cashremove":
+                        if(currentType != UserType.CASHIER){
+                            unknownCommand(inputs);
+                        }
+                        
                     break;
                     case "quit":
                         endProgram(vm);
