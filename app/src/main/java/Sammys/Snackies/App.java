@@ -366,7 +366,7 @@ public class App {
 
     private static void endProgram(VendingMachine vm) {
         // UNCOMMENT WHEN YOU WANT TO SAVE EVERY QUIT
-        vm.writeToFile(saveFilePath);
+        // vm.writeToFile(saveFilePath);
         System.out.println("Quitting...");
     }
 
@@ -374,7 +374,7 @@ public class App {
         System.out.println("System Starting...");
         VendingMachine vm = new VendingMachine();
         // UNCOMMENT WHEN YOU WANT TO LOAD EVERY START
-        vm.readFromFile(saveFilePath);
+        // vm.readFromFile(saveFilePath);
         System.out.println("Welcome to Sammy's Snackies!");
         helpCommand(null);
         return vm;
