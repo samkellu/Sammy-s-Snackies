@@ -34,6 +34,10 @@ public class Slot {
         this.count += newCount;
     }
 
+    public void sellContents(int sold) {
+        this.count -= sold;
+    }
+
 
     public String getName(){
 
