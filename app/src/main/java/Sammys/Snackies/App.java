@@ -7,14 +7,10 @@ import java.util.HashMap;
 
 public class App {
 
-<<<<<<< HEAD
     private final String fp = "saveFile.json";
-=======
     private static UserType currentType = UserType.BUYER;
     private static ArrayList<UserLogin> userLogins;
     private static final String userLoginFilepath = "userLogins.json";
->>>>>>> main
-
     private static double parseDenom(String s) {
 
         switch (s) {
@@ -277,7 +273,18 @@ public class App {
     }
 
     private static void helpCommand(ArrayList<String> inputs) {
-        if (inputs.size() >= 2) {
+         if (inputs == null) {
+            System.out.println("\nAvailable Commands:");
+            System.out.println("buyer - buy a product");
+            System.out.println("seller - TODO"); // TODO
+            System.out.println("owner - TODO"); // TODO
+            System.out.println("cashier - TODO"); // TODO
+            System.out.println("login - login to a cashier/owner/seller account");
+            System.out.println("help - display this screen");
+            System.out.println("quit - quit the program\n");
+
+        } else if (inputs.size() >= 2) {
+            
             switch(inputs.get(1).toLowerCase()) {
                 case "buyer":
                     System.out.println("\nUse this command to buy a product from the vending machine.");
@@ -324,15 +331,6 @@ public class App {
                     System.out.println(String.format("\nUnrecognised command: %s\n", inputs.get(1)));
                 break;
             }
-        } else {
-            System.out.println("\nAvailable Commands:");
-            System.out.println("buyer - buy a product");
-            System.out.println("seller - TODO"); // TODO
-            System.out.println("owner - TODO"); // TODO
-            System.out.println("cashier - TODO"); // TODO
-            System.out.println("login - login to a cashier/owner/seller account");
-            System.out.println("help - display this screen");
-            System.out.println("quit - quit the program\n");
         }
     }
 
@@ -359,19 +357,13 @@ public class App {
     public static void main(String[] args) {
         
         Scanner s = new Scanner(System.in);
-<<<<<<< HEAD
         FoodItem f = new FoodItem("water", 1.50, Category.DRINK);
 
         VendingMachine vm = initProgram();
         vm.addSlot("A1", f, 5);
 
-=======
         userLogins = UserLogin.readFromFile(userLoginFilepath);
 
-        // VendingMachine vm = new VendingMachine();
-
-        System.out.println("Welcome to Sammy's Snackies!");
->>>>>>> main
         while (true){
             System.out.print("> ");
             while(s.hasNextLine()){
@@ -408,12 +400,8 @@ public class App {
                         unknownCommand(inputs);
                     break;
                 }
-<<<<<<< HEAD
                 System.out.print("> ");
             }
-=======
-            } 
->>>>>>> main
         }
     }
 }
