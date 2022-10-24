@@ -7,6 +7,10 @@ import java.util.HashMap;
 
 public class App {
 
+    private static UserType currentType = UserType.BUYER;
+    private static ArrayList<UserLogin> userLogins;
+    private static final String userLoginFilepath = "userLogins.json";
+
     private static double parseDenom(String s) {
 
         switch (s) {
@@ -173,76 +177,104 @@ public class App {
     }
 
     private static void seller(ArrayList<String> inputs) {
+        if (currentType != UserType.SELLER){
+            System.out.println("You are unauthorised!! Seller role is required, please log in.");
+            return;
+        }
 
     }
 
-    private static void supplier(ArrayList<String> inputs) {
+    private static void cashier(ArrayList<String> inputs) {
+        if (currentType != UserType.CASHIER){
+            System.out.println("You are unauthorised!! Cashier role is required, please log in.");
+            return;
+        }
 
     }
 
     private static void owner(ArrayList<String> inputs) {
-
-    }
-
-    private static void products(VendingMachine v) {
-
-        System.out.println("\nProducts available:");
-        boolean noProducts = true;
-        for (String key : v.getSlots().keySet()) {
-            if (v.getSlots().get(key).getCount() > 0) {
-                System.out.println(v.getSlots().get(key));
-                noProducts = false;
-            }
+        if (currentType != UserType.OWNER){
+            System.out.println("You are unauthorised!! Owner role is required, please log in.");
+            return;
         }
 
-        if (noProducts) System.out.println("\nSorry, there are no products available in this machine.");
-        System.out.print("\n");
+        if (inputs.get(1).equals("add")){
+            if (inputs.size() != 5){
+                System.out.println("Incorrect number of parameters. Use \"help owner add\" for more information.");
+                return;
+            }
+            String username = inputs.get(2);
+            for (UserLogin user : userLogins){
+                if (user.getUsername().equals(username)){
+                    System.out.println("User already exists, please choose a unique username");
+                    return;
+                }
+            }
+            String password = inputs.get(3);
+            UserType type = UserType.fromName(inputs.get(4).toLowerCase());
+            UserLogin user = new UserLogin(username, password, type);
+            userLogins.add(user);
+            UserLogin.writeUsersToFile(userLoginFilepath, userLogins);
+            System.out.println("New user added with username " + username + " with role of " + type);
+
+        }
     }
 
     private static void userLogin(ArrayList<String> inputs) {
 
         if (inputs.size() != 3) {
-            System.out.println("\nIncorrect number of parameters. Use \"help login\" for more information.\n");
+            System.out.println("Incorrect number of parameters. Use \"help login\" for more information.");
             return;
         }
+
+        for (UserLogin user : userLogins){
+            if (user.verifyLogin(inputs.get(1), inputs.get(2))){
+                System.out.println("Welcome, " + user.getUsername());
+                currentType = user.getType();
+                System.out.println("You are now logged in as a " + user.getType());
+                return;
+            }
+        }
+
+        System.out.println("Login not found, try again");
+
+
 
         // TODO
         // check login, maybe we use a file of users and pwds?
     }
 
     private static void helpCommand(ArrayList<String> inputs) {
-        if (inputs != null && inputs.size() >= 2) {
+        if (inputs.size() >= 2) {
             switch(inputs.get(1).toLowerCase()) {
                 case "buyer":
-                case "buy":
                     System.out.println("\nUse this command to buy a product from the vending machine.");
                     System.out.println("Usage:");
                     System.out.println("buyer <cash/card> <product> <amount> [denominations...]\n");
                 break;
                 case "seller":
-                case "sell":
                     System.out.println("\nUse this command to TODO");
                     System.out.println("Usage:");
                     System.out.println("seller TODO\n");
                 break;
                 case "owner":
+                    if (inputs.size()>2 && inputs.get(2).toLowerCase().equals("add")){
+                        System.out.println("\n Use this command to add a new user to the list of logins");
+                        System.out.println("Useage: ");
+                        System.out.println("owner add <username> <password> <user type>");
+                        break;
+                    }
                     System.out.println("\nUse this command to TODO");
                     System.out.println("Usage:");
                     System.out.println("owner TODO\n");
                 break;
-                case "supplier":
+                case "cashier":
                     System.out.println("\nUse this command to TODO");
                     System.out.println("Usage:");
-                    System.out.println("supplier TODO\n");
-                break;
-                case "products":
-                case "product":
-                    System.out.println("\nUse this command to list all products in the vending machine.");
-                    System.out.println("Usage:");
-                    System.out.println("products\n");
+                    System.out.println("cashier TODO\n");
                 break;
                 case "login":
-                    System.out.println("\nUse this command to log in to a supplier/owner/seller account.");
+                    System.out.println("\nUse this command to log in to a cashier/owner/seller account.");
                     System.out.println("Usage:");
                     System.out.println("login <username> <password>\n");
                 break;
@@ -265,9 +297,8 @@ public class App {
             System.out.println("buyer - buy a product");
             System.out.println("seller - TODO"); // TODO
             System.out.println("owner - TODO"); // TODO
-            System.out.println("supplier - TODO"); // TODO
-            System.out.println("products - list available products in the vending machine");
-            System.out.println("login - login to a supplier/owner/seller account");
+            System.out.println("cashier - TODO"); // TODO
+            System.out.println("login - login to a cashier/owner/seller account");
             System.out.println("help - display this screen");
             System.out.println("quit - quit the program\n");
         }
@@ -285,14 +316,11 @@ public class App {
     public static void main(String[] args) {
         
         Scanner s = new Scanner(System.in);
+        userLogins = UserLogin.readFromFile(userLoginFilepath);
 
-        VendingMachine vm = new VendingMachine();
-        FoodItem f = new FoodItem("water", 1.50, Category.DRINK);
-        vm.addSlot("A1", f, 5);
+        // VendingMachine vm = new VendingMachine();
 
         System.out.println("Welcome to Sammy's Snackies!");
-        helpCommand(null);
-
         while (true){
             while(s.hasNextLine()){
                 String input = s.nextLine();
@@ -308,17 +336,14 @@ public class App {
                     case "seller":
                         seller(inputs);
                     break;
-                    case "supplier":
-                        supplier(inputs);
+                    case "cashier":
+                        cashier(inputs);
                     break;
                     case "owner":
                         owner(inputs);
                     break;
                     case "login":
                         userLogin(inputs);
-                    break;
-                    case "products":
-                        products(vm);
                     break;
                     case "help":
                         helpCommand(inputs);
@@ -331,7 +356,7 @@ public class App {
                         unknownCommand(inputs);
                     break;
                 }
-            }
+            } 
         }
 
 
