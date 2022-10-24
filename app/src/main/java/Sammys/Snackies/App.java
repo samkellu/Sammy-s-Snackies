@@ -7,7 +7,7 @@ import java.util.HashMap;
 
 public class App {
 
-    private final String fp = "saveFile.json";
+    private final String saveFilePath = "saveFile.json";
     private static UserType currentType = UserType.BUYER;
     private static ArrayList<UserLogin> userLogins;
     private static final String userLoginFilepath = "userLogins.json";
@@ -284,7 +284,7 @@ public class App {
             System.out.println("quit - quit the program\n");
 
         } else if (inputs.size() >= 2) {
-            
+
             switch(inputs.get(1).toLowerCase()) {
                 case "buyer":
                     System.out.println("\nUse this command to buy a product from the vending machine.");
@@ -336,7 +336,7 @@ public class App {
 
     private static void endProgram(VendingMachine vm) {
         // UNCOMMENT WHEN YOU WANT TO SAVE EVERY QUIT
-        // vm.writeToFile(fp);
+        // vm.writeToFile(saveFilePath);
         System.out.println("Quitting...");
     }
 
@@ -344,7 +344,7 @@ public class App {
         System.out.println("System Starting...");
         VendingMachine vm = new VendingMachine();
         // UNCOMMENT WHEN YOU WANT TO LOAD EVERY START
-        // vm.readFromFile(fp);
+        // vm.readFromFile(saveFilePath);
         System.out.println("Welcome to Sammy's Snackies!");
         helpCommand(null);
         return vm;
