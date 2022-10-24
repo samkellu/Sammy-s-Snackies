@@ -244,6 +244,24 @@ public class App {
             System.out.println("help - display this screen");
             System.out.println("quit - quit the program\n");
 
+            if(currentType == UserType.SELLER){
+                System.out.println("---------------Seller Commands-------------");
+
+            }
+            if(currentType == UserType.CASHIER){
+                System.out.println("---------------Cashier Commands-------------");
+                System.out.println("CashCheck - TODO");
+                System.out.println("CashAdd - TODO");
+                System.out.println("CashRemove - TODO");
+            }
+            if(currentType == UserType.OWNER){
+                System.out.println("---------------Owner Commands-------------");
+                
+            }
+
+
+
+
         } else if (inputs.size() >= 2) {
 
             switch(inputs.get(1).toLowerCase()) {
@@ -293,6 +311,21 @@ public class App {
                     System.out.println("\nUse this command to quit the program.");
                     System.out.println("Usage:");
                     System.out.println("quit\n");
+                break;
+                case "cashcheck":
+                System.out.println("\nCASHIER USE ONLY: Returns the denominations fo coins currently in the machine");
+                System.out.println("Usage:");
+                System.out.println("cashremove\n");
+                break;
+                case "cashadd":
+                System.out.println("\nCASHIER USE ONLY: Use this command to add money to the machine");
+                System.out.println("Usage:");
+                System.out.println("cashadd [num] [denomination]\n");
+                break;
+                case "cashremove":
+                    System.out.println("\nCASHIER USE ONLY: Use this command to remove money from the machine");
+                    System.out.println("Usage:");
+                    System.out.println("cashremove [num] [denomination]\n");
                 break;
                 default:
                     System.out.println(String.format("\nUnrecognised command: %s\n", inputs.get(1)));
