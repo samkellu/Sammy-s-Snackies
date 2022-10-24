@@ -7,6 +7,8 @@ import java.util.HashMap;
 
 public class App {
 
+    private final String fp = "saveFile.json";
+
     private static double parseDenom(String s) {
 
         switch (s) {
@@ -100,11 +102,12 @@ public class App {
         return denominations;
     }
 
-    private static void buyer(ArrayList<String> inputs) {
+    private static void buyer(ArrayList<String> inputs, VendingMachine vm) {
+
 
         // ensure enough arguments
-        if (inputs.size() < 5) {
-            System.out.println("Not enough arguments. Use \"help buyer\" to see required arguments");
+        if (inputs.size() < 4) {
+            System.out.println("Not enough arguments. Use \"help buyer\" to see required arguments.\n");
             return;
         }
 
@@ -112,16 +115,40 @@ public class App {
         boolean cash = false;
         if (inputs.get(1).toLowerCase().equals("cash"))
             cash = true;
+            // ensure enough arguments for cash payment
+            if (inputs.size() < 4) {
+                System.out.println("Not enough arguments. Use \"help buyer\" to see required arguments.\n");
+                return;
+            }
         else if (!inputs.get(1).toLowerCase().equals("card")) {
-            System.out.println("Please specify payment type (cash or card).");
+            System.out.println("Please specify payment type (cash or card).\n");
             return;
         }
 
-        // TODO
-        // check product validity, need vending machine to know what's there
+        // check product code exists
+        Slot slot = null;
+        boolean validProduct = false;
+        // checks all slots in the machine for a matching product code
+        for (Slot s : vm.getSlots().values()) {
+            if (inputs.get(2).toLowerCase().equals(s.getContents().getName().toLowerCase())) {
+                slot = s;
+                break;
+            }
+        }
 
-        // TODO
-        // check product quantity, need vending machine to know the quantity
+        if (slot == null) {
+            System.out.println("Please enter a valid product code. This machine contains no item with code: " + inputs.get(2) + "\n");
+            return;
+        }
+
+        // check the machine has sufficient quantity 
+        if (slot.getCount() < Integer.valueOf(inputs.get(3))) {
+            System.out.println("Unfortunately, this machine only has " + slot.getCount() + "x " + slot.getContents().toString() + " available.\n");
+            return;
+        } else if (Integer.valueOf(inputs.get(3)) <= 0) {
+            System.out.println("Please enter at least one for quantity.\n");
+            return;
+        }
 
         // TODO
         // if cash, check denominations
@@ -136,7 +163,7 @@ public class App {
                 String[] values = s.split("*");
 
                 if (values.length != 2) {
-                    System.out.println("Unrecognisable denomination.\nPlease use the format <value>*<amount>, where value can be 50c, $2, $5 etc. and amount is a positive integer.");
+                    System.out.println("Unrecognisable denomination.\nPlease use the format <value>*<amount>, where value can be 50c, $2, $5 etc. and amount is a positive integer.\n");
                     return;
                 }
                 
@@ -147,11 +174,11 @@ public class App {
                 try {
                     amt = Integer.parseInt(amount);
                 } catch (NumberFormatException e) {
-                    System.out.println("Please ensure the amount is a positive integer.");
+                    System.out.println("Please ensure the amount is a positive integer.\n");
                     return;
                 } finally {
                     if (amt <= 0) {
-                        System.out.println("Please ensure the amount is a positive integer.");
+                        System.out.println("Please ensure the amount is a positive integer.\n");
                         return;
                     }
                 }
@@ -164,10 +191,13 @@ public class App {
                 //Returns the denominations in a hashmap of the change
                 HashMap<String, Integer> ChangeDenominations = getDenominations(totalGiven);
 
-                
+
+                // TODO: need to change change in the machine
             }
         }
 
+        System.out.println("You recieved " + inputs.get(3) + "x " + slot.getContents().toString() + ".\nYou paid $" + slot.getContents().getPrice() * Integer.valueOf(inputs.get(3)) + ".\nThank you for shopping at Sammy's Snackies!\n");
+        slot.sellContents(Integer.valueOf(inputs.get(3)));
         // TODO
         // ensure enough money given, need the vending machine to know the price.
     }
@@ -273,27 +303,36 @@ public class App {
         }
     }
 
-    private static void endProgram() {
+    private static void endProgram(VendingMachine vm) {
+        // UNCOMMENT WHEN YOU WANT TO SAVE EVERY QUIT
+        // vm.writeToFile(fp);
         System.out.println("Quitting...");
+    }
+
+    private static VendingMachine initProgram() {
+        System.out.println("System Starting...");
+        VendingMachine vm = new VendingMachine();
+        // UNCOMMENT WHEN YOU WANT TO LOAD EVERY START
+        // vm.readFromFile(fp);
+        System.out.println("Welcome to Sammy's Snackies!");
+        helpCommand(null);
+        return vm;
     }
 
     private static void unknownCommand(ArrayList<String> inputs) {
         System.out.println("Unknown Command, use the help command to see available commands");
     }
 
-
     public static void main(String[] args) {
         
         Scanner s = new Scanner(System.in);
-
-        VendingMachine vm = new VendingMachine();
         FoodItem f = new FoodItem("water", 1.50, Category.DRINK);
+
+        VendingMachine vm = initProgram();
         vm.addSlot("A1", f, 5);
 
-        System.out.println("Welcome to Sammy's Snackies!");
-        helpCommand(null);
-
         while (true){
+            System.out.print("> ");
             while(s.hasNextLine()){
                 String input = s.nextLine();
                 String[] userInput = input.split(" ");
@@ -303,7 +342,7 @@ public class App {
                 switch(cmd.toLowerCase()) {
     
                     case "buyer":
-                        buyer(inputs);
+                        buyer(inputs, vm);
                     break;
                     case "seller":
                         seller(inputs);
@@ -324,17 +363,15 @@ public class App {
                         helpCommand(inputs);
                     break;
                     case "quit":
-                        endProgram();
+                        endProgram(vm);
                         s.close();
                         return;
                     default:
                         unknownCommand(inputs);
                     break;
                 }
+                System.out.print("> ");
             }
         }
-
-
     }
-
 }
