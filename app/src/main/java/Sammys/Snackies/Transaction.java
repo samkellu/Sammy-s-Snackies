@@ -28,6 +28,6 @@ public class Transaction {
 
     // Genereates a receipt of the transaction
     public String toString() {
-        return transactionID + "," + paymentMethod + "," + productBought.toString() + "," + qty;
+        return transactionID + "," + paymentMethod + "," + productBought.getName() + "," + qty;
     }
 }

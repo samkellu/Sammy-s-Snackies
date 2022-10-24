@@ -110,14 +110,18 @@ public class VendingMachine {
             }
 
             for (Object key : transactionData.keySet()) {
-                this.currentTransactionID = Integer.valueOf(String.valueOf(key)) + 1;
-                List<String> l = Arrays.asList(((String) transactionData.get(Integer.valueOf(String.valueOf(key)))).split("\\s*,\\s*"));
+                this.currentTransactionID = Integer.valueOf((String) key) + 1;
+                List<String> l = Arrays.asList(((String) transactionData.get((String) key)).split("\\s*,\\s*"));
 
                 FoodItem foodItem = null;
                 for (Slot s : allSlots.values()) {
-                    if (s.getContents().toString() == l.get(2)) {
+                    if (s.getContents().getName().toLowerCase().equals(l.get(2).toLowerCase())) {
                         foodItem = s.getContents();
                     }
+                }
+                if (foodItem == null) {
+                    System.out.println("Error loading product from file. Please check .json file itegrity.\n\n");
+                    continue;
                 }
                 this.transactions.add(new Transaction(Integer.valueOf(l.get(0)), l.get(1), foodItem, Integer.valueOf(l.get(3))));
             }
