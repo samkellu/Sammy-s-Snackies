@@ -3,6 +3,8 @@ package Sammys.Snackies;
 import java.util.HashMap;
 import java.util.NoSuchElementException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Arrays;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.FileWriter;
@@ -26,6 +28,11 @@ public class VendingMachine {
         for (String currency : currencyNames){
             this.currencyCounts.put(currency, 5);
         }
+        this.transactions = new ArrayList<Transaction>();
+    }
+
+    public ArrayList<Transaction> getTransactions() {
+        return this.transactions;
     }
 
     public void addSlot(String slotName, FoodItem slotContents, int contentCount){
@@ -82,10 +89,10 @@ public class VendingMachine {
             JSONObject currencies = (JSONObject) jsonData.remove(0);
 
             for (String key : currencyNames) {
-
-
                 this.currencyCounts.put(key, ((Long)(currencies.get(key))).intValue());
             }
+
+            JSONObject transactionData = (JSONObject) jsonData.remove(0);
 
             for (Object value : jsonData) {
                 JSONObject jObj = (JSONObject) value;
@@ -95,7 +102,19 @@ public class VendingMachine {
                 Category itemCategory = Category.valueOf((String) jObj.get("itemCategory"));
                 int slotCount = ((Long) jObj.get("slotCount")).intValue();
 
-                this.allSlots.put(slotName, new Slot(slotName, new FoodItem(itemName, itemPrice, itemCategory), slotCount));
+                allSlots.put(slotName, new Slot(slotName, new FoodItem(itemName, itemPrice, itemCategory), slotCount));
+            }
+
+            for (Object key : transactionData.keySet()) {
+                List<String> l = Arrays.asList(((String) transactionData.get(Integer.valueOf(String.valueOf(key)))).split("\\s*,\\s*"));
+
+                FoodItem foodItem = null;
+                for (Slot s : allSlots.values()) {
+                    if (s.getContents().toString() == l.get(2)) {
+                        foodItem = s.getContents();
+                    }
+                }
+                this.transactions.add(new Transaction(Integer.valueOf(l.get(0)), l.get(1), foodItem, Integer.valueOf(l.get(3))));
             }
 
         } catch(IOException e) {
@@ -111,10 +130,15 @@ public class VendingMachine {
         
         HashMap<String, Object> currencyData = new HashMap<String, Object>();
         for (String key : currencyCounts.keySet()) {
-
             currencyData.put(key, (Object) currencyCounts.get(key));
         }
         jsonData.add(currencyData);
+
+        HashMap<String, Object> transactionData = new HashMap<String, Object>();
+        for (Transaction transaction : transactions) {
+            transactionData.put(String.valueOf(transaction.getID()), transaction.toString());
+        }
+        jsonData.add(transactionData);
 
         for (Slot slot : allSlots.values()) {
             HashMap<String, Object> slotData = new HashMap<String, Object>();
