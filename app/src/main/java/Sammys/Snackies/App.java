@@ -180,32 +180,62 @@ public class App {
 
     }
 
-    private static void owner(ArrayList<String> inputs) {
+    private static void addUser(ArrayList<String> inputs) {
         if (currentType != UserType.OWNER){
             System.out.println("You are unauthorised!! Owner role is required, please log in.");
             return;
         }
 
-        if (inputs.get(1).equals("add")){
-            if (inputs.size() != 5){
-                System.out.println("Incorrect number of parameters. Use \"help owner add\" for more information.");
+        if (inputs.size() != 4){
+            System.out.println("Incorrect number of parameters. Use \"help addUser\" for more information.");
+            return;
+        }
+        String username = inputs.get(1);
+        for (UserLogin user : userLogins){
+            if (user.getUsername().equals(username)){
+                System.out.println("User already exists, please choose a unique username");
                 return;
             }
-            String username = inputs.get(2);
-            for (UserLogin user : userLogins){
-                if (user.getUsername().equals(username)){
-                    System.out.println("User already exists, please choose a unique username");
-                    return;
-                }
-            }
-            String password = inputs.get(3);
-            UserType type = UserType.fromName(inputs.get(4).toLowerCase());
-            UserLogin user = new UserLogin(username, password, type);
-            userLogins.add(user);
-            UserLogin.writeUsersToFile(userLoginFilepath, userLogins);
-            System.out.println("New user added with username " + username + " with role of " + type);
-
         }
+        String password = inputs.get(2);
+        UserType type = UserType.fromName(inputs.get(3).toLowerCase());
+        UserLogin user = new UserLogin(username, password, type);
+        userLogins.add(user);
+        UserLogin.writeUsersToFile(userLoginFilepath, userLogins);
+        System.out.println("New user added with username " + username + " with role of " + type);
+
+
+    }
+
+    private static void removeUser(ArrayList<String> inputs){
+        if (currentType != UserType.OWNER){
+            System.out.println("You are unauthorised!! Owner role is required, please log in.");
+            return;
+        }
+        if (inputs.size() != 2){
+            System.out.println("Incorrect paramaters! Use \"help removeUser\" to recieve help!");
+            return;
+        }
+        String username = inputs.get(1);
+        boolean isFound = false;
+        for (int i = 0; i < userLogins.size(); i++){
+            if (userLogins.get(i).getUsername().equals(username)){
+                userLogins.remove(i);
+                System.out.println("Removed user " + username);
+                isFound = true;
+                break;
+
+
+            }
+        }
+        if (!isFound){
+            System.out.println("User not found, please choose another username");
+            return;
+        }
+
+        UserLogin.writeUsersToFile(userLoginFilepath, userLogins);
+
+    
     }
 
     private static void userLogin(ArrayList<String> inputs) {
@@ -237,8 +267,6 @@ public class App {
             System.out.println("\nAvailable Commands:");
             System.out.println("buyer - buy a product");
             System.out.println("seller - TODO"); // TODO
-            System.out.println("owner - TODO"); // TODO
-            System.out.println("cashier - TODO"); // TODO
             System.out.println("products - list available products in the vending machine");
             System.out.println("login - login to a cashier/owner/seller account");
             System.out.println("help - display this screen");
@@ -252,13 +280,12 @@ public class App {
                 System.out.println("---------------Cashier Commands-------------");
                 System.out.println("CashCheck - Returns the current denominations of all cash in the machines");
                 System.out.println("CashAdd - Add a number of a denomination into the machine");
-                System.out.println("CashRemove - Remove a number of a denomination into the machine");
+                System.out.println("CashRemove - Remove a number of a denomination into the machine\n");
             }
             if(currentType == UserType.OWNER){
                 System.out.println("---------------Owner Commands-------------");
-                System.out.println("addUser - TODO");
-                System.out.println("removeUser - TODO");
-                
+                System.out.println("addUser - Add a new user to the system");
+                System.out.println("removeUser - Remove an existing user from the system\n");
             }
 
 
@@ -277,16 +304,15 @@ public class App {
                     System.out.println("Usage:");
                     System.out.println("seller TODO\n");
                 break;
-                case "owner":
-                    if (inputs.size()>2 && inputs.get(2).toLowerCase().equals("add")){
-                        System.out.println("\n Use this command to add a new user to the list of logins");
-                        System.out.println("Useage: ");
-                        System.out.println("owner add <username> <password> <user type>");
-                        break;
-                    }
-                    System.out.println("\nUse this command to TODO");
-                    System.out.println("Usage:");
-                    System.out.println("owner TODO\n");
+                case "adduser":
+                    System.out.println("\n OWNER USE ONLY: Use this command to add a new user to the list of logins");
+                    System.out.println("Useage: ");
+                    System.out.println("addUser <username> <password> <user type>");
+                break;
+                case "removeuser":
+                System.out.println("\n OWNER USE ONLY: Use this command to remove a new user");
+                System.out.println("Useage: ");
+                System.out.println("removeUser <username>");
                 break;
                 case "cashier":
                     System.out.println("\nUse this command to TODO");
@@ -442,8 +468,21 @@ public class App {
                     case "cashier":
                         cashier(inputs);
                     break;
-                    case "owner":
-                        owner(inputs);
+                    case "adduser":
+                    if(currentType != UserType.OWNER){
+                        unknownCommand(inputs);
+                    }
+                    else{
+                        addUser(inputs);
+                    }
+                    break;
+                    case "removeuser":
+                    if(currentType != UserType.OWNER){
+                        unknownCommand(inputs);
+                    }
+                    else{
+                        removeUser(inputs);
+                    }
                     break;
                     case "login":
                         userLogin(inputs);
