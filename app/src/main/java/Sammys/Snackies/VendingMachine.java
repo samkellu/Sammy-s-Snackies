@@ -191,20 +191,19 @@ public class VendingMachine {
         }
     }
 
-    public int[] getChangeFromCash(double totalGiven) throws IndexOutOfBoundsException{
+    public HashMap<String, Integer> getChangeFromCash(double totalGiven) throws IndexOutOfBoundsException{
         double currentTotal = totalGiven;
         int currentCurrency = currencyNames.length-1;
-        int[] retval = new int[currencyNames.length];
-        while (currentCurrency > 0){
+        HashMap<String, Integer> retval = new HashMap<>();
+        while (currentCurrency >= 0){
             double currentValue = currencyValues[currentCurrency];
             int currentValueCount = (int)(currentTotal / currentValue);
-            if (currentValueCount > this.currencyCounts.get(currencyNames[currentCurrency])){
-                currentTotal = (currentTotal % currentValue) +  this.currencyCounts.get(currencyNames[currentCurrency])-currentValueCount;
-                currentValueCount = this.currencyCounts.get(currencyNames[currentCurrency]);
+            if (currentValueCount >= this.currencyCounts.get(currencyNames[currentCurrency])){
+                currentTotal = (currentTotal % currentValue);
             } else {
                 currentTotal = currentTotal % currentValue;
             }
-            retval[currentCurrency] = currentValueCount;
+            retval.put(currencyNames[currentCurrency], currentValueCount);
             currentCurrency--;
         }
         if (currentTotal <= 0.04){

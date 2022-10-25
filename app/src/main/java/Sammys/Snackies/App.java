@@ -3,6 +3,7 @@ package Sammys.Snackies;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.HashMap;
 
 public class App {
@@ -69,13 +70,15 @@ public class App {
 
         // check cash or card
         boolean cash = false;
-        if (inputs.get(1).toLowerCase().equals("cash"))
+        if (inputs.get(1).toLowerCase().equals("cash")) {
             cash = true;
+
             // ensure enough arguments for cash payment
             if (inputs.size() < 4) {
                 System.out.println("Not enough arguments. Use \"help buyer\" to see required arguments.\n");
                 return;
             }
+        }
         else if (!inputs.get(1).toLowerCase().equals("card")) {
             System.out.println("Please specify payment type (cash or card).\n");
             return;
@@ -98,65 +101,118 @@ public class App {
         }
 
         // check the machine has sufficient quantity 
-        if (slot.getCount() < Integer.valueOf(inputs.get(3))) {
+        int productAmt = -1;
+        try {
+            productAmt = Integer.parseInt(inputs.get(3));
+        } catch (NumberFormatException e) {
+            System.out.println("\nPlease ensure the product amount is a positive integer.\n");
+            return;
+        }
+
+        if (productAmt <= 0) {
+            System.out.println("\nPlease ensure the product amount is a positive integer.\n");
+            return;
+        }
+
+        if (slot.getCount() < productAmt) {
             if (slot.getCount() == 0){
                 System.out.println("Unfortunately, this machine is all out of stock of " + slot.getContents());
             } else {
                 System.out.println("Unfortunately, this machine only has " + slot.getCount() + "x " + slot.getContents().toString() + " available.\n");
             }
             return;
-        } else if (Integer.valueOf(inputs.get(3)) <= 0) {
-            System.out.println("Please enter at least one for quantity.\n");
+        }
+
+        double totalGiven = 0.00;
+        String changeString = "";
+        // get the cost
+        double price = -1;
+        for (String s : vm.getSlots().keySet()) {
+            if (vm.getSlots().get(s).getContents().getName().equals(inputs.get(2))) {
+                price = vm.getSlots().get(s).getContents().getPrice();
+            }
+        }
+        if (price == -1) {
+            System.out.println("\nSorry an internal error occured, please try again.\n");
             return;
         }
 
+        double totalCost = productAmt*price;
 
-        // TODO
-        // if cash, check denominations
-        // get totalOwed
-        
-        int[] denoms = new int[11];
-        double totalGiven = 0.00;
+        // handle all cash specific items
         if (cash) {
-            ArrayList<String> inputDenoms = new ArrayList<String>(inputs.subList(4, inputs.size()-1));
+
+            ArrayList<String> inputDenoms = new ArrayList<String>(inputs.subList(4, inputs.size()));
+            HashMap<String, Integer> givenDenominations = new HashMap<>();
 
             for (String s : inputDenoms) {
-                String[] values = s.split("*");
 
-                if (values.length != 2) {
-                    System.out.println("Unrecognisable denomination.\nPlease use the format <value>*<amount>, where value can be 50c, $2, $5 etc. and amount is a positive integer.\n");
+                String[] values = s.split("\\*");
+
+                Set<String> denomSet = Set.of("5c","10c","20c","50c","$1","$2","$5","$10","$20","$50","$100");
+                String v = values[1];
+
+                if (values.length != 2 || !(denomSet.contains(v))) {
+                    System.out.println("Unrecognisable denomination.\nPlease use the format <amount>*<value>, where value can be 50c, $2, $5 etc. and amount is a positive integer.\n");
                     return;
                 }
                 
-                String v = values[0];
-                String amount = values[1];
+                String amount = values[0];
                 int amt = -1;
                 
                 try {
                     amt = Integer.parseInt(amount);
                 } catch (NumberFormatException e) {
+                    System.out.println("\nPlease ensure the cash amount is a positive integer.\n");
+                    return;
+                } 
+                
+                if (amt <= 0) {
                     System.out.println("Please ensure the amount is a positive integer.\n");
                     return;
-                } finally {
-                    if (amt <= 0) {
-                        System.out.println("Please ensure the amount is a positive integer.\n");
-                        return;
-                    }
                 }
+                
 
                 double value = parseDenom(v);
                 if (value == -1) return;
 
+                givenDenominations.put(v, amt);
                 totalGiven += value*amt;
-
-                //Returns the denominations in a hashmap of the change
-
-
-                // TODO: need to change change in the machine
             }
+
+            // get the change
+            HashMap<String, Integer> changeToGive;
+
+
+            try {
+                changeToGive = vm.getChangeFromCash(totalGiven-totalCost);
+            } catch (IndexOutOfBoundsException e) {
+                System.out.println("\nSorry, we don't have the change to give you.\nReturning money...\n");
+                return;
+            }
+
+            boolean givingChange = false;
+            changeString = "Change given: ";
+            for (String s : changeToGive.keySet()) {
+                if (changeToGive.get(s) > 0) {
+                    givingChange = true;
+                    changeString += String.format("%dx%s, ", changeToGive.get(s), s);
+                }
+            }
+            changeString += "\n\n";
+
+            if (!givingChange) {
+                changeString = "Correct change given, no change to give\n\n";
+            }
+                
         }
 
-        System.out.println("You recieved " + inputs.get(3) + "x " + slot.getContents().toString() + ".\nYou paid $" + slot.getContents().getPrice() * Integer.valueOf(inputs.get(3)) + ".\nThank you for shopping at Sammy's Snackies!\n");
+        // dispense products and change
+        System.out.println(String.format("\nYou recieved %sx %s.", inputs.get(3), slot.getContents().toString()));
+        System.out.println(String.format("You paid $%.2f.", totalCost));
+        System.out.print(changeString);
+        System.out.println("Thank you for shopping at Sammy's Snackies!");
+
         slot.sellContents(Integer.valueOf(inputs.get(3)));
 
         vm.addTransaction(inputs.get(1).toLowerCase(), slot.getContents(), Integer.valueOf(inputs.get(3)));
@@ -204,38 +260,6 @@ public class App {
         UserLogin.writeUsersToFile(userLoginFilepath, userLogins);
         System.out.println("New user added with username " + username + " with role of " + type);
 
-
-    }
-
-    private static void removeUser(ArrayList<String> inputs){
-        if (currentType != UserType.OWNER){
-            System.out.println("You are unauthorised!! Owner role is required, please log in.");
-            return;
-        }
-        if (inputs.size() != 2){
-            System.out.println("Incorrect paramaters! Use \"help removeUser\" to recieve help!");
-            return;
-        }
-        String username = inputs.get(1);
-        boolean isFound = false;
-        for (int i = 0; i < userLogins.size(); i++){
-            if (userLogins.get(i).getUsername().equals(username)){
-                userLogins.remove(i);
-                System.out.println("Removed user " + username);
-                isFound = true;
-                break;
-
-
-            }
-        }
-        if (!isFound){
-            System.out.println("User not found, please choose another username");
-            return;
-        }
-
-        UserLogin.writeUsersToFile(userLoginFilepath, userLogins);
-
-    
     }
 
     private static void userLogin(ArrayList<String> inputs) {
@@ -262,6 +286,8 @@ public class App {
         // check login, maybe we use a file of users and pwds?
     }
 
+    // TODO
+    // add message at the end saying something like "to see more on a command use help <command>"
     private static void helpCommand(ArrayList<String> inputs) {
          if (inputs==null || inputs.size() == 1) {
             System.out.println("\nAvailable Commands:");
@@ -436,7 +462,7 @@ public class App {
     }
 
     private static void unknownCommand(ArrayList<String> inputs) {
-        System.out.println("Unknown Command, use the help command to see available commands");
+        System.out.println("\nUnknown Command, use the help command to see available commands");
     }
 
     public static void main(String[] args) {
@@ -456,7 +482,7 @@ public class App {
                 String[] userInput = input.split(" ");
                 ArrayList<String> inputs = new ArrayList<String>(Arrays.asList(userInput));
                 String cmd = inputs.get(0);
-    
+                
                 switch(cmd.toLowerCase()) {
     
                     case "buyer":
@@ -469,20 +495,20 @@ public class App {
                         cashier(inputs);
                     break;
                     case "adduser":
-                    if(currentType != UserType.OWNER){
-                        unknownCommand(inputs);
-                    }
-                    else{
-                        addUser(inputs);
-                    }
+                        if(currentType != UserType.OWNER){
+                            unknownCommand(inputs);
+                        }
+                        else{
+                            addUser(inputs);
+                        }
                     break;
                     case "removeuser":
-                    if(currentType != UserType.OWNER){
-                        unknownCommand(inputs);
-                    }
-                    else{
-                        removeUser(inputs);
-                    }
+                        if(currentType != UserType.OWNER){
+                            unknownCommand(inputs);
+                        }
+                        else{
+                            // removeUser(inputs);
+                        }
                     break;
                     case "login":
                         userLogin(inputs);
