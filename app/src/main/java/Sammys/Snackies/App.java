@@ -199,6 +199,7 @@ public class App {
         if (inputs.size() >= 2) {
             switch(inputs.get(1).toLowerCase()) {
                 case "buyer":
+                case "buy":
                     System.out.println("\nUse this command to buy a product from the vending machine.");
                     System.out.println("Usage:");
                     System.out.println("buyer <cash/card> <product> <amount> [denominations...]\n");
@@ -229,6 +230,9 @@ public class App {
                     System.out.println("help [command]\n");
                 break;
                 case "quit":
+                case "exit":
+                case ":wq":
+                case ":q!":
                     System.out.println("\nUse this command to quit the program.");
                     System.out.println("Usage:");
                     System.out.println("quit\n");
