@@ -59,15 +59,23 @@ public class App {
         System.out.print("\n");
     }
 
+<<<<<<< HEAD
+    private static void buyer(ArrayList<String> inputs) {
+        System.out.println(inputs);
+        // ensure enough arguments
+        if ((inputs.size() != 5) & !((inputs.size() == 4) & (inputs.get(1).equals("card"))) ) {
+            System.out.println("Not enough arguments. Use \"help buyer\" to see required arguments");
+=======
     private static void buyer(ArrayList<String> inputs, VendingMachine vm) {
 
 
         // ensure enough arguments
         if (inputs.size() < 4) {
             System.out.println("Not enough arguments. Use \"help buyer\" to see required arguments.\n");
+>>>>>>> 5883b10361299a50d33d825b3d8d4b12cd67c83a
             return;
         }
-
+        System.out.println("passed");
         // check cash or card
         boolean cash = false;
         if (inputs.get(1).toLowerCase().equals("cash")) {
@@ -347,6 +355,7 @@ public class App {
 
             switch(inputs.get(1).toLowerCase()) {
                 case "buyer":
+                case "buy":
                     System.out.println("\nUse this command to buy a product from the vending machine.");
                     System.out.println("Usage:");
                     System.out.println("buyer <cash/card> <product> <amount> [denominations...]\n");
@@ -388,6 +397,9 @@ public class App {
                     System.out.println("help [command]\n");
                 break;
                 case "quit":
+                case "exit":
+                case ":wq":
+                case ":q!":
                     System.out.println("\nUse this command to quit the program.");
                     System.out.println("Usage:");
                     System.out.println("quit\n");
@@ -509,9 +521,15 @@ public class App {
 
         userLogins = UserLogin.readFromFile(userLoginFilepath);
 
+<<<<<<< HEAD
+        System.out.println("Welcome to Sammy's Snackies!");
+        System.out.print("> ");
+=======
+>>>>>>> 5883b10361299a50d33d825b3d8d4b12cd67c83a
         while (true){
             System.out.print("> ");
             while(s.hasNextLine()){
+                
                 String input = s.nextLine();
                 String[] userInput = input.split(" ");
                 ArrayList<String> inputs = new ArrayList<String>(Arrays.asList(userInput));
