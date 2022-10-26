@@ -59,20 +59,12 @@ public class App {
         System.out.print("\n");
     }
 
-<<<<<<< HEAD
-    private static void buyer(ArrayList<String> inputs) {
-        System.out.println(inputs);
-        // ensure enough arguments
-        if ((inputs.size() != 5) & !((inputs.size() == 4) & (inputs.get(1).equals("card"))) ) {
-            System.out.println("Not enough arguments. Use \"help buyer\" to see required arguments");
-=======
     private static void buyer(ArrayList<String> inputs, VendingMachine vm) {
 
 
         // ensure enough arguments
         if (inputs.size() < 4) {
             System.out.println("Not enough arguments. Use \"help buyer\" to see required arguments.\n");
->>>>>>> 5883b10361299a50d33d825b3d8d4b12cd67c83a
             return;
         }
         System.out.println("passed");
@@ -521,11 +513,8 @@ public class App {
 
         userLogins = UserLogin.readFromFile(userLoginFilepath);
 
-<<<<<<< HEAD
         System.out.println("Welcome to Sammy's Snackies!");
         System.out.print("> ");
-=======
->>>>>>> 5883b10361299a50d33d825b3d8d4b12cd67c83a
         while (true){
             System.out.print("> ");
             while(s.hasNextLine()){
