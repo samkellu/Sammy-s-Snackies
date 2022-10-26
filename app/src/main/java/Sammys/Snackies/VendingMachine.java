@@ -3,6 +3,8 @@ package Sammys.Snackies;
 import java.util.HashMap;
 import java.util.NoSuchElementException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Arrays;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.FileWriter;
@@ -17,6 +19,8 @@ public class VendingMachine {
     private final String[] currencyNames = {"5c", "10c", "20c", "50c", "$1", "$2", "$5", "$10", "$20", "$50", "$100"};
     private final double[] currencyValues = {0.05, 0.10, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100};
     private final String fp = "data.json";
+    private Integer currentTransactionID = 0;
+    private ArrayList<Transaction> transactions;
 
     public VendingMachine(){
         this.allSlots = new HashMap<String, Slot>();
@@ -24,6 +28,15 @@ public class VendingMachine {
         for (String currency : currencyNames){
             this.currencyCounts.put(currency, 5);
         }
+        this.transactions = new ArrayList<Transaction>();
+    }
+
+    public ArrayList<Transaction> getTransactions() {
+        return this.transactions;
+    }
+    
+    public void addTransaction(String paymentMethod, FoodItem productBought, Integer qty) {
+        transactions.add(new Transaction(currentTransactionID++, paymentMethod, productBought, qty));
     }
 
     public void addSlot(String slotName, FoodItem slotContents, int contentCount){
@@ -42,10 +55,35 @@ public class VendingMachine {
             throw new NoSuchElementException("Incorrect denomination parsed! (" + currencyName + ")");
         }
         this.currencyCounts.put(currencyName, currencyCount + this.currencyCounts.get(currencyName));
+
+    }
+
+    public void removeCurrencyCount(String currencyName, int currencyCount) throws NoSuchElementException{
+        boolean currencyFound = false;
+        for (String name : this.currencyNames){
+            if (currencyName.equals(name)){
+                currencyFound = true;
+                break;
+            }
+        }
+        if (!currencyFound){
+            System.out.println("Incorrect denomination parsed! (" + currencyName + ")");
+            throw new NoSuchElementException();
+        }
+        if(this.currencyCounts.get(currencyName) < currencyCount){
+            System.out.println("Not enough of this denomination in the machine");
+            throw new NoSuchElementException();
+        }
+        this.currencyCounts.put(currencyName, this.currencyCounts.get(currencyName) - currencyCount);
+        
     }
 
     public HashMap<String, Integer> getCurrencyCounts() {
         return this.currencyCounts;
+    }
+
+    public HashMap<String, Slot> getSlots() {
+        return allSlots;
     }
 
     public String toString(){
@@ -76,10 +114,10 @@ public class VendingMachine {
             JSONObject currencies = (JSONObject) jsonData.remove(0);
 
             for (String key : currencyNames) {
-
-
                 this.currencyCounts.put(key, ((Long)(currencies.get(key))).intValue());
             }
+
+            JSONObject transactionData = (JSONObject) jsonData.remove(0);
 
             for (Object value : jsonData) {
                 JSONObject jObj = (JSONObject) value;
@@ -89,7 +127,24 @@ public class VendingMachine {
                 Category itemCategory = Category.valueOf((String) jObj.get("itemCategory"));
                 int slotCount = ((Long) jObj.get("slotCount")).intValue();
 
-                this.allSlots.put(slotName, new Slot(slotName, new FoodItem(itemName, itemPrice, itemCategory), slotCount));
+                allSlots.put(slotName, new Slot(slotName, new FoodItem(itemName, itemPrice, itemCategory), slotCount));
+            }
+
+            for (Object key : transactionData.keySet()) {
+                this.currentTransactionID = Integer.valueOf((String) key) + 1;
+                List<String> l = Arrays.asList(((String) transactionData.get((String) key)).split("\\s*,\\s*"));
+
+                FoodItem foodItem = null;
+                for (Slot s : allSlots.values()) {
+                    if (s.getContents().getName().toLowerCase().equals(l.get(2).toLowerCase())) {
+                        foodItem = s.getContents();
+                    }
+                }
+                if (foodItem == null) {
+                    System.out.println("Error loading product from file. Please check .json file itegrity.\n\n");
+                    continue;
+                }
+                this.transactions.add(new Transaction(Integer.valueOf(l.get(0)), l.get(1), foodItem, Integer.valueOf(l.get(3))));
             }
 
         } catch(IOException e) {
@@ -105,10 +160,15 @@ public class VendingMachine {
         
         HashMap<String, Object> currencyData = new HashMap<String, Object>();
         for (String key : currencyCounts.keySet()) {
-
             currencyData.put(key, (Object) currencyCounts.get(key));
         }
         jsonData.add(currencyData);
+
+        HashMap<String, Object> transactionData = new HashMap<String, Object>();
+        for (Transaction transaction : transactions) {
+            transactionData.put(String.valueOf(transaction.getID()), transaction.toString());
+        }
+        jsonData.add(transactionData);
 
         for (Slot slot : allSlots.values()) {
             HashMap<String, Object> slotData = new HashMap<String, Object>();
@@ -131,20 +191,19 @@ public class VendingMachine {
         }
     }
 
-    public int[] getChangeFromCash(double totalGiven) throws IndexOutOfBoundsException{
+    public HashMap<String, Integer> getChangeFromCash(double totalGiven) throws IndexOutOfBoundsException{
         double currentTotal = totalGiven;
         int currentCurrency = currencyNames.length-1;
-        int[] retval = new int[currencyNames.length];
-        while (currentCurrency > 0){
+        HashMap<String, Integer> retval = new HashMap<>();
+        while (currentCurrency >= 0){
             double currentValue = currencyValues[currentCurrency];
             int currentValueCount = (int)(currentTotal / currentValue);
-            if (currentValueCount > this.currencyCounts.get(currencyNames[currentCurrency])){
-                currentTotal = (currentTotal % currentValue) +  this.currencyCounts.get(currencyNames[currentCurrency])-currentValueCount;
-                currentValueCount = this.currencyCounts.get(currencyNames[currentCurrency]);
+            if (currentValueCount >= this.currencyCounts.get(currencyNames[currentCurrency])){
+                currentTotal = (currentTotal % currentValue);
             } else {
                 currentTotal = currentTotal % currentValue;
             }
-            retval[currentCurrency] = currentValueCount;
+            retval.put(currencyNames[currentCurrency], currentValueCount);
             currentCurrency--;
         }
         if (currentTotal <= 0.04){
