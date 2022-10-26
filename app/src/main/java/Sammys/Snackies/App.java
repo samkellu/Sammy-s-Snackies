@@ -150,13 +150,13 @@ public class App {
                 String[] values = s.split("\\*");
 
                 Set<String> denomSet = Set.of("5c","10c","20c","50c","$1","$2","$5","$10","$20","$50","$100");
-                String v = values[1];
 
-                if (values.length != 2 || !(denomSet.contains(v))) {
+                if (values.length != 2 || !(denomSet.contains(values[1]))) {
                     System.out.println("Unrecognisable denomination.\nPlease use the format <amount>*<value>, where value can be 50c, $2, $5 etc. and amount is a positive integer.\n");
                     return;
                 }
                 
+                String v = values[1];                
                 String amount = values[0];
                 int amt = -1;
                 
