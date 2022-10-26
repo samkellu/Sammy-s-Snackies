@@ -150,13 +150,13 @@ public class App {
                 String[] values = s.split("\\*");
 
                 Set<String> denomSet = Set.of("5c","10c","20c","50c","$1","$2","$5","$10","$20","$50","$100");
-                String v = values[1];
 
-                if (values.length != 2 || !(denomSet.contains(v))) {
+                if (values.length != 2 || !(denomSet.contains(values[1]))) {
                     System.out.println("Unrecognisable denomination.\nPlease use the format <amount>*<value>, where value can be 50c, $2, $5 etc. and amount is a positive integer.\n");
                     return;
                 }
                 
+                String v = values[1];                
                 String amount = values[0];
                 int amt = -1;
                 
@@ -283,6 +283,35 @@ public class App {
 
         // TODO
         // check login, maybe we use a file of users and pwds?
+    }
+
+    private static void removeUser(ArrayList<String> inputs){
+        if (currentType != UserType.OWNER){
+            System.out.println("You are unauthorised!! Owner role is required, please log in.");
+            return;
+        }
+        if (inputs.size() != 2){
+            System.out.println("Incorrect paramaters! Use \"help removeUser\" to recieve help!");
+            return;
+        }
+        String username = inputs.get(1);
+        boolean isFound = false;
+        for (int i = 0; i < userLogins.size(); i++){
+            if (userLogins.get(i).getUsername().equals(username)){
+                userLogins.remove(i);
+                System.out.println("Removed user " + username);
+                isFound = true;
+                break;
+
+
+            }
+        }
+        if (!isFound){
+            System.out.println("User not found, please choose another username");
+            return;
+        }
+
+        UserLogin.writeUsersToFile(userLoginFilepath, userLogins);
     }
 
     // TODO
@@ -512,7 +541,7 @@ public class App {
                             unknownCommand(inputs);
                         }
                         else{
-                            // removeUser(inputs);
+                            removeUser(inputs);
                         }
                         break;
                     case "listtransactions":
