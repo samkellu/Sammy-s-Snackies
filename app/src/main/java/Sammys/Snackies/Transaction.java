@@ -42,8 +42,12 @@ public class Transaction {
         return this.productBought;
     }
 
-    // Genereates a receipt of the transaction
     public String toString() {
         return transactionID + "," + paymentMethod + "," + productBought.getName() + "," + qty;
+    }
+    
+    // Genereates a receipt of the transaction
+    public String toOutput() {
+        return String.format("Transaction #%d: Payment Method: %s, %dx %s -> $%.2f", transactionID, paymentMethod, qty, productBought.getName(), totalAmount);
     }
 }
