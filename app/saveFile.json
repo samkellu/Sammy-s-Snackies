@@ -1,1 +1,1 @@
-[{"$5":5,"$20":5,"$10":5,"10c":5,"20c":5,"50c":5,"$100":5,"$1":5,"5c":5,"$2":5,"$50":5},{"0":"0,card,water,1"},{"slotName":"A1","itemName":"water","itemCategory":"DRINK","slotCount":5,"itemPrice":1.5}]
+[{"$5":5,"$20":5,"$10":5,"10c":5,"20c":5,"50c":5,"$100":5,"$1":5,"5c":5,"$2":5,"$50":5},{"0":"0,card,water,1","1":"1,cash,water,1","2":"2,cash,water,1","3":"3,cash,water,1","4":"4,cash,water,1","5":"5,cash,water,1"},{"slotName":"A1","itemName":"water","itemCategory":"DRINK","slotCount":0,"itemPrice":1.5}]

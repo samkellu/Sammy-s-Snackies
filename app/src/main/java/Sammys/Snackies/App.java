@@ -286,6 +286,35 @@ public class App {
         // check login, maybe we use a file of users and pwds?
     }
 
+    private static void removeUser(ArrayList<String> inputs){
+        if (currentType != UserType.OWNER){
+            System.out.println("You are unauthorised!! Owner role is required, please log in.");
+            return;
+        }
+        if (inputs.size() != 2){
+            System.out.println("Incorrect paramaters! Use \"help removeUser\" to recieve help!");
+            return;
+        }
+        String username = inputs.get(1);
+        boolean isFound = false;
+        for (int i = 0; i < userLogins.size(); i++){
+            if (userLogins.get(i).getUsername().equals(username)){
+                userLogins.remove(i);
+                System.out.println("Removed user " + username);
+                isFound = true;
+                break;
+
+
+            }
+        }
+        if (!isFound){
+            System.out.println("User not found, please choose another username");
+            return;
+        }
+
+        UserLogin.writeUsersToFile(userLoginFilepath, userLogins);
+    }
+
     // TODO
     // add message at the end saying something like "to see more on a command use help <command>"
     private static void helpCommand(ArrayList<String> inputs) {
@@ -507,7 +536,7 @@ public class App {
                             unknownCommand(inputs);
                         }
                         else{
-                            // removeUser(inputs);
+                            removeUser(inputs);
                         }
                     break;
                     case "login":
