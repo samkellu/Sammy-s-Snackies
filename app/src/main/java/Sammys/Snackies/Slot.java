@@ -27,7 +27,9 @@ public class Slot {
     }
 
     public void restockContents(int newCount) throws IndexOutOfBoundsException {
-        if (this.count + newCount > 15){ // If too many items, do not allow restocking
+        if (newCount < 0) {
+            return;
+        } else if (this.count + newCount > 15){ // If too many items, do not allow restocking
             throw new IndexOutOfBoundsException("This slot can only hold " + Integer.toString(15-this.count) + " more items");
         }
 
