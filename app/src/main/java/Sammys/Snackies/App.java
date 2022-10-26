@@ -203,8 +203,7 @@ public class App {
 
             if (!givingChange) {
                 changeString = "Correct change given, no change to give\n\n";
-            }
-                
+            }    
         }
 
         // dispense products and change
@@ -340,11 +339,9 @@ public class App {
             if(currentType == UserType.OWNER){
                 System.out.println("---------------Owner Commands-------------");
                 System.out.println("addUser - Add a new user to the system");
-                System.out.println("removeUser - Remove an existing user from the system\n");
+                System.out.println("removeUser - Remove an existing user from the system");
+                System.out.println("listTransactions - View transaction history\n");
             }
-
-
-
 
         } else if (inputs.size() >= 2) {
 
@@ -423,6 +420,14 @@ public class App {
         for(String currency : currencyCounts.keySet()){
             System.out.println(currency + ":" + currencyCounts.get(currency));
         }
+    }
+
+    private static void listTransactions(VendingMachine vm) {
+        System.out.println("\nTransaction History:");
+        for (Transaction transaction : vm.getTransactions()) {
+            System.out.println(transaction.toOutput());
+        }
+        System.out.println();
     }
 
     private static void cashAdd(VendingMachine vm, ArrayList<String> inputs){
@@ -522,8 +527,8 @@ public class App {
                     break;
                     case "cashier":
                         cashier(inputs);
-                    break;
-                    case "adduser":
+                        break;
+                        case "adduser":
                         if(currentType != UserType.OWNER){
                             unknownCommand(inputs);
                         }
@@ -537,6 +542,14 @@ public class App {
                         }
                         else{
                             removeUser(inputs);
+                        }
+                        break;
+                    case "listtransactions":
+                        if(currentType != UserType.OWNER){
+                            unknownCommand(inputs);
+                        }
+                        else{
+                            listTransactions(vm);
                         }
                     break;
                     case "login":
