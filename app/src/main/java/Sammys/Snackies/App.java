@@ -8,6 +8,10 @@ import java.util.HashMap;
 
 public class App {
 
+    public static final String RED = "\u001B[31m";
+    public static final String GREEN = "\u001B[32m";
+    public static final String YELLOW = "\u001B[33m";
+
     private static final String saveFilePath = "saveFile.json";
     private static UserType currentType = UserType.BUYER;
     private static ArrayList<UserLogin> userLogins;
@@ -38,7 +42,7 @@ public class App {
             case "$100":
                 return 100.00;
             default:
-                System.out.println("Please enter a valid monetary denomination.");
+                System.out.println(RED + "Please enter a valid monetary denomination.");
                 return -1;
         }
     }
@@ -55,7 +59,7 @@ public class App {
 
             }
         }
-        if (noProducts) System.out.println("\nSorry, there are no products available in this machine.");
+        if (noProducts) System.out.println(RED + "\nSorry, there are no products available in this machine.");
         System.out.print("\n");
     }
 
@@ -64,10 +68,9 @@ public class App {
 
         // ensure enough arguments
         if (inputs.size() < 4) {
-            System.out.println("Not enough arguments. Use \"help buyer\" to see required arguments.\n");
+            System.out.println(RED + "Not enough arguments. Use \"help buyer\" to see required arguments.\n");
             return;
         }
-        System.out.println("passed");
         // check cash or card
         boolean cash = false;
         if (inputs.get(1).toLowerCase().equals("cash")) {
@@ -75,12 +78,12 @@ public class App {
 
             // ensure enough arguments for cash payment
             if (inputs.size() < 4) {
-                System.out.println("Not enough arguments. Use \"help buyer\" to see required arguments.\n");
+                System.out.println(RED + "Not enough arguments. Use \"help buyer\" to see required arguments.\n");
                 return;
             }
         }
         else if (!inputs.get(1).toLowerCase().equals("card")) {
-            System.out.println("Please specify payment type (cash or card).\n");
+            System.out.println(RED + "Please specify payment type (cash or card).\n");
             return;
         }
 
@@ -96,7 +99,7 @@ public class App {
         }
 
         if (slot == null) {
-            System.out.println("Please enter a valid product code. This machine contains no item with code: " + inputs.get(2) + "\n");
+            System.out.println(RED + "Please enter a valid product code. This machine contains no item with code: " + inputs.get(2) + "\n");
             return;
         }
 
@@ -105,20 +108,20 @@ public class App {
         try {
             productAmt = Integer.parseInt(inputs.get(3));
         } catch (NumberFormatException e) {
-            System.out.println("\nPlease ensure the product amount is a positive integer.\n");
+            System.out.println(RED + "\nPlease ensure the product amount is a positive integer.\n");
             return;
         }
 
         if (productAmt <= 0) {
-            System.out.println("\nPlease ensure the product amount is a positive integer.\n");
+            System.out.println(RED + "\nPlease ensure the product amount is a positive integer.\n");
             return;
         }
 
         if (slot.getCount() < productAmt) {
             if (slot.getCount() == 0){
-                System.out.println("Unfortunately, this machine is all out of stock of " + slot.getContents());
+                System.out.println(RED + "Unfortunately, this machine is all out of stock of " + slot.getContents());
             } else {
-                System.out.println("Unfortunately, this machine only has " + slot.getCount() + "x " + slot.getContents().toString() + " available.\n");
+                System.out.println(RED + "Unfortunately, this machine only has " + slot.getCount() + "x " + slot.getContents().toString() + " available.\n");
             }
             return;
         }
@@ -133,7 +136,7 @@ public class App {
             }
         }
         if (price == -1) {
-            System.out.println("\nSorry an internal error occured, please try again.\n");
+            System.out.println(RED + "\nSorry an internal error occured, please try again.\n");
             return;
         }
 
@@ -152,7 +155,7 @@ public class App {
                 Set<String> denomSet = Set.of("5c","10c","20c","50c","$1","$2","$5","$10","$20","$50","$100");
 
                 if (values.length != 2 || !(denomSet.contains(values[1]))) {
-                    System.out.println("Unrecognisable denomination.\nPlease use the format <amount>*<value>, where value can be 50c, $2, $5 etc. and amount is a positive integer.\n");
+                    System.out.println(RED + "Unrecognisable denomination.\nPlease use the format <amount>*<value>, where value can be 50c, $2, $5 etc. and amount is a positive integer.\n");
                     return;
                 }
                 
@@ -163,12 +166,12 @@ public class App {
                 try {
                     amt = Integer.parseInt(amount);
                 } catch (NumberFormatException e) {
-                    System.out.println("\nPlease ensure the cash amount is a positive integer.\n");
+                    System.out.println(RED + "\nPlease ensure the cash amount is a positive integer.\n");
                     return;
                 } 
                 
                 if (amt <= 0) {
-                    System.out.println("Please ensure the amount is a positive integer.\n");
+                    System.out.println(RED + "\nPlease ensure the amount is a positive integer.\n");
                     return;
                 }
                 
@@ -187,7 +190,7 @@ public class App {
             try {
                 changeToGive = vm.getChangeFromCash(totalGiven-totalCost);
             } catch (IndexOutOfBoundsException e) {
-                System.out.println("\nSorry, we don't have the change to give you.\nReturning money...\n");
+                System.out.println(RED + "\nSorry, we don't have the change to give you.\nReturning money...\n");
                 return;
             }
 
@@ -221,7 +224,7 @@ public class App {
 
     private static void seller(ArrayList<String> inputs) {
         if (currentType != UserType.SELLER){
-            System.out.println("You are unauthorised!! Seller role is required, please log in.");
+            System.out.println(RED + "You are unauthorised!! Seller role is required, please log in.");
             return;
         }
 
@@ -229,7 +232,7 @@ public class App {
 
     private static void cashier(ArrayList<String> inputs) {
         if (currentType != UserType.CASHIER){
-            System.out.println("You are unauthorised!! Cashier role is required, please log in.");
+            System.out.println(RED + "You are unauthorised!! Cashier role is required, please log in.");
             return;
         }
 
@@ -237,18 +240,18 @@ public class App {
 
     private static void addUser(ArrayList<String> inputs) {
         if (currentType != UserType.OWNER){
-            System.out.println("You are unauthorised!! Owner role is required, please log in.");
+            System.out.println(RED + "You are unauthorised!! Owner role is required, please log in.");
             return;
         }
 
         if (inputs.size() != 4){
-            System.out.println("Incorrect number of parameters. Use \"help addUser\" for more information.");
+            System.out.println(RED + "Incorrect number of parameters. Use \"help addUser\" for more information.");
             return;
         }
         String username = inputs.get(1);
         for (UserLogin user : userLogins){
             if (user.getUsername().equals(username)){
-                System.out.println("User already exists, please choose a unique username");
+                System.out.println(RED + "User already exists, please choose a unique username");
                 return;
             }
         }
@@ -257,14 +260,14 @@ public class App {
         UserLogin user = new UserLogin(username, password, type);
         userLogins.add(user);
         UserLogin.writeUsersToFile(userLoginFilepath, userLogins);
-        System.out.println("New user added with username " + username + " with role of " + type);
+        System.out.println(GREEN + "New user added with username " + username + " with role of " + type);
 
     }
 
     private static void userLogin(ArrayList<String> inputs) {
 
         if (inputs.size() != 3) {
-            System.out.println("Incorrect number of parameters. Use \"help login\" for more information.");
+            System.out.println(RED + "Incorrect number of parameters. Use \"help login\" for more information.");
             return;
         }
 
@@ -277,7 +280,7 @@ public class App {
             }
         }
 
-        System.out.println("Login not found, try again");
+        System.out.println(RED + "Login not found, try again");
 
 
 
@@ -287,11 +290,11 @@ public class App {
 
     private static void removeUser(ArrayList<String> inputs){
         if (currentType != UserType.OWNER){
-            System.out.println("You are unauthorised!! Owner role is required, please log in.");
+            System.out.println(RED + "You are unauthorised!! Owner role is required, please log in.");
             return;
         }
         if (inputs.size() != 2){
-            System.out.println("Incorrect paramaters! Use \"help removeUser\" to recieve help!");
+            System.out.println(RED + "Incorrect paramaters! Use \"help removeUser\" to recieve help!");
             return;
         }
         String username = inputs.get(1);
@@ -299,7 +302,7 @@ public class App {
         for (int i = 0; i < userLogins.size(); i++){
             if (userLogins.get(i).getUsername().equals(username)){
                 userLogins.remove(i);
-                System.out.println("Removed user " + username);
+                System.out.println(GREEN + "Removed user " + username);
                 isFound = true;
                 break;
 
@@ -307,7 +310,7 @@ public class App {
             }
         }
         if (!isFound){
-            System.out.println("User not found, please choose another username");
+            System.out.println(RED + "User not found, please choose another username");
             return;
         }
 
@@ -318,7 +321,7 @@ public class App {
     // add message at the end saying something like "to see more on a command use help <command>"
     private static void helpCommand(ArrayList<String> inputs) {
          if (inputs==null || inputs.size() == 1) {
-            System.out.println("\nAvailable Commands:");
+            System.out.println(YELLOW + "\nAvailable Commands:");
             System.out.println("buyer - buy a product");
             System.out.println("seller - TODO"); // TODO
             System.out.println("products - list available products in the vending machine");
@@ -327,17 +330,17 @@ public class App {
             System.out.println("quit - quit the program\n");
 
             if(currentType == UserType.SELLER){
-                System.out.println("---------------Seller Commands-------------");
+                System.out.println(YELLOW + "---------------Seller Commands-------------");
 
             }
             if(currentType == UserType.CASHIER){
-                System.out.println("---------------Cashier Commands-------------");
+                System.out.println(YELLOW + "---------------Cashier Commands-------------");
                 System.out.println("CashCheck - Returns the current denominations of all cash in the machines");
                 System.out.println("CashAdd - Add a number of a denomination into the machine");
                 System.out.println("CashRemove - Remove a number of a denomination into the machine\n");
             }
             if(currentType == UserType.OWNER){
-                System.out.println("---------------Owner Commands-------------");
+                System.out.println(YELLOW + "---------------Owner Commands-------------");
                 System.out.println("addUser - Add a new user to the system");
                 System.out.println("removeUser - Remove an existing user from the system");
                 System.out.println("listTransactions - View transaction history\n");
@@ -350,7 +353,7 @@ public class App {
                 case "buy":
                     System.out.println("\nUse this command to buy a product from the vending machine.");
                     System.out.println("Usage:");
-                    System.out.println("buyer <cash/card> <product> <amount> [denominations...]\n");
+                    System.out.println(GREEN + "buyer <cash/card> <product> <amount> [denominations...]\n");
                 break;
                 case "seller":
                     System.out.println("\nUse this command to TODO");
@@ -360,12 +363,12 @@ public class App {
                 case "adduser":
                     System.out.println("\n OWNER USE ONLY: Use this command to add a new user to the list of logins");
                     System.out.println("Useage: ");
-                    System.out.println("addUser <username> <password> <user type>");
+                    System.out.println(GREEN + "addUser <username> <password> <user type>");
                 break;
                 case "removeuser":
                 System.out.println("\n OWNER USE ONLY: Use this command to remove a new user");
                 System.out.println("Useage: ");
-                System.out.println("removeUser <username>");
+                System.out.println(GREEN + "removeUser <username>");
                 break;
                 case "cashier":
                     System.out.println("\nUse this command to TODO");
@@ -375,18 +378,18 @@ public class App {
                 case "login":
                     System.out.println("\nUse this command to log in to a cashier/owner/seller account.");
                     System.out.println("Usage:");
-                    System.out.println("login <username> <password>\n");
+                    System.out.println(GREEN + "login <username> <password>\n");
                 break;
                 case "products":
                 case "product":
                 System.out.println("\nUse this command to list all products in the vending machine.");
                 System.out.println("Usage:");
-                System.out.println("products\n");
+                System.out.println(GREEN + "products\n");
                 break;
                 case "help":
                     System.out.println("\nUse this command to see available commands or for more information on a command");
                     System.out.println("Usage:");
-                    System.out.println("help [command]\n");
+                    System.out.println(GREEN + "help [command]\n");
                 break;
                 case "quit":
                 case "exit":
@@ -394,25 +397,25 @@ public class App {
                 case ":q!":
                     System.out.println("\nUse this command to quit the program.");
                     System.out.println("Usage:");
-                    System.out.println("quit\n");
+                    System.out.println(GREEN + "quit\n");
                 break;
                 case "cashcheck":
                 System.out.println("\nCASHIER USE ONLY: Returns the denominations fo coins currently in the machine");
                 System.out.println("Usage:");
-                System.out.println("cashremove\n");
+                System.out.println(GREEN + "cashremove\n");
                 break;
                 case "cashadd":
                 System.out.println("\nCASHIER USE ONLY: Use this command to add money to the machine");
                 System.out.println("Usage:");
-                System.out.println("cashadd [num] [denomination]\n");
+                System.out.println(GREEN + "cashadd [num] [denomination]\n");
                 break;
                 case "cashremove":
                     System.out.println("\nCASHIER USE ONLY: Use this command to remove money from the machine");
                     System.out.println("Usage:");
-                    System.out.println("cashremove [num] [denomination]\n");
+                    System.out.println(GREEN + "cashremove [num] [denomination]\n");
                 break;
                 default:
-                    System.out.println(String.format("\nUnrecognised command: %s\n", inputs.get(1)));
+                    System.out.println(String.format(RED + "\nUnrecognised command: %s\n", inputs.get(1)));
                 break;
             }
         } 
@@ -436,7 +439,7 @@ public class App {
 
     private static void cashAdd(VendingMachine vm, ArrayList<String> inputs){
         if(inputs.size() != 3){
-            System.out.println("Incorrect number of parameters. Use \"help cashadd\" for more information.");
+            System.out.println(RED + "Incorrect number of parameters. Use \"help cashadd\" for more information.");
             return;
         }
         int num=0;
@@ -445,23 +448,23 @@ public class App {
             num = Integer.parseInt(inputs.get(1));
         }
         catch(Exception e){
-            System.out.println("2nd element is not a valid number. Use \"help cashadd\" for more information.");
+            System.out.println(RED + "2nd element is not a valid number. Use \"help cashadd\" for more information.");
             return;
         }
         try{
             vm.addCurrencyCount(denomination, num);
         }
         catch(Exception e){
-            System.out.println("Incorrect Currency name parsed");
+            System.out.println(RED + "Incorrect Currency name parsed");
             return;
         }
-        System.out.println("Currency successful added");
+        System.out.println(RED + "Currency successful added");
 
     }
 
     private static void cashRemove(VendingMachine vm, ArrayList<String> inputs){
         if(inputs.size() != 3){
-            System.out.println("Incorrect number of parameters. Use \"help cashadd\" for more information.");
+            System.out.println(RED + "Incorrect number of parameters. Use \"help cashadd\" for more information.");
             return;
         }
         int num=0;
@@ -470,7 +473,7 @@ public class App {
             num = Integer.parseInt(inputs.get(1));
         }
         catch(Exception e){
-            System.out.println("2nd element is not a valid number. Use \"help cashadd\" for more information.");
+            System.out.println(RED + "2nd element is not a valid number. Use \"help cashadd\" for more information.");
             return;
         }
         try{
@@ -479,22 +482,67 @@ public class App {
         catch(Exception e){
             return;
         }
-        System.out.println("Currency successful removed");
+        System.out.println(GREEN + "Currency successful removed");
 
     }
 
     private static void endProgram(VendingMachine vm) {
-        // UNCOMMENT WHEN YOU WANT TO SAVE EVERY QUIT
         vm.writeToFile(saveFilePath);
-        System.out.println("Quitting...");
+        System.out.println(YELLOW + "Quitting...");
     }
 
     private static VendingMachine initProgram() {
-        System.out.println("System Starting...");
+        System.out.println(YELLOW + "System Starting...");
         VendingMachine vm = new VendingMachine();
-        // UNCOMMENT WHEN YOU WANT TO LOAD EVERY START
         vm.readFromFile(saveFilePath);
-        System.out.println("Welcome to Sammy's Snackies!");
+
+        String introBanner[] = new String[] 
+        {"       @@@@@@    @@@@@@   @@@@@@@@@@   @@@@@@@@@@   @@@ @@@   @@@@@@           \n",
+         "      @@@@@@@   @@@@@@@@  @@@@@@@@@@@  @@@@@@@@@@@  @@@ @@@  @@@@@@@           \n",
+         "      !@@       @@!  @@@  @@! @@! @@!  @@! @@! @@!  @@! !@@  !@@               \n",
+         "      !@!       !@!  @!@  !@! !@! !@!  !@! !@! !@!  !@! @!!  !@!               \n", 
+         "      !!@@!!    @!@!@!@!  @!! !!@ @!@  @!! !!@ @!@   !@!@!   !!@@!!            \n",
+         "       !!@!!!   !!!@!!!!  !@!   ! !@!  !@!   ! !@!    @!!!    !!@!!!           \n",
+         "           !:!  !!:  !!!  !!:     !!:  !!:     !!:    !!:         !:!          \n",
+         "          !:!   :!:  !:!  :!:     :!:  :!:     :!:    :!:        !:!           \n",
+         "      :::: ::   ::   :::  :::     ::   :::     ::      ::    :::: ::           \n",
+         "      :: : :     :   : :   :      :     :      :       :     :: : :            \n",
+         "       @@@@@@   @@@  @@@   @@@@@@    @@@@@@@  @@@  @@@  @@@  @@@@@@@@   @@@@@@ \n",
+         "      @@@@@@@   @@@@ @@@  @@@@@@@@  @@@@@@@@  @@@  @@@  @@@  @@@@@@@@  @@@@@@@ \n",
+         "      !@@       @@!@!@@@  @@!  @@@  !@@       @@!  !@@  @@!  @@!       !@@     \n",
+         "      !@!       !@!!@!@!  !@!  @!@  !@!       !@!  @!!  !@!  !@!       !@!     \n",
+         "      !!@@!!    @!@ !!@!  @!@!@!@!  !@!       @!@@!@!   !!@  @!!!:!    !!@@!!  \n",
+         "       !!@!!!   !@!  !!!  !!!@!!!!  !!!       !!@!!!    !!!  !!!!!:     !!@!!! \n",
+         "           !:!  !!:  !!!  !!:  !!!  :!!       !!: :!!   !!:  !!:            !:!\n",
+         "          !:!   :!:  !:!  :!:  !:!  :!:       :!:  !:!  :!:  :!:           !:! \n",
+         "      :::: ::   ::   ::   ::   :::   ::: :::  ::  :::   ::   :: ::::  :::: ::  \n",
+         "      :: : :    ::   :    :    : :   :: :: :  :   :::   :    : :: ::   :: : :  \n\n"};
+
+        double charCounter = 79;
+        System.out.println(GREEN);
+        while (charCounter >= 0) {
+            char[] line = new char[81];
+            System.out.print("\033\143");
+            System.out.flush();  
+            for (String str : introBanner) {
+                str.getChars(((Double) charCounter).intValue(),80, line,1);
+                line[0] = '\r';
+                System.out.print(line);
+            }
+            charCounter-= 0.5;
+            try {
+                Thread.sleep(40);
+            }
+            catch (Exception e) {
+           
+            System.out.println(RED + e);
+            }
+        }
+        System.out.print("\033\143");
+        System.out.flush();
+        for (String str : introBanner) {
+            System.out.print(str);
+        }
         helpCommand(null);
         return vm;
     }
