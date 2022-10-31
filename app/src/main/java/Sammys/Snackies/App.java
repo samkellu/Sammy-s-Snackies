@@ -377,12 +377,8 @@ public class App {
             System.out.println("quit - quit the program");
 
             if(currentType == UserType.SELLER){
-<<<<<<< HEAD
                 System.out.println(YELLOW + "---------------Seller Commands-------------" + RESET);
-=======
-                System.out.println("---------------Seller Commands-------------");
                 System.out.println("restockContents - restock a specific item in the machine");
->>>>>>> main
 
             }
             if(currentType == UserType.CASHIER){
