@@ -151,8 +151,11 @@ public class App {
             for (String s : inputDenoms) {
 
                 String[] values = s.split("\\*");
+                String[] currencyValues = new String[] {"5c","10c","20c","50c","$1","$2","$5","$10","$20","$50"};
+                ArrayList<String> denomSet = new ArrayList<String>(Arrays.asList(currencyValues));
+                // Set<String> denomSet =  new ArrayList<String>(Arrays.asList(new {"5c","10c","20c","50c","$1","$2","$5","$10","$20","$50"}));
+                denomSet.add("$100");
 
-                Set<String> denomSet = Set.of("5c","10c","20c","50c","$1","$2","$5","$10","$20","$50","$100");
 
                 if (values.length != 2 || !(denomSet.contains(values[1]))) {
                     System.out.println(RED + "Unrecognisable denomination.\nPlease use the format <amount>*<value>, where value can be 50c, $2, $5 etc. and amount is a positive integer." + RESET);
@@ -227,6 +230,54 @@ public class App {
             System.out.println(RED + "You are unauthorised!! Seller role is required, please log in." + RESET);
             return;
         }
+
+    }
+
+    private static void restockProduct(ArrayList<String> inputs, VendingMachine vm){
+        // takes itemname itemcount 
+
+        if (inputs.size() != 3){
+            System.out.println("Invalid input. Use \"help restockContents\" for help");
+            return;
+        }
+
+        if (!vm.isInMachine(inputs.get(1))){
+            System.out.println("Item not found, use \"help restock\" for help");
+            return;
+        }
+
+
+        // check product code exists
+        Slot slot = null;
+        boolean validProduct = false;
+        // checks all slots in the machine for a matching product code
+        for (Slot s : vm.getSlots().values()) {
+            if (inputs.get(1).toLowerCase().equals(s.getContents().getName().toLowerCase())) {
+                slot = s;
+                break;
+            }
+        }
+        if(slot==null){
+            System.out.println("Unexpected error");
+            return;
+        }
+        int restockCount;
+        try {
+            restockCount = Integer.parseInt(inputs.get(2));
+        } catch (NumberFormatException e){
+            System.out.println("Please enter a valid integer for restock count");
+            return;
+        }
+        try{
+            slot.restockContents(restockCount);
+        } catch (IndexOutOfBoundsException e){
+            System.out.println(e);
+            return;
+        }
+
+        System.out.println("Successfully restocked " + inputs.get(2) +" "+inputs.get(1)+"'s, new stock count is " + Integer.toString(slot.getCount()) + " with a value of $" +String.format("%.2f", slot.getCount()*slot.getContents().getPrice()));
+
+
 
     }
 
@@ -326,7 +377,12 @@ public class App {
             System.out.println("quit - quit the program");
 
             if(currentType == UserType.SELLER){
+<<<<<<< HEAD
                 System.out.println(YELLOW + "---------------Seller Commands-------------" + RESET);
+=======
+                System.out.println("---------------Seller Commands-------------");
+                System.out.println("restockContents - restock a specific item in the machine");
+>>>>>>> main
 
             }
             if(currentType == UserType.CASHIER){
@@ -394,6 +450,11 @@ public class App {
                     System.out.println("\nUse this command to quit the program.");
                     System.out.println("Usage:");
                     System.out.println(GREEN + "quit" + RESET);
+                break;
+                case "restockcontents":
+                    System.out.println("\nUse this command restock an item.");
+                    System.out.println("Usage:");
+                    System.out.println("restockcontents <item name> <restock count>\n");
                 break;
                 case "cashcheck":
                 System.out.println("\nCASHIER USE ONLY: Returns the denominations fo coins currently in the machine");
@@ -605,6 +666,9 @@ public class App {
                     break;
                     case "login":
                         userLogin(inputs);
+                    break;
+                    case "restockcontents":
+                        restockProduct(inputs, vm);
                     break;
                     case "products":
                         products(vm);
