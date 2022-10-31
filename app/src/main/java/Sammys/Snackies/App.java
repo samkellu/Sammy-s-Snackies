@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.HashMap;
+import java.util.List;
 
 public class App {
 
@@ -38,7 +39,7 @@ public class App {
             case "$100":
                 return 100.00;
             default:
-                System.out.println("Please enter a valid monetary denomination.");
+                System.out.println("\nPlease enter a valid monetary denomination.");
                 return -1;
         }
     }
@@ -86,7 +87,10 @@ public class App {
 
         // check product code exists
         Slot slot = null;
-        boolean validProduct = false;
+
+        // TODO
+        // boolean validProduct = false; // unused, if needed, just uncomment this
+
         // checks all slots in the machine for a matching product code
         for (Slot s : vm.getSlots().values()) {
             if (inputs.get(2).toLowerCase().equals(s.getContents().getName().toLowerCase())) {
@@ -152,7 +156,7 @@ public class App {
                 Set<String> denomSet = Set.of("5c","10c","20c","50c","$1","$2","$5","$10","$20","$50","$100");
 
                 if (values.length != 2 || !(denomSet.contains(values[1]))) {
-                    System.out.println("Unrecognisable denomination.\nPlease use the format <amount>*<value>, where value can be 50c, $2, $5 etc. and amount is a positive integer.\n");
+                    System.out.println("\nUnrecognisable denomination.\nPlease use the format <amount>*<value>, where value can be 50c, $2, $5 etc. and amount is a positive integer.\n");
                     return;
                 }
                 
@@ -168,7 +172,7 @@ public class App {
                 } 
                 
                 if (amt <= 0) {
-                    System.out.println("Please ensure the amount is a positive integer.\n");
+                    System.out.println("\nPlease ensure the cash amount is a positive integer.\n");
                     return;
                 }
                 
@@ -215,8 +219,6 @@ public class App {
         slot.sellContents(Integer.valueOf(inputs.get(3)));
 
         vm.addTransaction(inputs.get(1).toLowerCase(), slot.getContents(), Integer.valueOf(inputs.get(3)));
-        // TODO
-        // ensure enough money given, need the vending machine to know the price.
     }
 
     private static void seller(ArrayList<String> inputs) {
@@ -278,11 +280,6 @@ public class App {
         }
 
         System.out.println("Login not found, try again");
-
-
-
-        // TODO
-        // check login, maybe we use a file of users and pwds?
     }
 
     private static void removeUser(ArrayList<String> inputs){
@@ -404,7 +401,7 @@ public class App {
                 case "cashadd":
                 System.out.println("\nCASHIER USE ONLY: Use this command to add money to the machine");
                 System.out.println("Usage:");
-                System.out.println("cashadd [num] [denomination]\n");
+                System.out.println("cashadd <amount>*<denomination>...\n");
                 break;
                 case "cashremove":
                     System.out.println("\nCASHIER USE ONLY: Use this command to remove money from the machine");
@@ -435,11 +432,52 @@ public class App {
     }
 
     private static void cashAdd(VendingMachine vm, ArrayList<String> inputs){
-        if(inputs.size() != 3){
+
+        if(inputs.size() < 2){
             System.out.println("Incorrect number of parameters. Use \"help cashadd\" for more information.");
             return;
         }
-        int num=0;
+
+        ArrayList<String> inputDenoms = new ArrayList<String>(inputs.subList(4, inputs.size()));
+
+        for (String s : inputDenoms) {
+
+            String[] values = s.split("\\*");
+
+            Set<String> denomSet = Set.of("5c","10c","20c","50c","$1","$2","$5","$10","$20","$50","$100");
+
+            if (values.length != 2 || !(denomSet.contains(values[1]))) {
+                System.out.println("\nUnrecognisable denomination.\nPlease use the format <amount>*<value>, where value can be 50c, $2, $5 etc. and amount is a positive integer.\n");
+                return;
+            }
+                            
+            int amt = -1;
+            
+            try {
+                amt = Integer.parseInt(values[0]);
+            } catch (NumberFormatException e) {
+                System.out.println("\nPlease ensure the cash amount is a positive integer.\n");
+                return;
+            } 
+            
+            if (amt <= 0) {
+                System.out.println("\nPlease ensure the cash amount is a positive integer.\n");
+                return;
+            }
+            
+            if (parseDenom(values[1]) == -1) return;
+
+            vm.addCurrencyCount(values[1], amt);
+        }
+
+        /*
+
+        TODO
+        this is the original cash add code, I'm leaving it here for the time being incase any test cases have been made and we can get print
+        statements correct again
+        Let's remove this big comment block once we've checked any testing.
+
+        int num = 0;
         String denomination = inputs.get(2);
         try{
             num = Integer.parseInt(inputs.get(1));
@@ -455,6 +493,7 @@ public class App {
             System.out.println("Incorrect Currency name parsed");
             return;
         }
+        */
         System.out.println("Currency successful added");
 
     }
@@ -534,14 +573,14 @@ public class App {
                     break;
                     case "cashier":
                         cashier(inputs);
-                        break;
-                        case "adduser":
-                        if(currentType != UserType.OWNER){
-                            unknownCommand(inputs);
-                        }
-                        else{
-                            addUser(inputs);
-                        }
+                    break;
+                    case "adduser":
+                    if(currentType != UserType.OWNER){
+                        unknownCommand(inputs);
+                    }
+                    else{
+                        addUser(inputs);
+                    }
                     break;
                     case "removeuser":
                         if(currentType != UserType.OWNER){
@@ -579,12 +618,14 @@ public class App {
                     case "cashadd":
                         if(currentType != UserType.CASHIER){
                             unknownCommand(inputs);
+                            break;
                         }
                         cashAdd(vm, inputs);
                     break;
                     case "cashremove":
                         if(currentType != UserType.CASHIER){
                             unknownCommand(inputs);
+                            break;
                         }
                         cashRemove(vm, inputs);
                     break;
