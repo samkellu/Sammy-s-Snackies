@@ -235,15 +235,9 @@ public class App {
         // takes itemname itemcount 
 
         if (inputs.size() != 3){
-            System.out.println("Invalid input. Use \"help restockContents\" for help");
+            printColour(RED, "Invalid input. Use \"help restockContents\" for help");
             return;
         }
-
-        // if (!vm.isInMachine(inputs.get(1))){
-        //     System.out.println("Item not found, use \"help restockContents\" for help");
-        //     return;
-        // }
-
 
         // check product code exists
         Slot slot = null;
@@ -255,14 +249,14 @@ public class App {
             }
         }
         if(slot==null){
-            System.out.println("Could not find slot " + inputs.get(1));
+            printColour(RED, "Could not find slot " + inputs.get(1));
             return;
         }
         int restockCount;
         try {
             restockCount = Integer.parseInt(inputs.get(2));
         } catch (NumberFormatException e){
-            System.out.println("Please enter a valid integer for restock count");
+            printColour(RED, "Please enter a valid integer for restock count");
             return;
         }
         try{
@@ -275,9 +269,7 @@ public class App {
         System.out.println("Successfully restocked " + inputs.get(2) +" "+slot.getContents().getName()+"'s, new stock count is " + Integer.toString(slot.getCount()) + " with a value of $" +String.format("%.2f", slot.getCount()*slot.getContents().getPrice()));
 
 
-
     }
-
 
     private static void addProduct(ArrayList<String> inputs, VendingMachine vm){
 
@@ -285,7 +277,7 @@ public class App {
         // addProduct <slot name> <product name> <product price> <product category> <product stock>
 
         if (inputs.size() != 6){
-            System.out.println("Invalid input, use \"help addProduct\" to get help");
+            printColour(RED, "Invalid input, use \"help addProduct\" to get help");
             return;
         }
 
@@ -295,7 +287,7 @@ public class App {
             if (name.equals(slotName)){
                 currentSlot = vm.getSlots().get(name);
                 if (currentSlot.getCount()!=0){
-                    System.out.println("Slot already exists and is non empty! Please choose an empty slot or try \"restockProduct\"");
+                    printColour(RED, "Slot already exists and is non empty! Please choose an empty slot or try \"restockProduct\"");
                     return;
                 }
             }
@@ -318,7 +310,6 @@ public class App {
                 System.out.println("Category not found! Please choose one of the following categories:");
                 System.out.println("CHOCOLATE | CANDY | CHIPS | DRINK");
                 return;
-
         }
         try{
             FoodItem newFood = new FoodItem(inputs.get(2).toLowerCase(), Double.parseDouble(inputs.get(3)), foodCategory);
@@ -336,9 +327,32 @@ public class App {
             return;
         }
 
+    }
 
+    private static void removeProduct(ArrayList<String> inputs, VendingMachine vm){
+        // Useage:
+        // removeProduct <slotname>
 
+        if (inputs.size() != 2){
+            printColour(RED, "Invalid input length, use \"help removeProduct\" for help");
+            return;
+        }
 
+        Slot slot = null;
+        for (String s : vm.getSlots().keySet()){
+            if (s.equals(inputs.get(1).toUpperCase())){
+                slot = vm.getSlots().get(s);
+                break;
+            }
+        }
+        if (slot == null){
+            printColour(RED, "Slot not found, please try a valid slot name.");
+            printColour(GREEN, "Try use \"products\" to get a list of all available products and slots!");
+            return;
+        }
+        System.out.println("Removing product " + slot.getContents().getName() + " from slot " + inputs.get(1).toUpperCase() + " for a total value of $" + String.format("%.2f", slot.getContents().getPrice()*slot.getCount()));
+        vm.getSlots().remove(slot.getName());
+        return;
     }
 
     private static void cashier(ArrayList<String> inputs) {
@@ -439,7 +453,7 @@ public class App {
                 printColour(YELLOW, "---------------Seller Commands-------------");
                 System.out.println("restockContents - restock a specific item in the machine");
                 System.out.println("addProduct - add a new item to the machine");
-
+                System.out.println("removeProduct - remove an existing item from the machine");
             }
             if(currentType == UserType.CASHIER){
                 printColour(YELLOW, "---------------Cashier Commands-------------");
@@ -504,14 +518,19 @@ public class App {
                     printColour(GREEN, "quit");
                 break;
                 case "restockcontents":
-                    System.out.println("\nUse this command restock an item.");
+                    System.out.println("\nSELLER USE ONLY: Use this command restock an item.");
                     System.out.println("Usage:");
                     System.out.println("restockcontents <slot name> <restock count>\n");
                 break;
                 case "addproduct":
-                    System.out.println("\nUse this command add a new an item.");
+                    System.out.println("\nSELLER USE ONLY: Use this command add a new item.");
                     System.out.println("Usage:");
                     System.out.println("addproduct <slot name> <product name> <product price> <product category> <product stock>\n");
+                break;
+                case "removeproduct":
+                    System.out.println("\nSELLER USE ONLY: RUse this command remove an existing  item.");
+                    System.out.println("Usage:");
+                    System.out.println("removeproduct <slot name> \n");
                 break;
                 case "cashcheck":
                 System.out.println("\nCASHIER USE ONLY: Returns the denominations fo coins currently in the machine");
@@ -773,6 +792,15 @@ public class App {
                             addProduct(inputs, vm);
                         }
                     break;
+                    case "removeproduct":
+                        if (currentType != UserType.SELLER){
+                            unknownCommand(inputs);
+
+                        } else {
+                            removeProduct(inputs, vm);
+                        }
+                    break;
+
                     case "products":
                     case "product":
                         products(vm);
