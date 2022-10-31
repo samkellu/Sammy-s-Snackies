@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.HashMap;
-import java.util.List;
 
 public class App {
 
@@ -385,8 +384,8 @@ public class App {
                     System.out.println("Usage:");
                     System.out.println("help [command]\n");
                 break;
-                case "quit":
                 case "exit":
+                case "quit":
                 case ":wq":
                 case ":q!":
                     System.out.println("\nUse this command to quit the program.");
@@ -394,14 +393,15 @@ public class App {
                     System.out.println("quit\n");
                 break;
                 case "cashcheck":
-                System.out.println("\nCASHIER USE ONLY: Returns the denominations fo coins currently in the machine");
-                System.out.println("Usage:");
-                System.out.println("cashremove\n");
+                    // TODO make this word
+                    System.out.println("\nCASHIER USE ONLY: Returns the denominations fo coins currently in the machine");
+                    System.out.println("Usage:");
+                    System.out.println("cashremove\n");
                 break;
                 case "cashadd":
-                System.out.println("\nCASHIER USE ONLY: Use this command to add money to the machine");
-                System.out.println("Usage:");
-                System.out.println("cashadd <amount>*<denomination>...\n");
+                    System.out.println("\nCASHIER USE ONLY: Use this command to add money to the machine");
+                    System.out.println("Usage:");
+                    System.out.println("cashadd <amount>*<denomination>...\n");
                 break;
                 case "cashremove":
                     System.out.println("\nCASHIER USE ONLY: Use this command to remove money from the machine");
@@ -438,7 +438,7 @@ public class App {
             return;
         }
 
-        ArrayList<String> inputDenoms = new ArrayList<String>(inputs.subList(4, inputs.size()));
+        ArrayList<String> inputDenoms = new ArrayList<String>(inputs.subList(1, inputs.size()));
 
         for (String s : inputDenoms) {
 
@@ -503,7 +503,7 @@ public class App {
             System.out.println("Incorrect number of parameters. Use \"help cashadd\" for more information.");
             return;
         }
-        int num=0;
+        int num = 0;
         String denomination = inputs.get(2);
         try{
             num = Integer.parseInt(inputs.get(1));
@@ -566,6 +566,7 @@ public class App {
                 switch(cmd.toLowerCase()) {
     
                     case "buyer":
+                    case "buy":
                         buyer(inputs, vm);
                     break;
                     case "seller":
@@ -602,6 +603,7 @@ public class App {
                         userLogin(inputs);
                     break;
                     case "products":
+                    case "product":
                         products(vm);
                     break;
                     case "help":
@@ -629,7 +631,10 @@ public class App {
                         }
                         cashRemove(vm, inputs);
                     break;
+                    case "exit":
                     case "quit":
+                    case ":wq":
+                    case ":q!":
                         endProgram(vm);
                         s.close();
                         return;
