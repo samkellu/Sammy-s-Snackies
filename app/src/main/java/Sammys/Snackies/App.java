@@ -235,7 +235,7 @@ public class App {
         // takes itemname itemcount 
 
         if (inputs.size() != 3){
-            printColour(RED, "Invalid input. Use \"help restockContents\" for help");
+            printColour(RED, "Invalid input. Use \"help restock\" for help");
             return;
         }
 
@@ -287,7 +287,7 @@ public class App {
             if (name.equals(slotName)){
                 currentSlot = vm.getSlots().get(name);
                 if (currentSlot.getCount()!=0){
-                    printColour(RED, "Slot already exists and is non empty! Please choose an empty slot or try \"restockProduct\"");
+                    printColour(RED, "Slot already exists and is non empty! Please choose an empty slot or try \"restock\"");
                     return;
                 }
             }
@@ -451,25 +451,27 @@ public class App {
 
             if(currentType == UserType.SELLER){
                 printColour(YELLOW, "---------------Seller Commands-------------");
-                System.out.println("restockContents - restock a specific item in the machine");
-                System.out.println("addProduct - add a new item to the machine");
-                System.out.println("removeProduct - remove an existing item from the machine");
+                System.out.println("restock - restock a specific item in the machine");
+                System.out.println("product add - add a new item to the machine");
+                System.out.println("product remove - remove an existing item from the machine");
             }
             if(currentType == UserType.CASHIER){
                 printColour(YELLOW, "---------------Cashier Commands-------------");
-                System.out.println("CashCheck - Returns the current denominations of all cash in the machines");
-                System.out.println("CashAdd - Add a number of a denomination into the machine");
-                System.out.println("CashRemove - Remove a number of a denomination into the machine");
+                System.out.println("cash check - Returns the current denominations of all cash in the machines");
+                System.out.println("cash add - Add a number of a denomination into the machine");
+                System.out.println("cash remove - Remove a number of a denomination into the machine");
             }
             if(currentType == UserType.OWNER){
                 printColour(YELLOW, "---------------Owner Commands-------------");
-                System.out.println("addUser - Add a new user to the system");
-                System.out.println("removeUser - Remove an existing user from the system");
-                System.out.println("listTransactions - View transaction history");
+                System.out.println("user add - Add a new user to the system");
+                System.out.println("user remove - Remove an existing user from the system");
+                System.out.println("list transactions - View transaction history");
             }
 
         } else if (inputs.size() >= 2) {
-
+            if (inputs.size() == 3){
+                inputs.add(1, inputs.get(1)+inputs.get(2));
+            }
             switch(inputs.get(1).toLowerCase()) {
                 case "buyer":
                 case "buy":
@@ -478,20 +480,15 @@ public class App {
                     System.out.println("buyer <cash/card> <product> <amount> [denominations...]\n");
                 break;
                 
-                case "adduser":
+                case "useradd":
                     System.out.println("\n OWNER USE ONLY: Use this command to add a new user to the list of logins");
                     System.out.println("Useage: ");
-                    printColour(GREEN, "addUser <username> <password> <user type>");
+                    printColour(GREEN, "user add <username> <password> <user type>");
                 break;
-                case "removeuser":
+                case "userremove":
                 System.out.println("\n OWNER USE ONLY: Use this command to remove a new user");
                 System.out.println("Useage: ");
-                printColour(GREEN, "removeUser <username>");
-                break;
-                case "cashier":
-                    System.out.println("\nUse this command to TODO");
-                    System.out.println("Usage:");
-                    System.out.println("cashier TODO");
+                printColour(GREEN, "user remove <username>");
                 break;
                 case "login":
                     System.out.println("\nUse this command to log in to a cashier/owner/seller account.");
@@ -499,7 +496,6 @@ public class App {
                     printColour(GREEN, "login <username> <password>");
                 break;
                 case "products":
-                case "product":
                 System.out.println("\nUse this command to list all products in the vending machine.");
                 System.out.println("Usage:");
                 printColour(GREEN, "products");
@@ -522,12 +518,12 @@ public class App {
                     System.out.println("Usage:");
                     System.out.println("restockcontents <slot name> <restock count>\n");
                 break;
-                case "addproduct":
+                case "productadd":
                     System.out.println("\nSELLER USE ONLY: Use this command add a new item.");
                     System.out.println("Usage:");
                     System.out.println("addproduct <slot name> <product name> <product price> <product category> <product stock>\n");
                 break;
-                case "removeproduct":
+                case "productremove":
                     System.out.println("\nSELLER USE ONLY: RUse this command remove an existing  item.");
                     System.out.println("Usage:");
                     System.out.println("removeproduct <slot name> \n");
@@ -574,7 +570,7 @@ public class App {
     private static void cashAdd(VendingMachine vm, ArrayList<String> inputs){
 
         if(inputs.size() < 2){
-            System.out.println("Incorrect number of parameters. Use \"help cashadd\" for more information.");
+            System.out.println("Incorrect number of parameters. Use \"help cash add\" for more information.");
             return;
         }
 
@@ -616,7 +612,7 @@ public class App {
     private static void cashRemove(VendingMachine vm, ArrayList<String> inputs) {
 
         if(inputs.size() < 2){
-            System.out.println("Incorrect number of parameters. Use \"help cashremove\" for more information.");
+            System.out.println("Incorrect number of parameters. Use \"help cash remove\" for more information.");
             return;
         }
 
@@ -741,42 +737,61 @@ public class App {
                 String cmd = inputs.get(0);
                 
                 switch(cmd.toLowerCase()) {
-    
-                    case "buyer":
+
                     case "buy":
                         buyer(inputs, vm);
                     break;
                     case "cashier":
                         cashier(inputs);
                     break;
-                    case "adduser":
-                    if(currentType != UserType.OWNER){
-                        unknownCommand(inputs);
-                    }
-                    else{
-                        addUser(inputs);
-                    }
-                    break;
-                    case "removeuser":
-                        if(currentType != UserType.OWNER){
-                            unknownCommand(inputs);
+                    case "user":
+                        if(inputs.size() > 1){
+                            
+                            if(currentType != UserType.OWNER){
+                                unknownCommand(inputs);
+                            }
+                            else{
+                                if(inputs.get(1).equals("remove")){
+                                    inputs.remove(0);
+                                    removeUser(inputs);
+                                }
+                                else if(inputs.get(1).equals("add")){
+                                    inputs.remove(0);
+                                    addUser(inputs);
+                                }
+                                else{
+                                    unknownCommand(inputs);
+                                }
+                            
+                                }
                         }
                         else{
-                            removeUser(inputs);
+                            unknownCommand(inputs);
                         }
+                        
                         break;
-                    case "listtransactions":
-                        if(currentType != UserType.OWNER){
-                            unknownCommand(inputs);
+                    case "list":
+                        if(inputs.size() > 1){
+                            if(inputs.get(1).equals("transactions")){
+                                if(currentType != UserType.OWNER){
+                                    unknownCommand(inputs);
+                                }
+                                else{
+                                    listTransactions(vm);
+                                }
+                            }
+                            else{
+                                unknownCommand(inputs);
+                            }
                         }
                         else{
-                            listTransactions(vm);
+                            unknownCommand(inputs);
                         }
                     break;
                     case "login":
                         userLogin(inputs);
                     break;
-                    case "restockcontents":
+                    case "restock":
                         if (currentType != UserType.SELLER){
                             unknownCommand(inputs);
 
@@ -784,52 +799,70 @@ public class App {
                             restockProduct(inputs, vm);
                         }
                     break;
-                    case "addproduct":
-                        if (currentType != UserType.SELLER){
-                            unknownCommand(inputs);
-
-                        } else {
-                            addProduct(inputs, vm);
-                        }
-                    break;
-                    case "removeproduct":
-                        if (currentType != UserType.SELLER){
-                            unknownCommand(inputs);
-
-                        } else {
-                            removeProduct(inputs, vm);
-                        }
-                    break;
-
-                    case "products":
                     case "product":
+                        if(inputs.size() > 1){
+                                
+                            if(currentType != UserType.SELLER){
+                                unknownCommand(inputs);
+                            }
+                            else{
+                                if(inputs.get(1).equals("remove")){
+                                    inputs.remove(0);
+                                    removeProduct(inputs, vm);
+                                }
+                                else if(inputs.get(1).equals("add")){
+                                    inputs.remove(0);
+                                    addProduct(inputs, vm);
+                                }
+                                else{
+                                    unknownCommand(inputs);
+                                }
+                            
+                                }
+                        }
+                        else{
+                            unknownCommand(inputs);
+                        }
+                        
+                        break;
+                    
+                    case "products":
                         products(vm);
                     break;
                     case "help":
                         helpCommand(inputs);
                     break;
-                    case "cashcheck":
+                    case "cash":
+                    if(inputs.size() > 1){
+                            
                         if(currentType != UserType.CASHIER){
                             unknownCommand(inputs);
                         }
                         else{
-                            cashCheck(vm);
-                        }
+                            if(inputs.get(1).equals("remove")){
+                                inputs.remove(0);
+                                cashRemove(vm, inputs);
+                            }
+                            else if(inputs.get(1).equals("add")){
+                                inputs.remove(0);
+                                cashAdd(vm, inputs);
+                            }
+                            else if(inputs.get(1).equals("check")){
+                                inputs.remove(0);
+                                cashCheck(vm);
+                            }
+                            else{
+                                unknownCommand(inputs);
+                            }
+                        
+                            }
+                    }
+                    else{
+                        unknownCommand(inputs);
+                    }
+                    
                     break;
-                    case "cashadd":
-                        if(currentType != UserType.CASHIER){
-                            unknownCommand(inputs);
-                            break;
-                        }
-                        cashAdd(vm, inputs);
-                    break;
-                    case "cashremove":
-                        if(currentType != UserType.CASHIER){
-                            unknownCommand(inputs);
-                            break;
-                        }
-                        cashRemove(vm, inputs);
-                    break;
+
                     case "exit":
                     case "quit":
                     case ":wq":
