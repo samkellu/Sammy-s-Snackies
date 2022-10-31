@@ -76,7 +76,9 @@ class UserLogin {
     public static void writeUsersToFile(String fp, ArrayList<UserLogin> logins){
         ArrayList<HashMap<String, Object>> jsonData = new ArrayList<>();
         
-        HashMap<String, Object> currencyData = new HashMap<String, Object>();
+        // TODO
+        // this was unused, I think this is fully done but I'll leave it as a comment for now.
+        // HashMap<String, Object> currencyData = new HashMap<String, Object>();
         
 
         for (UserLogin user : logins) {

@@ -1,7 +1,5 @@
 package Sammys.Snackies;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 
 // When writing the sale code in vendingMachine, create a new transaction and increment the transactionID  
 
