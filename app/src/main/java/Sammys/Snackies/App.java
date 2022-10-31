@@ -7,7 +7,6 @@ import java.util.Set;
 import java.util.HashMap;
 
 public class App {
-
     private static final String saveFilePath = "saveFile.json";
     private static UserType currentType = UserType.BUYER;
     private static ArrayList<UserLogin> userLogins;
@@ -60,7 +59,6 @@ public class App {
     }
 
     private static void buyer(ArrayList<String> inputs, VendingMachine vm) {
-
 
         // ensure enough arguments
         if (inputs.size() < 4) {
@@ -233,7 +231,6 @@ public class App {
             System.out.println("You are unauthorised!! Cashier role is required, please log in.");
             return;
         }
-
     }
 
     private static void addUser(ArrayList<String> inputs) {
@@ -298,8 +295,6 @@ public class App {
                 System.out.println("Removed user " + username);
                 isFound = true;
                 break;
-
-
             }
         }
         if (!isFound){
@@ -393,10 +388,9 @@ public class App {
                     System.out.println("quit\n");
                 break;
                 case "cashcheck":
-                    // TODO make this word
-                    System.out.println("\nCASHIER USE ONLY: Returns the denominations fo coins currently in the machine");
+                    System.out.println("\nCASHIER USE ONLY: Returns the denominations for coins and notes currently in the machine");
                     System.out.println("Usage:");
-                    System.out.println("cashremove\n");
+                    System.out.println("cashcheck\n");
                 break;
                 case "cashadd":
                     System.out.println("\nCASHIER USE ONLY: Use this command to add money to the machine");
@@ -406,7 +400,7 @@ public class App {
                 case "cashremove":
                     System.out.println("\nCASHIER USE ONLY: Use this command to remove money from the machine");
                     System.out.println("Usage:");
-                    System.out.println("cashremove [num] [denomination]\n");
+                    System.out.println("cashremove <num>*<denomination>...\n");
                 break;
                 default:
                     System.out.println(String.format("\nUnrecognised command: %s\n", inputs.get(1)));
@@ -470,53 +464,46 @@ public class App {
             vm.addCurrencyCount(values[1], amt);
         }
 
-        /*
-
-        TODO
-        this is the original cash add code, I'm leaving it here for the time being incase any test cases have been made and we can get print
-        statements correct again
-        Let's remove this big comment block once we've checked any testing.
-
-        int num = 0;
-        String denomination = inputs.get(2);
-        try{
-            num = Integer.parseInt(inputs.get(1));
-        }
-        catch(Exception e){
-            System.out.println("2nd element is not a valid number. Use \"help cashadd\" for more information.");
-            return;
-        }
-        try{
-            vm.addCurrencyCount(denomination, num);
-        }
-        catch(Exception e){
-            System.out.println("Incorrect Currency name parsed");
-            return;
-        }
-        */
         System.out.println("Currency successful added");
-
     }
 
-    private static void cashRemove(VendingMachine vm, ArrayList<String> inputs){
-        if(inputs.size() != 3){
-            System.out.println("Incorrect number of parameters. Use \"help cashadd\" for more information.");
+    private static void cashRemove(VendingMachine vm, ArrayList<String> inputs) {
+
+        if(inputs.size() < 2){
+            System.out.println("Incorrect number of parameters. Use \"help cashremove\" for more information.");
             return;
         }
-        int num = 0;
-        String denomination = inputs.get(2);
-        try{
-            num = Integer.parseInt(inputs.get(1));
-        }
-        catch(Exception e){
-            System.out.println("2nd element is not a valid number. Use \"help cashadd\" for more information.");
-            return;
-        }
-        try{
-            vm.removeCurrencyCount(denomination, num);
-        }
-        catch(Exception e){
-            return;
+
+        ArrayList<String> inputDenoms = new ArrayList<String>(inputs.subList(1, inputs.size()));
+
+        for (String s : inputDenoms) {
+
+            String[] values = s.split("\\*");
+
+            Set<String> denomSet = Set.of("5c","10c","20c","50c","$1","$2","$5","$10","$20","$50","$100");
+
+            if (values.length != 2 || !(denomSet.contains(values[1]))) {
+                System.out.println("\nUnrecognisable denomination.\nPlease use the format <amount>*<value>, where value can be 50c, $2, $5 etc. and amount is a positive integer.\n");
+                return;
+            }
+                            
+            int amt = -1;
+            
+            try {
+                amt = Integer.parseInt(values[0]);
+            } catch (NumberFormatException e) {
+                System.out.println("\nPlease ensure the cash amount is a positive integer.\n");
+                return;
+            } 
+            
+            if (amt <= 0) {
+                System.out.println("\nPlease ensure the cash amount is a positive integer.\n");
+                return;
+            }
+            
+            if (parseDenom(values[1]) == -1) return;
+
+            vm.addCurrencyCount(values[1], amt);
         }
         System.out.println("Currency successful removed");
 
@@ -554,7 +541,7 @@ public class App {
 
         System.out.println("Welcome to Sammy's Snackies!");
         System.out.print("> ");
-        while (true){
+        while (true) {
             System.out.print("> ");
             while(s.hasNextLine()){
                 
