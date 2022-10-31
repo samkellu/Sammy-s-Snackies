@@ -37,6 +37,15 @@ public class VendingMachine {
     public ArrayList<Transaction> getTransactions() {
         return this.transactions;
     }
+
+    public boolean isInMachine(String itemName){
+        for (Slot slot : allSlots.values()){
+            if (slot.getContents().getName().equals(itemName)){
+                return true;
+            }
+        }
+        return false;
+    }
     
     public void addTransaction(String paymentMethod, FoodItem productBought, Integer qty) {
         transactions.add(new Transaction(currentTransactionID++, paymentMethod, productBought, qty));
