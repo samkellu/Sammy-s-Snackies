@@ -11,4 +11,60 @@ class AppTest {
         // App classUnderTest = new App();
         assertNotNull(1,"nice");
     }
+
+    @Test void checkCardVerificationValid() {
+        assertTrue(App.verifyCard(1010101010101010L, "12/22", 333));
+    }
+
+    @Test void checkCardVerificationLarge() {
+        assertTrue(App.verifyCard(9999999999999999L, "12/22", 333));
+    }
+
+    @Test void checkCardVerificationInvalidCardUnder() {
+        assertFalse(App.verifyCard(999999999999999L, "12/22", 333));
+    }
+
+    @Test void checkCardVerificationInvalidCardOver() {
+        assertFalse(App.verifyCard(99999999999999999L, "12/22", 333));
+    }
+
+    @Test void checkCardVerificationInvalidCVCUnder() {
+        assertFalse(App.verifyCard(1010101010101010L, "12/22", 33));
+    }
+
+    @Test void checkCardVerificationInvalidCVCOver() {
+        assertFalse(App.verifyCard(1010101010101010L, "12/22", 33123));
+    }
+
+    @Test void checkCardVerificationInvalidCVC4() {
+        assertTrue(App.verifyCard(1010101010101010L, "12/22", 3312));
+    }
+
+    @Test void checkCardVerificationInvalidDateUnder() {
+        assertFalse(App.verifyCard(1010101010101010L, "12/21", 332));
+    }
+
+    @Test void checkCardVerificationInvalidDateBadMonthUnder() {
+        assertFalse(App.verifyCard(1010101010101010L, "-2/21", 332));
+    }
+
+    @Test void checkCardVerificationInvalidDateBadMonthOver() {
+        assertFalse(App.verifyCard(1010101010101010L, "13/21", 332));
+    }
+
+    @Test void checkCardVerificationInvalidDateBadYearUnder() {
+        assertFalse(App.verifyCard(1010101010101010L, "11/-1", 332));
+    }
+
+    @Test void checkCardVerificationInvalidDateBadYearOverLen() {
+        assertFalse(App.verifyCard(1010101010101010L, "11/100", 332));
+    }
+
+    @Test void checkCardVerificationInvalidDateBadMonthOverLen() {
+        assertFalse(App.verifyCard(1010101010101010L, "111/50", 332));
+    }
+
+    @Test void checkCardVerificationValidDateMonthLen1() {
+        assertTrue(App.verifyCard(1010101010101010L, "1/50", 332));
+    }
 }
