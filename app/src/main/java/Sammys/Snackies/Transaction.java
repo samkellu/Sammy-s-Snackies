@@ -46,6 +46,6 @@ public class Transaction {
     
     // Genereates a receipt of the transaction
     public String toOutput() {
-        return String.format("Transaction #%d: Payment Method: %s, %dx %s -> $%.2f", transactionID, paymentMethod, qty, productBought.getName(), totalAmount);
+        return String.format("| #%-14d| %-15s| %-29s |", transactionID, paymentMethod, String.format("%dx %s -> $%.2f", qty, productBought.getName(), totalAmount));
     }
 }

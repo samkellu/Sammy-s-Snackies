@@ -51,6 +51,6 @@ public class Slot {
     }
 
     public String toString() {
-        return String.format("%s    | %s    | %d    | $%.2f |", name, contents.getName(), count, contents.getPrice());
+        return String.format("| %-5s| %-12s| %-5d| %-8.2f |", name, contents.getName(), count, contents.getPrice());
     }
 }
