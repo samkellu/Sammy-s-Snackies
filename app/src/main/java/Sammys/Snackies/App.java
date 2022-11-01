@@ -608,10 +608,10 @@ public class App {
 
                  
                 // Seller commands
-                case "restockcontents":
+                case "restock":
                     printColour(YELLOW, "SELLER USE ONLY: Use this command restock an item.");
                     printColour(YELLOW, "Usage:");
-                    printColour(GREEN, "    restock contents <slot name> <restock count>");
+                    printColour(GREEN, "    restock <slot name> <restock count>");
                 break;
                 case "productadd":
                     printColour(YELLOW, "SELLER USE ONLY: Use this command add a new item.");
@@ -905,7 +905,6 @@ public class App {
                     case "restock":
                         if (currentType != UserType.SELLER){
                             unknownCommand(inputs);
-
                         } else {
                             restockProduct(inputs, vm);
                         }
