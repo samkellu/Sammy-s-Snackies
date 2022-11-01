@@ -128,7 +128,9 @@ public class App {
 
         // Ensure enough arguments
         if (inputs.size() < 4) {
-            printColour(RED, "Not enough arguments. Use \"help buyer\" to see required arguments.");
+            printColour(RED, "Not enough arguments.");
+            printColour(YELLOW, "Usage:");
+            printColour(GREEN, "    buy <cash/card> <product> <amount> [denominations...]");
             return;
         }
         // Check cash or card
@@ -138,7 +140,9 @@ public class App {
 
             // Ensure enough arguments for cash payment
             if (inputs.size() < 4) {
-                printColour(RED, "Not enough arguments. Use \"help buyer\" to see required arguments.");
+                printColour(RED, "Not enough arguments.");
+                printColour(YELLOW, "Usage:");
+                printColour(GREEN, "    buy <cash/card> <product> <amount> [denominations...]");
                 return;
             }
         // Gives error if the payment method is neither card nor cash
@@ -360,7 +364,9 @@ public class App {
 
         // Check number of inputs
         if (inputs.size() != 3){
-            printColour(RED, "Invalid input. Use \"help restock\" for help");
+            printColour(RED, "Invalid input.");
+            printColour(YELLOW, "Usage:");
+            printColour(GREEN, "    restock <slot name> <restock count>");
             return;
         }
 
@@ -408,7 +414,10 @@ public class App {
 
         // Checks number of inputs
         if (inputs.size() != 6){
-            printColour(RED, "Invalid input, use \"help add product\" to get help");
+            printColour(RED, "Invalid input.");
+            printColour(YELLOW, "Usage:");
+            printColour(GREEN, "    product add <slot name> <product name> <product price> <product category> <product stock>");
+                
             return;
         }
 
@@ -479,7 +488,9 @@ public class App {
 
         // Checks input size
         if (inputs.size() != 2){
-            printColour(RED, "Invalid input length, use \"help removeProduct\" for help");
+            printColour(RED, "Invalid input.");
+            printColour(YELLOW, "Usage:");
+            printColour(GREEN, "    product remove <slot name>");
             return;
         }
 
@@ -513,7 +524,9 @@ public class App {
 
         // Checks input size
         if (inputs.size() != 4){
-            printColour(RED, "Incorrect number of parameters. Use \"help addUser\" for more information.");
+            printColour(RED, "Invalid input.");
+            printColour(YELLOW, "Usage: ");
+            printColour(GREEN, "    user add <username> <password> <user type>");
             return;
         }
 
@@ -541,7 +554,9 @@ public class App {
 
         // Checks input size
         if (inputs.size() != 3) {
-            printColour(RED, "Incorrect number of parameters. Use \"help login\" for more information.");
+            printColour(RED, "Invalid input.");
+            printColour(YELLOW, "Usage:");
+            printColour(GREEN, "    login <username> <password>");
             return;
         }
 
@@ -569,7 +584,9 @@ public class App {
 
         // Checks input size
         if (inputs.size() != 2){
-            printColour(RED, "Incorrect paramaters! Use \"help removeUser\" to recieve help!");
+            printColour(RED, "Invalid input.");
+            printColour(YELLOW, "Usage: ");
+            printColour(GREEN, "    user remove <username>");
             return;
         }
 
@@ -646,10 +663,11 @@ public class App {
         */
 
         // ensure correct permissions
-        if (currentType != UserType.SELLER)
-            return RED + "You are unauthorised!! Seller role is required, please log in." + RESET;
+        // if (currentType != UserType.SELLER)
+        //     return RED + "You are unauthorised!! Seller role is required, please log in." + RESET;
 
         // ensure correct number of arguments
+
         if (inputs.size() < 5 || inputs.size() > 6)
             return RED + "\nIncorrect paramaters! Use \"help modify\" to recieve help!" + RESET;
 
@@ -779,6 +797,7 @@ public class App {
                 printColour(GREEN, "    restock -" + RESET + " restock a specific item in the machine");
                 printColour(GREEN, "    product add -" + RESET + " add a new item to the machine");
                 printColour(GREEN, "    product remove -" + RESET + " remove an existing item from the machine");
+                printColour(GREEN, "    modify -" + RESET + " modify an existing item in the machine");
             }
             if(currentType == UserType.CASHIER){
                 printColour(YELLOW, "---------------Cashier Commands-------------");
@@ -840,12 +859,12 @@ public class App {
                 case "cashadd":
                     printColour(YELLOW, "CASHIER USE ONLY: Use this command to add money to the machine");
                     printColour(YELLOW, "Usage:");
-                    printColour(GREEN, "    cash  add [<num> <denomination> ...]");
+                    printColour(GREEN, "    cash add [<num>*<denomination> ...]");
                     break;
                 case "cashremove":
                     printColour(YELLOW, "CASHIER USE ONLY: Use this command to remove money from the machine");
                     printColour(YELLOW, "Usage:");
-                    printColour(GREEN, "    cash remove [<num> <denomination> ...]");
+                    printColour(GREEN, "    cash remove [<num>*<denomination> ...]");
                 break;
 
                  
@@ -882,6 +901,20 @@ public class App {
                     printColour(YELLOW, "OWNER USE ONLY: Use this command to generate a list of all users and their types");
                     printColour(YELLOW, "Usage: ");
                     printColour(GREEN, "    user list");
+                break;
+                case "modify":
+                    printColour(YELLOW, "SELLER USE ONLY");
+                    printColour(YELLOW, "To change a slot's name:");
+                    printColour(GREEN, "    modify <old_slot_name> slot name to <new_slot_name>\n");
+                    printColour(YELLOW, "Note: this name must be unique in the vending machine");
+                    printColour(YELLOW, "To change just one slot's product's details:");
+                    printColour(GREEN, "    modify <slot_name> product name to <new_product_name>");
+                    printColour(GREEN, "    modify <slot_name> product price to <new_price>");
+                    printColour(GREEN, "    modify <slot_name> product category to <new_category>\n");
+                    printColour(YELLOW, "To change all product's details that have the same name:");
+                    printColour(GREEN, "    modify <product_name> name to <new_product_name>");
+                    printColour(GREEN, "    modify <product_name> price to <new_price>");
+                    printColour(GREEN, "    modify <product_name> category to <new_category>");
                 break;
                 default:
                     printColour(RED,String.format("Unrecognised command: %s", inputs.get(1)));
@@ -975,7 +1008,9 @@ public class App {
 
         // Checks input size
         if(inputs.size() < 2){
-            printColour(RED, "Incorrect number of parameters. Use \"help cash add\" for more information.");
+            printColour(RED, "Invalid input.");
+            printColour(YELLOW, "Usage:");
+            printColour(GREEN, "    cash add [<num> <denomination> ...]");
             return;
         }
 
@@ -1020,7 +1055,9 @@ public class App {
 
         // Checks input size
         if(inputs.size() < 2){
-            printColour(RED, "Incorrect number of parameters. Use \"help cash remove\" for more information.");
+            printColour(RED, "Invalid input");
+            printColour(YELLOW, "Usage:");
+            printColour(GREEN, "    cash remove [<num>*<denomination> ...]");
             return;
         }
 
@@ -1174,7 +1211,7 @@ public class App {
                                 } else if (inputs.get(1).equals("add")) {
                                     inputs.remove(0);
                                     addUser(inputs);
-                                } if (inputs.get(1).equals("list")) {
+                                } else if (inputs.get(1).equals("list")) {
                                     inputs.remove(0);
                                     userList(inputs);
                                 } else {
