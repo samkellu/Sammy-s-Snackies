@@ -69,6 +69,11 @@ class UserLogin {
         return this.username;
     }
 
+    public String toString(){
+        String retval = this.username + ", " + this.type.toString();
+        return retval;
+    }
+
     public String getPassword(){
         return this.password;
     }
@@ -124,4 +129,6 @@ class UserLogin {
         }
         return retval;
     }
+    
+
 }
