@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.HashMap;
+import java.time.*;
 
 public class App {
 
@@ -17,6 +18,7 @@ public class App {
     private static UserType currentType = UserType.BUYER;
     private static ArrayList<UserLogin> userLogins;
     private static final String userLoginFilepath = "userLogins.json";
+
     private static double parseDenom(String s) {
 
         switch (s) {
@@ -64,6 +66,12 @@ public class App {
             }
         }
         if (noProducts) printColour(RED, "\nSorry, there are no products available in this machine.");
+    }
+
+    private static void printCardError() {
+        printColour(RED, "Invalid card details entered, please try again or type \"quit\" to cancel this transaction.\nCard details must be of the form:\n");
+        printColour(GREEN, "  CARD NUMBER (16) MM/YY CVC\n  **************** **/** ***");
+        System.out.print("> ");
     }
 
     private static void buyer(ArrayList<String> inputs, VendingMachine vm) {
@@ -124,7 +132,7 @@ public class App {
 
         if (slot.getCount() < productAmt) {
             if (slot.getCount() == 0){
-                printColour(RED, "Unfortunately, this machine is all out of stock of " + slot.getContents());
+                printColour(RED, "Unfortunately, this machine is all out of stock of " + slot.getContents().getName());
             } else {
                 printColour(RED, "Unfortunately, this machine only has " + slot.getCount() + "x " + slot.getContents().toString() + " available.");
             }
@@ -213,7 +221,46 @@ public class App {
 
             if (!givingChange) {
                 changeString = "Correct change given, no change to give\n\n";
-            }    
+            }
+
+        } else {
+
+            boolean attempting = true;
+            Scanner s = new Scanner(System.in);
+            String input = new String();
+
+            printColour(YELLOW, "Please enter your card details, or type \"quit\" to cancel this transaction.\nCard details must be of the form:\n");
+            printColour(GREEN, "  CARD NUMBER (16) MM/YY CVC\n  **************** **/** ***");
+            System.out.print("> ");
+
+            while (attempting) {
+                input = s.nextLine();
+                System.out.println();
+                if (input.toLowerCase().equals("quit")) {
+                    printColour(GREEN, "Transaction cancelled.");
+                    return;
+                }
+
+                String sepInput[] = input.split(" ");
+
+                if (sepInput.length != 3) {
+                    printCardError();
+                    continue;
+                }
+
+                try {
+                    if (!verifyCard(Long.parseLong(sepInput[0]), sepInput[1], Integer.parseInt(sepInput[2]))) {
+                        printCardError();
+                        continue;
+                    } else {
+                        printColour(GREEN, "Card is valid!");
+                        attempting = false;
+                        break;
+                    }
+                } catch (Exception e) {
+                    printCardError();
+                }
+            }
         }
 
         // dispense products and change
@@ -229,7 +276,25 @@ public class App {
         // ensure enough money given, need the vending machine to know the price.
     }
 
+    public static boolean verifyCard(long cardNumber, String date, int cvc) {
 
+        String dateArr[] = date.split("/");
+        if (dateArr.length != 2 || dateArr[0].length() > 2 || dateArr[1].length() > 2 || dateArr[0].length() <= 0 || dateArr[1].length() <= 0) {
+            return false;
+        }
+            
+        LocalDate localDate = LocalDate.now();
+        try {
+            date = String.format("20%d-%02d-01",Integer.parseInt(dateArr[1]), Integer.parseInt(dateArr[0]));
+            if (String.valueOf(cardNumber).length() == 16 && (String.valueOf(cvc).length() == 3 || String.valueOf(cvc).length() == 4) && localDate.isBefore(LocalDate.parse(date))) {
+                return true;
+            }
+            return false;
+
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
     private static void restockProduct(ArrayList<String> inputs, VendingMachine vm){
         // takes itemname itemcount 
@@ -273,9 +338,6 @@ public class App {
         }
 
         System.out.println("Successfully restocked " + inputs.get(2) +" "+slot.getContents().getName()+"'s, new stock count is " + Integer.toString(slot.getCount()) + " with a value of $" +String.format("%.2f", slot.getCount()*slot.getContents().getPrice()));
-
-
-
     }
 
 
@@ -318,8 +380,8 @@ public class App {
                 System.out.println("Category not found! Please choose one of the following categories:");
                 System.out.println("CHOCOLATE | CANDY | CHIPS | DRINK");
                 return;
-
         }
+
         try{
             FoodItem newFood = new FoodItem(inputs.get(2).toLowerCase(), Double.parseDouble(inputs.get(3)), foodCategory);
             if (currentSlot != null){
@@ -335,10 +397,6 @@ public class App {
             System.out.println("Please use a decimal number for price and an integer for food item count");
             return;
         }
-
-
-
-
     }
 
     private static void cashier(ArrayList<String> inputs) {
@@ -712,11 +770,11 @@ public class App {
 
         userLogins = UserLogin.readFromFile(userLoginFilepath);
 
-
         while (true){
             while(s.hasNextLine()){
                 
                 String input = s.nextLine();
+                System.out.println();
                 String[] userInput = input.split(" ");
                 ArrayList<String> inputs = new ArrayList<String>(Arrays.asList(userInput));
                 String cmd = inputs.get(0);
