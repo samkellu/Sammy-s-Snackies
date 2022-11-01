@@ -79,12 +79,10 @@ public class VendingMachine {
             }
         }
         if (!currencyFound){
-            System.out.println("Incorrect denomination parsed! (" + currencyName + ")");
-            throw new NoSuchElementException();
+            throw new NoSuchElementException("Incorrect denomination parsed! (" + currencyName + ")");
         }
         if(this.currencyCounts.get(currencyName) < currencyCount){
-            System.out.println("Not enough of this denomination in the machine");
-            throw new NoSuchElementException();
+            throw new NoSuchElementException("Not enough of this denomination in the machine");
         }
         this.currencyCounts.put(currencyName, this.currencyCounts.get(currencyName) - currencyCount);
         
