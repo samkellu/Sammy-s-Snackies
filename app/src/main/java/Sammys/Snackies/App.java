@@ -57,17 +57,55 @@ public class App {
 
     private static void products(VendingMachine v) {
 
-        printColour(YELLOW, "Products available:\n");
-        boolean noProducts = true;
-        printColour(GREEN, "    | " + RESET + YELLOW + "SLOT" + RESET + GREEN + " | " + RESET + YELLOW + "NAME" + RESET + GREEN + "        | " + RESET + YELLOW + "QTY" + RESET + GREEN + "  | " + RESET + YELLOW + "PRICE" + RESET + GREEN + "    |");
-        printColour(GREEN, "    |------+-------------+------+----------|");
+        int maxSlot = 5;
+        int maxName = 5;
+        int maxQty = 4;
+        int maxPrice = 6;
+
+        boolean empty = false;
         for (String key : v.getSlots().keySet()) {
-            if (v.getSlots().get(key).getCount() > 0) {
-                printColour(GREEN, "    " + v.getSlots().get(key).toString());
-                noProducts = false;
+
+            if (!empty) {
+                empty = (v.getSlots().get(key).getCount() == 0) ? true : false;
             }
+                
+            String name = v.getSlots().get(key).getName();
+            String qty = String.valueOf(v.getSlots().get(key).getCount());
+            String price = String.format("$%.2f", v.getSlots().get(key).getContents().getPrice());
+
+            maxSlot = (key.length() > maxSlot) ? key.length() : maxSlot;
+            maxName = (name.length() > maxName) ? name.length() : maxName;
+            maxQty = (qty.length() > maxQty) ? qty.length() : maxQty;
+            maxPrice = (price.length() > maxPrice) ? price.length() : maxPrice;
         }
-        if (noProducts) printColour(RED, "Sorry, there are no products available in this machine.");
+
+        if (empty) {
+            printColour(RED, "Sorry, there are no products available in this machine.");
+            return;
+        }
+
+        String slotSub = String.format(RESET + YELLOW + "%-" + maxSlot + "s" + RESET + GREEN, "SLOT");
+        String nameSub = String.format(RESET + YELLOW + "%-" + maxName + "s" + RESET + GREEN, "NAME");
+        String qtySub = String.format(RESET + YELLOW + "%-" + maxQty + "s" + RESET + GREEN, "QTY");
+        String priceSub = String.format(RESET + YELLOW + "%-" + maxPrice + "s" + RESET + GREEN, "PRICE");
+
+        printColour(YELLOW, "Products available:\n");
+        printColour(GREEN, String.format("    | %s | %s | %s | %s |", slotSub, nameSub, qtySub, priceSub));
+
+        String slotSpace = String.format("%-" + maxSlot + "s", "").replace(' ', '-');
+        String nameSpace = String.format("%-" + maxName + "s", "").replace(' ', '-');
+        String qtySpace = String.format("%-" + maxQty + "s", "").replace(' ', '-');
+        String priceSpace = String.format("%-" + maxPrice + "s", "").replace(' ', '-');
+        printColour(GREEN, "    |-" + slotSpace + "-+-" + nameSpace + "-+-" + qtySpace + "-+-" + priceSpace + "-|");
+
+        for (String key : v.getSlots().keySet()) {
+
+            String name = v.getSlots().get(key).getName();
+            String qty = String.valueOf(v.getSlots().get(key).getCount());
+            String price = String.format("$%.2f", v.getSlots().get(key).getContents().getPrice());
+            printColour(GREEN, String.format("    | %-" + maxSlot + "s | %-" + maxName + "s | %-" + maxQty + "s | %-" + maxPrice + "s |", key, name, qty, price));
+        }
+
     }
 
     private static void printCardError() {
@@ -513,7 +551,7 @@ public class App {
             maxPassword = (userLogin.getPassword().length() > maxPassword) ? userLogin.getPassword().length() : maxPassword;
             maxType = (userLogin.getType().toString().length() > maxType) ? userLogin.getType().toString().length() : maxType;
         }
-
+        printColour(YELLOW, "All users in the database: \n");
         printColour(GREEN, String.format("    | " + RESET + YELLOW + "%-" + maxType + "s" + RESET + GREEN + " | " + RESET + YELLOW + "%-" + maxUsername + "s" + RESET + GREEN + " | " + RESET + YELLOW + "%-" + maxPassword + "s" + RESET + GREEN + " |", "TYPE", "USERNAME", "PASSWORD"));
         printColour(GREEN, "    |-" + String.format("%-" + maxType + "s", "").replace(' ', '-') + "-+-" + String.format("%-" + maxUsername + "s", "").replace(' ', '-') + "-+-" + String.format("%-" + maxPassword + "s", "").replace(' ', '-') + "-|");
 
