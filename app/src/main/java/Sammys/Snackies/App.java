@@ -687,12 +687,30 @@ public class App {
     }
 
     private static void cashCheck(VendingMachine vm){
+
+        printColour(YELLOW, "Cash Reserves:\n");
+
+        int maxDenom = 13;
+        int maxAmount = 7;
+
         HashMap<String, Integer> currencyCounts = vm.getCurrencyCounts();
-        printColour(GREEN, "    | " + RESET + YELLOW + "DENOMINATION " + RESET + GREEN + "|" + RESET + YELLOW + " AMOUNT" + RESET + GREEN + "   |");
-        printColour(GREEN, "    |--------------+----------|");
         String denomArr[] = new String[] {"5c","10c","20c","50c","$1","$2","$5","$10","$20","$50","$100"};
         for(String currency : denomArr){
-            printColour(GREEN, String.format("    | %-12s | %-9d|", currency, currencyCounts.get(currency)));
+            String amount = String.valueOf(currencyCounts.get(currency));
+            maxAmount = (amount.length() > maxAmount) ? amount.length() : maxAmount;
+        }
+
+        String denomSub = String.format(RESET + YELLOW + "%-" + maxDenom + "s" + RESET + GREEN, "DENOMINATION");
+        String amountSub = String.format(RESET + YELLOW + "%-" + maxAmount + "s" + RESET + GREEN, "AMOUNT");
+        printColour(GREEN, String.format("    | %s | %s |", denomSub, amountSub));
+
+        String denomSpace = String.format("%-" + maxDenom + "s", "").replace(' ', '-');
+        String amountSpace = String.format("%-" + maxAmount + "s", "").replace(' ', '-');
+        printColour(GREEN, "    |-" + denomSpace + "-+-" + amountSpace + "-|");
+
+        for(String currency : denomArr){
+            String amount = String.valueOf(currencyCounts.get(currency));
+            printColour(GREEN, String.format("    | %-" + maxDenom + "s | %-" + maxAmount + "s |", currency, amount));
         }
     }
 
