@@ -658,11 +658,11 @@ public class App {
 
     private static void cashCheck(VendingMachine vm){
         HashMap<String, Integer> currencyCounts = vm.getCurrencyCounts();
-        printColour(GREEN, "   | " + RESET + YELLOW + "DENOMINATION " + RESET + GREEN + "|" + RESET + YELLOW + " AMOUNT" + RESET + GREEN + "   |");
-        printColour(GREEN, "   |--------------+----------|");
+        printColour(GREEN, "    | " + RESET + YELLOW + "DENOMINATION " + RESET + GREEN + "|" + RESET + YELLOW + " AMOUNT" + RESET + GREEN + "   |");
+        printColour(GREEN, "    |--------------+----------|");
         String denomArr[] = new String[] {"5c","10c","20c","50c","$1","$2","$5","$10","$20","$50","$100"};
         for(String currency : denomArr){
-            printColour(GREEN, String.format("   | %-12s | %-9d|", currency, currencyCounts.get(currency)));
+            printColour(GREEN, String.format("    | %-12s | %-9d|", currency, currencyCounts.get(currency)));
         }
     }
 
