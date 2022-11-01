@@ -152,15 +152,13 @@ public class App {
 
             ArrayList<String> inputDenoms = new ArrayList<String>(inputs.subList(4, inputs.size()));
             HashMap<String, Integer> givenDenominations = new HashMap<>();
+            String[] currencyValues = new String[] {"5c","10c","20c","50c","$1","$2","$5","$10","$20","$50","$100"};
 
             for (String s : inputDenoms) {
 
                 String[] values = s.split("\\*");
-                String[] currencyValues = new String[] {"5c","10c","20c","50c","$1","$2","$5","$10","$20","$50","$100"};
                 ArrayList<String> denomSet = new ArrayList<String>(Arrays.asList(currencyValues));
                 
-
-
                 if (values.length != 2 || !(denomSet.contains(values[1]))) {
                     printColour(RED, "Unrecognisable denomination.\nPlease use the format <amount>*<value>, where value can be 50c, $2, $5 etc. and amount is a positive integer.");
                     return;
@@ -203,10 +201,11 @@ public class App {
 
             boolean givingChange = false;
             changeString = "Change given: ";
-            for (String s : changeToGive.keySet()) {
-                if (changeToGive.get(s) > 0) {
+            for (String value : currencyValues) {
+                if (changeToGive.containsKey(value))
+                if (changeToGive.get(value) > 0) {
                     givingChange = true;
-                    changeString += String.format("%dx%s, ", changeToGive.get(s), s);
+                    changeString += String.format("%dx%s, ", changeToGive.get(value), value);
                 }
             }
             changeString += "\n\n";
@@ -228,8 +227,6 @@ public class App {
         // TODO
         // ensure enough money given, need the vending machine to know the price.
     }
-
-
 
     private static void restockProduct(ArrayList<String> inputs, VendingMachine vm){
         // takes itemname itemcount 
@@ -277,7 +274,7 @@ public class App {
         // addProduct <slot name> <product name> <product price> <product category> <product stock>
 
         if (inputs.size() != 6){
-            printColour(RED, "Invalid input, use \"help addProduct\" to get help");
+            printColour(RED, "Invalid input, use \"help add product\" to get help");
             return;
         }
 
@@ -312,7 +309,12 @@ public class App {
                 return;
         }
         try{
-            FoodItem newFood = new FoodItem(inputs.get(2).toLowerCase(), Double.parseDouble(inputs.get(3)), foodCategory);
+            String priceStr = inputs.get(3);
+            if (priceStr.charAt(0) == '$'){
+                priceStr = priceStr.substring(1);
+            }
+            Double price = Double.parseDouble(priceStr);
+            FoodItem newFood = new FoodItem(inputs.get(2).toLowerCase(), price, foodCategory);
             if (currentSlot != null){
                 vm.getSlots().remove(currentSlot.getName());
             }
@@ -355,12 +357,14 @@ public class App {
         return;
     }
 
-    private static void cashier(ArrayList<String> inputs) {
-        if (currentType != UserType.CASHIER){
-            printColour(RED, "You are unauthorised!! Cashier role is required, please log in.");
-            return;
-        }
-    }
+
+    // Deprecated
+    // private static void cashier(ArrayList<String> inputs) {
+    //     if (currentType != UserType.CASHIER){
+    //         printColour(RED, "You are unauthorised!! Cashier role is required, please log in.");
+    //         return;
+    //     }
+    // }
 
     private static void addUser(ArrayList<String> inputs) {
         if (currentType != UserType.OWNER){
@@ -437,13 +441,42 @@ public class App {
         UserLogin.writeUsersToFile(userLoginFilepath, userLogins);
     }
 
+    private static void userList(ArrayList<String> inputs){
+
+        if (inputs.size() != 1){
+            printColour(YELLOW, "This command takes no user input!");
+        }
+
+        int max = 0;
+        for (UserLogin userLogin :userLogins){
+            if (userLogin.getUsername().length() > max){
+                max = userLogin.getUsername().length();
+            }
+        }
+
+        String space = "";
+        for (int i = 0; i < max; i++){
+            space+=" ";
+        }
+        printColour(YELLOW, "Username" + space + "Password");
+        for (UserLogin userLogin : userLogins){
+            StringBuilder str = new StringBuilder();
+
+            str.append(userLogin.getUsername());
+            for (int i = 0; i < max+8-userLogin.getUsername().toString().length(); i++){
+                str.append(" ");
+            }
+            str.append(userLogin.getType());
+            // str.append();
+            printColour(GREEN, str.toString());
+        }
+    }
     // TODO
     // add message at the end saying something like "to see more on a command use help <command>"
     private static void helpCommand(ArrayList<String> inputs) {
          if (inputs==null || inputs.size() == 1) {
             printColour(YELLOW, "\n---------------Available Commands:---------------");
-            System.out.println("buyer - buy a product");
-            System.out.println("seller - TODO"); // TODO
+            System.out.println("buy - purchase a product");
             System.out.println("products - list available products in the vending machine");
             System.out.println("login - login to a cashier/owner/seller account");
             System.out.println("help - display this screen");
@@ -465,6 +498,7 @@ public class App {
                 printColour(YELLOW, "---------------Owner Commands-------------");
                 System.out.println("user add - Add a new user to the system");
                 System.out.println("user remove - Remove an existing user from the system");
+                System.out.println("user list - Generate a list of users and their role");
                 System.out.println("list transactions - View transaction history");
             }
 
@@ -473,32 +507,23 @@ public class App {
                 inputs.add(1, inputs.get(1)+inputs.get(2));
             }
             switch(inputs.get(1).toLowerCase()) {
+
+                // Universal commands
                 case "buyer":
                 case "buy":
-                    System.out.println("\nUse this command to buy a product from the vending machine.");
+                    System.out.println("\nUse this command to purchase a product from the vending machine.");
                     System.out.println("Usage:");
-                    System.out.println("buyer <cash/card> <product> <amount> [denominations...]\n");
+                    System.out.println("buy <cash/card> <product> <amount> [denominations...]\n");
                 break;
-                
-                case "useradd":
-                    System.out.println("\n OWNER USE ONLY: Use this command to add a new user to the list of logins");
-                    System.out.println("Useage: ");
-                    printColour(GREEN, "user add <username> <password> <user type>");
-                break;
-                case "userremove":
-                System.out.println("\n OWNER USE ONLY: Use this command to remove a new user");
-                System.out.println("Useage: ");
-                printColour(GREEN, "user remove <username>");
+                case "products":
+                    System.out.println("\nUse this command to list all products in the vending machine.");
+                    System.out.println("Usage:");
+                    printColour(GREEN, "products");
                 break;
                 case "login":
                     System.out.println("\nUse this command to log in to a cashier/owner/seller account.");
                     System.out.println("Usage:");
                     printColour(GREEN, "login <username> <password>");
-                break;
-                case "products":
-                System.out.println("\nUse this command to list all products in the vending machine.");
-                System.out.println("Usage:");
-                printColour(GREEN, "products");
                 break;
                 case "help":
                     System.out.println("\nUse this command to see available commands or for more information on a command");
@@ -513,35 +538,58 @@ public class App {
                     System.out.println("Usage:");
                     printColour(GREEN, "quit");
                 break;
+
+                // Cashier Commands
+                case "cashcheck":
+                    System.out.println("\nCASHIER USE ONLY: Returns the denominations fo coins currently in the machine");
+                    System.out.println("Usage:");
+                    printColour(GREEN, "cash check");
+                break;
+                case "cashadd":
+                    System.out.println("\nCASHIER USE ONLY: Use this command to add money to the machine");
+                    System.out.println("Usage:");
+                    printColour(GREEN, "cash  add [num] [denomination]");
+                    break;
+                case "cashremove":
+                    System.out.println("\nCASHIER USE ONLY: Use this command to remove money from the machine");
+                    System.out.println("Usage:");
+                    printColour(GREEN, "cash remove [num] [denomination]");
+                break;
+
+                 
+                // Seller commands
                 case "restockcontents":
                     System.out.println("\nSELLER USE ONLY: Use this command restock an item.");
                     System.out.println("Usage:");
-                    System.out.println("restockcontents <slot name> <restock count>\n");
+                    System.out.println("restock contents <slot name> <restock count>\n");
                 break;
                 case "productadd":
                     System.out.println("\nSELLER USE ONLY: Use this command add a new item.");
                     System.out.println("Usage:");
-                    System.out.println("addproduct <slot name> <product name> <product price> <product category> <product stock>\n");
+                    System.out.println("product add <slot name> <product name> <product price> <product category> <product stock>\n");
                 break;
                 case "productremove":
                     System.out.println("\nSELLER USE ONLY: RUse this command remove an existing  item.");
                     System.out.println("Usage:");
-                    System.out.println("removeproduct <slot name> \n");
+                    System.out.println("product <slot name> \n");
                 break;
-                case "cashcheck":
-                System.out.println("\nCASHIER USE ONLY: Returns the denominations fo coins currently in the machine");
-                System.out.println("Usage:");
-                printColour(GREEN, "cashremove");
+
+               
+                // Owner Commands
+                case "useradd":
+                    System.out.println("\nOWNER USE ONLY: Use this command to add a new user to the list of logins");
+                    System.out.println("Useage: ");
+                    printColour(GREEN, "user add <username> <password> <user type>");
                 break;
-                case "cashadd":
-                System.out.println("\nCASHIER USE ONLY: Use this command to add money to the machine");
-                System.out.println("Usage:");
-                printColour(GREEN, "cashadd [num] [denomination]");
+                case "userremove":
+                    System.out.println("\nOWNER USE ONLY: Use this command to remove a new user");
+                    System.out.println("Useage: ");
+                    printColour(GREEN, "user remove <username>");
                 break;
-                case "cashremove":
-                    System.out.println("\nCASHIER USE ONLY: Use this command to remove money from the machine");
-                    System.out.println("Usage:");
-                    printColour(GREEN, "cashremove [num] [denomination]");
+                case "userlist":
+                    System.out.println("\nOWNER USE ONLY: Use this command to generate a list of all users and their types");
+                    System.out.println("Useage: ");
+                    printColour(GREEN, "user list");
                 break;
                 default:
                     System.out.println(String.format(RED + "\nUnrecognised command: %s", inputs.get(1)));
@@ -741,9 +789,10 @@ public class App {
                     case "buy":
                         buyer(inputs, vm);
                     break;
-                    case "cashier":
-                        cashier(inputs);
-                    break;
+                    // Deprecated
+                    // case "cashier":
+                    //     cashier(inputs);
+                    // break;
                     case "user":
                         if(inputs.size() > 1){
                             
@@ -758,6 +807,9 @@ public class App {
                                 else if(inputs.get(1).equals("add")){
                                     inputs.remove(0);
                                     addUser(inputs);
+                                } if (inputs.get(1).equals("list")){
+                                    inputs.remove(0);
+                                    userList(inputs);
                                 }
                                 else{
                                     unknownCommand(inputs);
