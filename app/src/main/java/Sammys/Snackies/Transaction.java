@@ -43,9 +43,4 @@ public class Transaction {
     public String toString() {
         return transactionID + "," + paymentMethod + "," + productBought.getName() + "," + qty;
     }
-    
-    // Genereates a receipt of the transaction
-    public String toOutput() {
-        return String.format("| #%-14d| %-15s| %-29s |", transactionID, paymentMethod, String.format("%dx %s -> $%.2f", qty, productBought.getName(), totalAmount));
-    }
 }

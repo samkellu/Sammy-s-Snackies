@@ -697,11 +697,45 @@ public class App {
     }
 
     private static void listTransactions(VendingMachine vm) {
-        printColour(YELLOW, "Transaction History:");
-        printColour(GREEN, "\n    | " + RESET + YELLOW + "TRANSACTION ID" + RESET + GREEN + " | " + RESET + YELLOW + "PAYMENT METHOD" + RESET + GREEN + " | " + RESET + YELLOW + "PURCHASE" + RESET + GREEN + "                      |");
-        printColour(GREEN, "    |----------------+----------------+-------------------------------|");
+
+        printColour(YELLOW, "Transaction History:\n");
+        int maxID = 15;
+        int maxPayment = 15;
+        int maxPurchase = 9;
+
+        if (vm.getTransactions().size() == 0) {
+            printColour(RED, "There are no transactions to display.");
+        }
+
         for (Transaction transaction : vm.getTransactions()) {
-            printColour(GREEN, "    " + transaction.toOutput());
+                
+            String id = String.valueOf(transaction.getID());
+            String payment = transaction.getPaymentMethod();
+            String purchase = String.format("%dx %s -> $%.2f", transaction.getQty(), transaction.getProductBought().getName(), transaction.getTotalAmount());
+
+            maxID = (id.length() > maxID) ? id.length() : maxID;
+            maxPayment = (payment.length() > maxPayment) ? payment.length() : maxPayment;
+            maxPurchase = (purchase.length() > maxPurchase) ? purchase.length() : maxPurchase;
+        }
+
+        String idSub = String.format(RESET + YELLOW + "%-" + maxID + "s" + RESET + GREEN, "TRANSACTION ID");
+        String paymentSub = String.format(RESET + YELLOW + "%-" + maxPayment + "s" + RESET + GREEN, "PAYMENT METHOD");
+        String purchaseSub = String.format(RESET + YELLOW + "%-" + maxPurchase + "s" + RESET + GREEN, "PURCHASE");
+
+        printColour(YELLOW, "Products available:\n");
+        printColour(GREEN, String.format("    | %s | %s | %s |", idSub, paymentSub, purchaseSub));
+
+        String idSpace = String.format("%-" + maxID + "s", "").replace(' ', '-');
+        String paymentSpace = String.format("%-" + maxPayment + "s", "").replace(' ', '-');
+        String purchaseSpace = String.format("%-" + maxPurchase + "s", "").replace(' ', '-');
+        printColour(GREEN, "    |-" + idSpace + "-+-" + paymentSpace + "-+-" + purchaseSpace + "-|");
+
+        for (Transaction transaction : vm.getTransactions()) {
+
+            String id = String.valueOf(transaction.getID());
+            String payment = transaction.getPaymentMethod();
+            String purchase = String.format("%dx %s -> $%.2f", transaction.getQty(), transaction.getProductBought().getName(), transaction.getTotalAmount());
+            printColour(GREEN, String.format("    | %-" + maxID + "s | %-" + maxPayment + "s | %-" + maxPurchase + "s |", id, payment, purchase));
         }
     }
 
