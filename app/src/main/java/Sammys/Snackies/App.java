@@ -218,7 +218,7 @@ public class App {
                     changeString += String.format("%dx%s, ", changeToGive.get(value), value);
                 }
             }
-            changeString += "\n\n";
+            changeString += "\n";
 
             if (!givingChange) {
                 changeString = "Correct change given, no change to give\n\n";
@@ -265,7 +265,7 @@ public class App {
         }
 
         // dispense products and change
-        printColour(GREEN, String.format("\nYou recieved %sx %s.", inputs.get(3), slot.getContents().toString()));
+        printColour(GREEN, String.format("You recieved %sx %s.", inputs.get(3), slot.getContents().toString()));
         printColour(GREEN, String.format("You paid $%.2f.", totalCost));
         printColour(GREEN, changeString);
         printColour(YELLOW, "Thank you for shopping at Sammy's Snackies!");
@@ -658,10 +658,11 @@ public class App {
 
     private static void cashCheck(VendingMachine vm){
         HashMap<String, Integer> currencyCounts = vm.getCurrencyCounts();
-        printColour(YELLOW, "Currency : Number");
+        printColour(YELLOW, "   DENOMINATION " + RESET + GREEN + "|" + RESET + YELLOW + " AMOUNT");
+        printColour(GREEN, "   -------------+-------");
         String denomArr[] = new String[] {"5c","10c","20c","50c","$1","$2","$5","$10","$20","$50","$100"};
         for(String currency : denomArr){
-            printColour(YELLOW, currency + ":" + RESET + GREEN + currencyCounts.get(currency));
+            printColour(GREEN, String.format("   %-12s | %d", currency, currencyCounts.get(currency)));
         }
     }
 
