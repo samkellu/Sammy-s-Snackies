@@ -502,31 +502,23 @@ public class App {
     private static void userList(ArrayList<String> inputs){
 
         if (inputs.size() != 1){
-            printColour(YELLOW, "This command takes no user input!");
+            printColour(RED, "This command takes no user input!");
         }
 
-        int max = 0;
-        for (UserLogin userLogin :userLogins){
-            if (userLogin.getUsername().length() > max){
-                max = userLogin.getUsername().length();
-            }
-        }
-
-        String space = "";
-        for (int i = 0; i < max; i++){
-            space+=" ";
-        }
-        printColour(YELLOW, "Username" + space + "Password");
+        int maxUsername = 9;
+        int maxPassword = 9;
+        int maxType = 5;
         for (UserLogin userLogin : userLogins){
-            StringBuilder str = new StringBuilder();
+            maxUsername = (userLogin.getUsername().length() > maxUsername) ? userLogin.getUsername().length() : maxUsername;
+            maxPassword = (userLogin.getPassword().length() > maxPassword) ? userLogin.getPassword().length() : maxPassword;
+            maxType = (userLogin.getType().toString().length() > maxType) ? userLogin.getType().toString().length() : maxType;
+        }
 
-            str.append(userLogin.getUsername());
-            for (int i = 0; i < max+8-userLogin.getUsername().toString().length(); i++){
-                str.append(" ");
-            }
-            str.append(userLogin.getType());
-            // str.append();
-            printColour(GREEN, str.toString());
+        printColour(GREEN, String.format("    | " + RESET + YELLOW + "%-" + maxType + "s" + RESET + GREEN + " | " + RESET + YELLOW + "%-" + maxUsername + "s" + RESET + GREEN + " | " + RESET + YELLOW + "%-" + maxPassword + "s" + RESET + GREEN + " |", "TYPE", "USERNAME", "PASSWORD"));
+        printColour(GREEN, "    |-" + String.format("%-" + maxType + "s", "").replace(' ', '-') + "-+-" + String.format("%-" + maxUsername + "s", "").replace(' ', '-') + "-+-" + String.format("%-" + maxPassword + "s", "").replace(' ', '-') + "-|");
+
+        for (UserLogin userLogin : userLogins){
+            printColour(GREEN, String.format("    | %-" + maxType + "s | %-" + maxUsername + "s | %-" + maxPassword + "s |", userLogin.getType().toString().toUpperCase(), userLogin.getUsername(), userLogin.getPassword()));
         }
     }
     // TODO
