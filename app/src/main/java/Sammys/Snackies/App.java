@@ -114,14 +114,14 @@ public class App {
         System.out.print("> ");
     }
 
-    private static void buyer(ArrayList<String> inputs, VendingMachine vm) {
+    private static boolean buyer(ArrayList<String> inputs, VendingMachine vm) {
 
         // ensure enough arguments
         if (inputs.size() < 4) {
             printColour(RED, "Not enough arguments.");
             printColour(YELLOW, "Usage:");
             printColour(GREEN, "    buy <cash/card> <product> <amount> [denominations...]");
-            return;
+            return false;
         }
         // check cash or card
         boolean cash = false;
@@ -133,12 +133,12 @@ public class App {
                 printColour(RED, "Not enough arguments.");
                 printColour(YELLOW, "Usage:");
                 printColour(GREEN, "    buy <cash/card> <product> <amount> [denominations...]");
-                return;
+                return false;
             }
         }
         else if (!inputs.get(1).toLowerCase().equals("card")) {
             printColour(RED, "Please specify payment type (cash or card).");
-            return;
+            return false;
         }
 
         // check product code exists
@@ -157,7 +157,7 @@ public class App {
 
         if (slot == null) {
             printColour(RED, "Please enter a valid product code. This machine contains no item with code: " + inputs.get(2));
-            return;
+            return false;
         }
 
         // check the machine has sufficient quantity 
@@ -166,12 +166,12 @@ public class App {
             productAmt = Integer.parseInt(inputs.get(3));
         } catch (NumberFormatException e) {
             printColour(RED, "\nPlease ensure the product amount is a positive integer.");
-            return;
+            return false;
         }
 
         if (productAmt <= 0) {
             printColour(RED, "\nPlease ensure the product amount is a positive integer.");
-            return;
+            return false;
         }
 
         if (slot.getCount() < productAmt) {
@@ -180,7 +180,7 @@ public class App {
             } else {
                 printColour(RED, "Unfortunately, this machine only has " + slot.getCount() + "x " + slot.getContents().toString() + " available.");
             }
-            return;
+            return false;
         }
 
         double totalGiven = 0.00;
@@ -194,7 +194,7 @@ public class App {
         }
         if (price == -1) {
             printColour(RED, "\nSorry an internal error occured, please try again.");
-            return;
+            return false;
         }
 
         double totalCost = productAmt*price;
@@ -213,7 +213,7 @@ public class App {
                 
                 if (values.length != 2 || !(denomSet.contains(values[1]))) {
                     printColour(RED, "Unrecognisable denomination.\nPlease use the format <amount>*<value>, where value can be 50c, $2, $5 etc. and amount is a positive integer.");
-                    return;
+                    return false;
                 }
                 
                 String v = values[1];                
@@ -224,17 +224,17 @@ public class App {
                     amt = Integer.parseInt(amount);
                 } catch (NumberFormatException e) {
                     printColour(RED, "\nPlease ensure the cash amount is a positive integer.");
-                    return;
+                    return false;
                 } 
                 
                 if (amt <= 0) {
                     printColour(RED, "\nPlease ensure the amount is a positive integer.");
-                    return;
+                    return false;
                 }
                 
 
                 double value = parseDenom(v);
-                if (value == -1) return;
+                if (value == -1) return false;
 
                 givenDenominations.put(v, amt);
                 totalGiven += value*amt;
@@ -248,7 +248,7 @@ public class App {
                 changeToGive = vm.getChangeFromCash(totalGiven-totalCost);
             } catch (IndexOutOfBoundsException e) {
                 printColour(RED, "\nSorry, we don't have the change to give you.\nReturning money...");
-                return;
+                return false;
             }
 
             boolean givingChange = false;
@@ -281,7 +281,7 @@ public class App {
                 System.out.println();
                 if (input.toLowerCase().equals("quit")) {
                     printColour(GREEN, "Transaction cancelled.");
-                    return;
+                    return false;
                 }
 
                 String sepInput[] = input.split(" ");
@@ -317,6 +317,7 @@ public class App {
         vm.addTransaction(inputs.get(1).toLowerCase(), slot.getContents(), Integer.valueOf(inputs.get(3)));
         // TODO
         // ensure enough money given, need the vending machine to know the price.
+        return true;
     }
   
     public static boolean verifyCard(long cardNumber, String date, int cvc) {
@@ -339,14 +340,14 @@ public class App {
         }
     }
 
-    private static void restockProduct(ArrayList<String> inputs, VendingMachine vm){
+    private static boolean restockProduct(ArrayList<String> inputs, VendingMachine vm){
         // takes itemname itemcount 
 
         if (inputs.size() != 3){
             printColour(RED, "Invalid input.");
             printColour(YELLOW, "Usage:");
             printColour(GREEN, "    restock <slot name> <restock count>");
-            return;
+            return false;
         }
 
         // check product code exists
@@ -360,26 +361,27 @@ public class App {
         }
         if(slot==null){
             printColour(RED, "Could not find slot " + inputs.get(1));
-            return;
+            return false;
         }
         int restockCount;
         try {
             restockCount = Integer.parseInt(inputs.get(2));
         } catch (NumberFormatException e){
             printColour(RED, "Please enter a valid integer for restock count");
-            return;
+            return false;
         }
         try{
             slot.restockContents(restockCount);
         } catch (IndexOutOfBoundsException e){
             printColour(RED, e.getMessage());
-            return;
+            return false;
         }
 
         printColour(GREEN, "Successfully restocked " + inputs.get(2) +" "+slot.getContents().getName()+"'s, new stock count is " + Integer.toString(slot.getCount()) + " with a value of $" +String.format("%.2f", slot.getCount()*slot.getContents().getPrice()));
+        return true;
     }
 
-    private static void addProduct(ArrayList<String> inputs, VendingMachine vm){
+    private static boolean addProduct(ArrayList<String> inputs, VendingMachine vm){
 
         // Input: 
         // addProduct <slot name> <product name> <product price> <product category> <product stock>
@@ -389,7 +391,7 @@ public class App {
             printColour(YELLOW, "Usage:");
             printColour(GREEN, "    product add <slot name> <product name> <product price> <product category> <product stock>");
                 
-            return;
+            return false;
         }
 
         String slotName = inputs.get(1).toUpperCase();
@@ -399,7 +401,7 @@ public class App {
                 currentSlot = vm.getSlots().get(name);
                 if (currentSlot.getCount()!=0){
                     printColour(RED, "Slot already exists and is non empty! Please choose an empty slot or try \"restock\"");
-                    return;
+                    return false;
                 }
             }
         }
@@ -420,7 +422,7 @@ public class App {
             default:
                 printColour(RED, "Category not found! Please choose one of the following categories:");
                 printColour(GREEN, "CHOCOLATE | CANDY | CHIPS | DRINK");
-                return;
+                return false;
         }
 
         try{
@@ -441,11 +443,12 @@ public class App {
             printColour(GREEN, "Added " + currentSlot.getContents().getName() + " to slot " + currentSlot.getName() + " at a price of $" + String.format("%.2f", newFood.getPrice()));
         } catch (NumberFormatException e){
             printColour(RED, "Please use a decimal number for price and an integer for food item count");
-            return;
+            return false;
         }
+        return true;
     }
 
-    private static void removeProduct(ArrayList<String> inputs, VendingMachine vm){
+    private static boolean removeProduct(ArrayList<String> inputs, VendingMachine vm){
         // Useage:
         // removeProduct <slotname>
 
@@ -453,7 +456,7 @@ public class App {
             printColour(RED, "Invalid input.");
             printColour(YELLOW, "Usage:");
             printColour(GREEN, "    product remove <slot name>");
-            return;
+            return false;
         }
 
         Slot slot = null;
@@ -466,30 +469,30 @@ public class App {
         if (slot == null){
             printColour(RED, "Slot not found, please try a valid slot name.");
             printColour(GREEN, "Try use \"products\" to get a list of all available products and slots!");
-            return;
+            return false;
         }
         printColour(GREEN, "Removing product " + slot.getContents().getName() + " from slot " + inputs.get(1).toUpperCase() + " for a total value of $" + String.format("%.2f", slot.getContents().getPrice()*slot.getCount()));
         vm.getSlots().remove(slot.getName());
-        return;
+        return true;
     }
 
-    private static void addUser(ArrayList<String> inputs) {
+    private static boolean addUser(ArrayList<String> inputs) {
         if (currentType != UserType.OWNER){
             printColour(RED, "You are unauthorised!! Owner role is required, please log in.");
-            return;
+            return false;
         }
 
         if (inputs.size() != 4){
             printColour(RED, "Invalid input.");
             printColour(YELLOW, "Usage: ");
             printColour(GREEN, "    user add <username> <password> <user type>");
-            return;
+            return false;
         }
         String username = inputs.get(1);
         for (UserLogin user : userLogins){
             if (user.getUsername().equals(username)){
                 printColour(RED, "User already exists, please choose a unique username");
-                return;
+                return false;
             }
         }
         String password = inputs.get(2);
@@ -498,16 +501,16 @@ public class App {
         userLogins.add(user);
         UserLogin.writeUsersToFile(userLoginFilepath, userLogins);
         printColour(GREEN, "New user added with username " + username + " with role of " + type);
-
+        return true;
     }
 
-    private static void userLogin(ArrayList<String> inputs) {
+    private static boolean userLogin(ArrayList<String> inputs) {
 
         if (inputs.size() != 3) {
             printColour(RED, "Invalid input.");
             printColour(YELLOW, "Usage:");
             printColour(GREEN, "    login <username> <password>");
-            return;
+            return false;
         }
 
         for (UserLogin user : userLogins){
@@ -515,27 +518,21 @@ public class App {
                 printColour(GREEN, "Welcome, " + user.getUsername());
                 currentType = user.getType();
                 printColour(YELLOW, "You are now logged in as a " + user.getType());
-                return;
+                return false;
             }
         }
 
         printColour(RED, "Login not found, try again");
-        // TODO
-        // check login, maybe we use a file of users and pwds?
+        return true;
     }
 
-    private static void removeUser(ArrayList<String> inputs){
+    private static boolean removeUser(ArrayList<String> inputs){
 
-        // Deprecated
-        // if (currentType != UserType.OWNER){
-        //     printColour(RED, "You are unauthorised!! Owner role is required, please log in.");
-        //     return;
-        // }
         if (inputs.size() != 2){
             printColour(RED, "Invalid input.");
             printColour(YELLOW, "Usage: ");
             printColour(GREEN, "    user remove <username>");
-            return;
+            return false;
         }
         String username = inputs.get(1);
         boolean isFound = false;
@@ -550,12 +547,12 @@ public class App {
         }
         if (!isFound){
             printColour(RED, "User not found, please choose another username");
-            return;
+            return false;
         }
 
         UserLogin.writeUsersToFile(userLoginFilepath, userLogins);
+        return true;
     }
-
 
     private static double checkPrice(String price) {
 
@@ -724,8 +721,6 @@ public class App {
         }
     }
   
-    // TODO
-    // add message at the end saying something like "to see more on a command use help <command>"
     private static void helpCommand(ArrayList<String> inputs) {
          if (inputs==null || inputs.size() == 1) {
             printColour(YELLOW, "---------------Available Commands:---------------");
@@ -937,13 +932,13 @@ public class App {
         }
     }
 
-    private static void cashAdd(VendingMachine vm, ArrayList<String> inputs){
+    private static boolean cashAdd(VendingMachine vm, ArrayList<String> inputs){
 
         if(inputs.size() < 2){
             printColour(RED, "Invalid input.");
             printColour(YELLOW, "Usage:");
             printColour(GREEN, "    cash add [<num> <denomination> ...]");
-            return;
+            return false;
         }
 
         ArrayList<String> inputDenoms = new ArrayList<String>(inputs.subList(1, inputs.size()));
@@ -957,7 +952,7 @@ public class App {
             if (values.length != 2 || !(denomSet.contains(values[1]))) {
                 printColour(RED, "Unrecognisable denomination.");
                 printColour(GREEN, "Please use the format <amount>*<value>, where value can be 50c, $2, $5 etc. and amount is a positive integer.");
-                return;
+                return false;
             }
                             
             int amt = -1;
@@ -966,29 +961,30 @@ public class App {
                 amt = Integer.parseInt(values[0]);
             } catch (NumberFormatException e) {
                 printColour(RED, "Please ensure the cash amount is a positive integer.");
-                return;
+                return false;
             } 
             
             if (amt <= 0) {
                 printColour(RED, "Please ensure the cash amount is a positive integer.");
-                return;
+                return false;
             }
             
-            if (parseDenom(values[1]) == -1) return;
+            if (parseDenom(values[1]) == -1) return false;
 
             vm.addCurrencyCount(values[1], amt);
         }
 
         printColour(GREEN, "Currency successful added");
+        return true;
     }
 
-    private static void cashRemove(VendingMachine vm, ArrayList<String> inputs) {
+    private static boolean cashRemove(VendingMachine vm, ArrayList<String> inputs) {
 
         if(inputs.size() < 2){
             printColour(RED, "Invalid input");
             printColour(YELLOW, "Usage:");
             printColour(GREEN, "    cash remove [<num>*<denomination> ...]");
-            return;
+            return false;
         }
 
         ArrayList<String> inputDenoms = new ArrayList<String>(inputs.subList(1, inputs.size()));
@@ -1002,7 +998,7 @@ public class App {
             if (values.length != 2 || !(denomSet.contains(values[1]))) {
                 printColour(RED, "Unrecognisable denomination.");
                 printColour(GREEN, "Please use the format <amount>*<value>, where value can be 50c, $2, $5 etc. and amount is a positive integer.");
-                return;
+                return false;
             }
                             
             int amt = -1;
@@ -1011,24 +1007,25 @@ public class App {
                 amt = Integer.parseInt(values[0]);
             } catch (NumberFormatException e) {
                 printColour(RED, "Please ensure the cash amount is a positive integer.");
-                return;
+                return false;
             } 
             
             if (amt <= 0) {
                 printColour(RED, "Please ensure the cash amount is a positive integer.");
-                return;
+                return false;
             }
             
-            if (parseDenom(values[1]) == -1) return;
+            if (parseDenom(values[1]) == -1) return false;
 
             try {
                 vm.removeCurrencyCount(values[1], amt);
             } catch (NoSuchElementException e) {
                 printColour(RED, e.getMessage());
-                return;
+                return false;
             }
         }
         printColour(GREEN, "Currency successful removed");
+        return true;
 
     }
 
