@@ -1,3 +1,6 @@
 .gradle/**
 app/build/**
 app/bin/**
+app\bin\**
+app\build\**
+.gradle\**

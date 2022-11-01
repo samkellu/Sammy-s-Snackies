@@ -3,8 +3,8 @@ package Sammys.Snackies;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
-import java.util.Set;
 import java.util.HashMap;
+import java.util.List;
 import java.time.*;
 import java.util.NoSuchElementException;
 
@@ -499,6 +499,150 @@ public class App {
         UserLogin.writeUsersToFile(userLoginFilepath, userLogins);
     }
 
+
+    private static double checkPrice(String price) {
+
+        double ret;
+        try { 
+            ret = Double.parseDouble(price); 
+        }
+        catch (NumberFormatException e) { 
+            return -1; 
+        }
+        return ret;
+    }
+
+    private static void setCategory(Slot s, String category) {
+        switch (category) {
+            case "drink":
+                s.getContents().setCategory(Category.DRINK);
+                return;
+            case "chocolate":
+                s.getContents().setCategory(Category.CHOCOLATE);
+                return;
+            case "chips":
+                s.getContents().setCategory(Category.CHIPS);
+                return;
+            case "candy":
+                s.getContents().setCategory(Category.CANDY);
+                return;
+        }
+    }
+
+    private static String modify(ArrayList<String> inputs, VendingMachine vm) {
+
+        List<String> categories = Arrays.asList("drink","chocolate","chips","candy");
+        String success = "successfully modified product(s)";
+
+        /*
+        To change a slot's name:
+        modify <old_slot_name> slot name to <new_slot_name>
+        Note: this name must be unique in the vending machine
+
+        To change just one slot's product's details:
+        modify <slot_name> product name to <new_product_name>
+        modify <slot_name> product price to <new_price>
+        modify <slot_name> product category to <new_category>
+
+        To change all product's details that have the same name:
+        modify <product_name> name to <new_product_name>
+        modify <product_name> price to <new_price>
+        modify <product_name> category to <new_category>
+        */
+
+        // ensure correct permissions
+        if (currentType != UserType.SELLER)
+            return RED + "You are unauthorised!! Seller role is required, please log in." + RESET;
+
+        // ensure correct number of arguments
+        if (inputs.size() < 5 || inputs.size() > 6)
+            return RED + "\nIncorrect paramaters! Use \"help modify\" to recieve help!" + RESET;
+
+        String input1 = inputs.get(1).toUpperCase();
+        String input2 = inputs.get(2).toLowerCase();
+        String input3 = inputs.get(3).toLowerCase();
+        String input4 = inputs.get(4).toLowerCase();
+        String input5 = inputs.size() == 6 ? inputs.get(5).toLowerCase() : "";
+
+        // check to search for product name or slot name
+        boolean referencedBySlot = false;
+        if (input2.equals("slot") || input2.equals("product")) {
+            referencedBySlot = true;
+            if (!vm.getSlots().containsKey(input1))
+                return RED + "\nSlot name doesn't exist." + RESET;
+        }
+
+        // slot referenced, changing product details
+        if (referencedBySlot && input2.equals("product") && input4.equals("to")) {
+            Slot s = vm.getSlots().get(input1);
+            switch (input3) {
+                case "name":
+                    s.getContents().setName(inputs.get(5));
+                    return success;
+                case "price":
+                    double price = checkPrice(input5.replace("$", ""));
+                    if (price < 0.05)
+                        return RED + "\nPlease ensure new price is a valid price." + RESET;
+                    s.getContents().setPrice(price);
+                    return success;
+                case "category":
+                    if (!categories.contains(input5))
+                        return RED + "\nPlease ensure the category is a valid category." + RESET;
+                    setCategory(s, input5);
+                    return success;
+                default:
+                    return RED + "\nIncorrect paramaters! Use \"help modify\" to recieve help!" + RESET;    
+            }
+        }
+
+        // slot referenced, changing slot name
+        if (referencedBySlot && input2.equals("slot") && input3.equals("name") && input4.equals("to")) {
+            Slot s = vm.getSlots().get(input1);
+            if (vm.getSlots().containsKey(input5.toUpperCase()))
+                return RED + "\nSlot already exists. Please give this slot a new name." + RESET;
+            s.setName(input5.toUpperCase());
+            return success;
+        }
+
+        // product referenced, changing all products
+        if (!referencedBySlot && input3.equals("to")) {
+            
+            // get the slots containing the product referenced
+            List<Slot> slots = new ArrayList<>();
+            for (String key : vm.getSlots().keySet()) {
+                Slot s = vm.getSlots().get(key);
+                if (s.getContents().getName().toUpperCase().equals(input1))
+                    slots.add(s);
+            }
+
+            if (input2.equals("name")) {
+                slots.forEach((Slot s) -> { s.getContents().setName(inputs.get(4)); });
+            } 
+            else if (input2.equals("price")) {
+
+                double price = checkPrice(input4.replace("$", ""));
+                if (price < 0.05)
+                    return RED + "\nPlease ensure new price is a valid price." + RESET;
+
+                slots.forEach((Slot s) -> { s.getContents().setPrice(price); });
+            } 
+            else if (input2.equals("category")) {
+
+                if (!categories.contains(input5))
+                    return RED + "\nPlease ensure the category is a valid category." + RESET;
+                slots.forEach((Slot s) -> { setCategory(s, input5); });
+            } 
+            else {
+                return RED + "\nIncorrect paramaters! Use \"help modify\" to recieve help!" + RESET;
+            }
+
+            return success;
+        }
+
+        return RED + "\nIncorrect paramaters! Use \"help modify\" to recieve help!" + RESET;
+    }
+
+
     private static void userList(ArrayList<String> inputs){
 
         if (inputs.size() != 1){
@@ -521,6 +665,7 @@ public class App {
             printColour(GREEN, String.format("    | %-" + maxType + "s | %-" + maxUsername + "s | %-" + maxPassword + "s |", userLogin.getType().toString().toUpperCase(), userLogin.getUsername(), userLogin.getPassword()));
         }
     }
+  
     // TODO
     // add message at the end saying something like "to see more on a command use help <command>"
     private static void helpCommand(ArrayList<String> inputs) {
@@ -933,9 +1078,15 @@ public class App {
                         else{
                             unknownCommand(inputs);
                         }
-                        
-                        break;
-                    
+                    break;
+                    case "modify":
+                        if (currentType != UserType.SELLER){
+                            unknownCommand(inputs);
+
+                        } else {
+                            System.out.println(modify(inputs, vm));
+                        }
+                    break;
                     case "products":
                         products(vm);
                     break;

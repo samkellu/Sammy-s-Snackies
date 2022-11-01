@@ -8,18 +8,18 @@ public class Slot {
     private FoodItem contents;
     private int count;
 
-    public Slot(String name, FoodItem contents, int count){
+    public Slot(String name, FoodItem contents, int count) {
         this.name = name;
         this.contents = contents;
         this.count = count;
     }
 
-    public FoodItem getContents(){
+    public FoodItem getContents() {
         return this.contents;
     }
 
     public FoodItem removeItem() throws NoSuchElementException {
-        if (this.count == 0){
+        if (this.count == 0) {
             throw new NoSuchElementException("No " + this.contents.getName() + " remaining");
         }
         this.count--;
@@ -29,7 +29,7 @@ public class Slot {
     public void restockContents(int newCount) throws IndexOutOfBoundsException {
         if (newCount < 0) {
             return;
-        } else if (this.count + newCount > 15){ // If too many items, do not allow restocking
+        } else if (this.count + newCount > 15) { // If too many items, do not allow restocking
             throw new IndexOutOfBoundsException("This slot can only hold " + Integer.toString(15-this.count) + " more items");
         }
 
@@ -40,14 +40,24 @@ public class Slot {
         this.count -= sold;
     }
 
-
-    public String getName(){
-
+    public String getName() {
         return this.name;
     }
 
-    public int getCount(){
+    public int getCount() {
         return this.count;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setFoodItem(FoodItem contents) {
+        this.contents = contents;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
     }
 
     public String toString() {
