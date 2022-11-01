@@ -10,30 +10,41 @@ public class FoodItem {
     private double price;
     private Category category;
 
-    public FoodItem(String name, double price, Category category){
+    public FoodItem(String name, double price, Category category) {
         this.name = name;
         this.price = price;
         this.category = category;
     }
 
-    public String getName(){
+    public String getName() {
         return this.name;
     }
 
-    public double getPrice(){
+    public double getPrice() {
         return this.price;
-    }
-
-    public String toString(){
-        return this.name + " $" + String.format("%.2f", this.price);
     }
 
     public Category getCategory() {
         return this.category;
     }
 
-    public boolean isCategory(Category cat){
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public boolean isCategory(Category cat) {
         return cat == this.category;
     }
 
+    public String toString() {
+        return this.name + " $" + String.format("%.2f", this.price);
+    }
 }
