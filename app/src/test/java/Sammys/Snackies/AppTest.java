@@ -150,6 +150,7 @@ class AppTest {
 
     }
 
+    // checks that cash check will output the cash in the vending machine
     @Test void checkCashCheck(){
         VendingMachine vm = new VendingMachine();
         vm.readFromFile("saveFile.json");
@@ -162,6 +163,7 @@ class AppTest {
         } 
     }
     
+    // positive cash add test 
     @Test void checkCashaddValid(){
         VendingMachine vm = new VendingMachine();
         vm.readFromFile("saveFile.json");
@@ -183,6 +185,7 @@ class AppTest {
         assertEquals(currencyCounts + 3, currencyCountsAfter.get("$5"));
     }
 
+    // negative cash add test, negative add amount
     @Test void checkCashaddNeg(){
         VendingMachine vm = new VendingMachine();
         vm.readFromFile("saveFile.json");
@@ -204,6 +207,7 @@ class AppTest {
         assertEquals(currencyCounts, currencyCountsAfter.get("$5"));
     }
 
+    // positive cash add test, tries a large number of notes to add
     @Test void checkCashaddbig(){
         VendingMachine vm = new VendingMachine();
         vm.readFromFile("saveFile.json");
@@ -225,6 +229,7 @@ class AppTest {
         assertEquals(currencyCounts + 500000, currencyCountsAfter.get("$5"));
     }
 
+    // negative cash add test, bad format, no amount given
     @Test void checkCashaddinvalidSyntax(){
         VendingMachine vm = new VendingMachine();
         vm.readFromFile("saveFile.json");
@@ -246,6 +251,7 @@ class AppTest {
         assertEquals(currencyCounts, currencyCountsAfter.get("$5"));
     }
 
+    // positive cash add test, ensures multiple denominations at the same time
     @Test void checkCashaddValidMultiple(){
         VendingMachine vm = new VendingMachine();
         vm.readFromFile("saveFile.json");
@@ -269,6 +275,7 @@ class AppTest {
         assertEquals(currencyCountstens + 4, currencyCountsAfter.get("$10"));
     }
 
+    // negative cash add test, no input given
     @Test void checkCashaddnoinput(){
         VendingMachine vm = new VendingMachine();
         vm.readFromFile("saveFile.json");
@@ -480,6 +487,11 @@ class AppTest {
 
     @Test void cashremoveValid() {}
 
+    // negative cash remove tests:
+    //  bad denomination
+    //  no amount & bad denomination
+    //  negative amount
+    //  negative amount, with multiple denominations
     @Test void cashremoveInvalidAmount() {
         VendingMachine vm = new VendingMachine();
         vm.addCurrencyCount("$10", 20);
@@ -489,6 +501,9 @@ class AppTest {
         assertFalse(App.cashRemove(vm, generateInput("remove 2*$2 -1*$1")));
     }
 
+    // positive and negative cash remove test
+    //  remove all of one denomination
+    //  try and remove more, should fail
     @Test void cashremoveValidDenom() {
         VendingMachine vm = new VendingMachine();
         vm.addCurrencyCount("$10", 3);
@@ -498,6 +513,7 @@ class AppTest {
         
     }
   
+    // positive add product test, price has $
     @Test void addProductPositiveTest1() {
         String[] s = {"productadd", "Z1", "ZooperDooper", "$2.00", "candy", "5"};
         ArrayList<String> inputs = new ArrayList<>(Arrays.asList(s));
@@ -506,6 +522,7 @@ class AppTest {
         assertTrue(result);
     }
 
+    // positive add product test, price does not have $, and is int
     @Test void addProductPositiveTest2() {
         String[] s = {"productadd", "W1", "WagonWheels", "1", "candy", "1"};
         ArrayList<String> inputs = new ArrayList<>(Arrays.asList(s));
@@ -514,6 +531,7 @@ class AppTest {
         assertTrue(result);
     }
 
+    // positive add product test, checks case insensitivity
     @Test void addProductTestCaseInsensitivity() {
         String[] s = {"ProductAdd", "X1", "XanderRoot", "1", "Candy", "1"};
         ArrayList<String> inputs = new ArrayList<>(Arrays.asList(s));
@@ -522,6 +540,7 @@ class AppTest {
         assertTrue(result);
     }
 
+    // negative add product test, negative price
     @Test void addProductNegativeTest1() {
         String[] s = {"productadd", "Z1", "ZooperDooper", "-2.00", "candy", "5"};
         ArrayList<String> inputs = new ArrayList<>(Arrays.asList(s));
@@ -530,6 +549,7 @@ class AppTest {
         assertFalse(result);
     }
     
+    // negative add product test, negative amount
     @Test void addProductNegativeTest2() {
         String[] s = {"productadd", "W1", "WagonWheels", "1", "candy", "-1"};
         ArrayList<String> inputs = new ArrayList<>(Arrays.asList(s));
@@ -538,6 +558,7 @@ class AppTest {
         assertFalse(result);
     }
 
+    // negative add product test, zero amount
     @Test void addProductNegativeTest3() {
         String[] s = {"productadd", "X1", "XanderRoot", "1", "candy", "0"};
         ArrayList<String> inputs = new ArrayList<>(Arrays.asList(s));
