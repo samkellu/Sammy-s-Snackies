@@ -463,6 +463,11 @@ public class App {
                 priceStr = priceStr.substring(1);
             }
             Double price = Double.parseDouble(priceStr);
+
+            if (price < 0){
+                printColour(RED, "Cannot add a product with negative price!");
+                return false;
+            }
     
             // Creates new footItem
             FoodItem newFood = new FoodItem(inputs.get(2).toLowerCase(), price, foodCategory);
