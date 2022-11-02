@@ -132,7 +132,7 @@ class AppTest {
     }
 
     @Test void addProductNegativeTest3() {
-        String[] s = {"productadd", "W1", "WagonWheels", "1", "candy", "0"};
+        String[] s = {"productadd", "X1", "XanderRoot", "1", "candy", "0"};
         ArrayList<String> inputs = new ArrayList<>(Arrays.asList(s));
         VendingMachine vm = new VendingMachine();
         boolean result = App.addProduct(inputs, vm);
