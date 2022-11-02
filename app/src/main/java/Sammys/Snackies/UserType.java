@@ -94,7 +94,6 @@ class UserLogin {
         // Attempts to write the JSONArray to file
         try {
             FileWriter fw = new FileWriter(fp);
-            System.out.println("Huh");
             org.json.simple.JSONArray.writeJSONString(jsonData, fw);
             fw.flush();
             fw.close();
@@ -124,10 +123,8 @@ class UserLogin {
             fr.close();
 
         } catch(IOException e) {
-            System.out.println("Huh");
             e.printStackTrace();
         } catch(ParseException e) {
-            System.out.println("Huh");
             e.printStackTrace();
         }
         return retval;
