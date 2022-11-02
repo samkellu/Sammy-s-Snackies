@@ -8,9 +8,18 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Scanner;
 
 class AppTest {
+
+    ArrayList<String> generateInput(String input){
+        String[] userInput = input.split(" ");
+        ArrayList<String> inputs = new ArrayList<String>(Arrays.asList(userInput));
+        return inputs;
+    }
+
+
     @Test void appHasAGreeting() {
         // App classUnderTest = new App();
         assertNotNull(1,"nice");
@@ -126,6 +135,73 @@ class AppTest {
             assertTrue(false);
         } 
     }
-
     
+    @Test void checkCashaddValid(){
+        VendingMachine vm = new VendingMachine();
+        //vm.readFromFile("testSaveFile.json");
+        HashMap<String, Integer> currencyCounts = vm.getCurrencyCounts();
+        String[] inputArr = {"Add", "3*$5"};
+        ArrayList<String> inputString = new ArrayList<String>();
+        for(String str : inputArr){
+            inputString.add(str);
+        }
+        try{
+            App.cashAdd(vm,inputString);
+            assertTrue(true);
+        }
+        catch(Exception e){
+            assertTrue(false);
+        }
+        HashMap<String, Integer> currencyCountsAfter = vm.getCurrencyCounts();
+        
+        assertEquals(currencyCounts.get("$5")+3, currencyCountsAfter.get("$5"));
+    }
+
+    @Test void addProductPositiveTest1() {
+        String[] s = {"productadd", "Z1", "ZooperDooper", "$2.00", "candy", "5"};
+        ArrayList<String> inputs = new ArrayList<>(Arrays.asList(s));
+        VendingMachine vm = new VendingMachine();
+        boolean result = App.addProduct(inputs, vm);
+        assertTrue(result);
+    }
+
+    @Test void addProductPositiveTest2() {
+        String[] s = {"productadd", "W1", "WagonWheels", "1", "candy", "1"};
+        ArrayList<String> inputs = new ArrayList<>(Arrays.asList(s));
+        VendingMachine vm = new VendingMachine();
+        boolean result = App.addProduct(inputs, vm);
+        assertTrue(result);
+    }
+
+    @Test void addProductTestCaseInsensitivity() {
+        String[] s = {"ProductAdd", "X1", "XanderRoot", "1", "Candy", "1"};
+        ArrayList<String> inputs = new ArrayList<>(Arrays.asList(s));
+        VendingMachine vm = new VendingMachine();
+        boolean result = App.addProduct(inputs, vm);
+        assertTrue(result);
+    }
+
+    @Test void addProductNegativeTest1() {
+        String[] s = {"productadd", "Z1", "ZooperDooper", "-2.00", "candy", "5"};
+        ArrayList<String> inputs = new ArrayList<>(Arrays.asList(s));
+        VendingMachine vm = new VendingMachine();
+        boolean result = App.addProduct((ArrayList<String>)inputs, vm);
+        assertFalse(result);
+    }
+    
+    @Test void addProductNegativeTest2() {
+        String[] s = {"productadd", "W1", "WagonWheels", "1", "candy", "-1"};
+        ArrayList<String> inputs = new ArrayList<>(Arrays.asList(s));
+        VendingMachine vm = new VendingMachine();
+        boolean result = App.addProduct(inputs, vm);
+        assertFalse(result);
+    }
+
+    @Test void addProductNegativeTest3() {
+        String[] s = {"productadd", "X1", "XanderRoot", "1", "candy", "0"};
+        ArrayList<String> inputs = new ArrayList<>(Arrays.asList(s));
+        VendingMachine vm = new VendingMachine();
+        boolean result = App.addProduct(inputs, vm);
+        assertFalse(result);
+    }
 }
