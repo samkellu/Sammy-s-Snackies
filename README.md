@@ -3,8 +3,11 @@ This is a vending machine system made and developed for our client - Fred. We ha
 
 Contributors: 
 Ethan Katte  |  510432959
+
 Brad Wootton |  510289180
+
 Leo Denham   |  510439796
+
 Sam Kelly    |  510441537
 
 
@@ -34,6 +37,9 @@ Sam Kelly    |  510441537
 - List the transaction History.
 
 ## Running The Program
+
+<b> Note: </b> we attempted to have a functioning executable however had a variety of issues despite following an expertly designed guide from the legend that is Frank Fu. You may attempt to use it however it's executability has been tentative.
+
 - Clone the repository using ```git clone https://github.sydney.edu.au/SOT2412-COMP9412-2022S2/Sammys-Snackies.git```.
 - Navigate into the 'Sammys-Snackies' Folder.
 - Open a terminal and type ```gradle run```.
@@ -43,8 +49,11 @@ Sam Kelly    |  510441537
 - To login to the system use any of the following logins:
 
   USERNAME | PASSWORD | ROLE
+  
   seller   | password | Seller
+  
   cashier  | password | Cashier
+  
   owner    | password | Owner
 
 ## Testing
@@ -52,8 +61,7 @@ Sam Kelly    |  510441537
 - Navigate into the 'Sammys-Snackies' Folder.
 - Open a terminal and type ```gradle test```.
 - Navigate to the Testing report at ```..\Sammys-Snackies\app\build\reports\tests\test\index.html``` and open the file.
-- Navigat to the coverage report at ...
 
 ## Contributions
-Unortunately due to a high volume of requests we will be unable to open external contributions - this would also be a breach of academic dishonesty
+Unfortunately due to a high volume of requests we will be unable to open external contributions - this would also be a breach of academic dishonesty
 Please forward any complaints to noreply@gmail.com
