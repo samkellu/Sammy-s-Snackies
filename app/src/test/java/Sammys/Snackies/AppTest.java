@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Scanner;
 
 class AppTest {
@@ -104,7 +105,7 @@ class AppTest {
     //  purchasing negative amounts
     @Test void checkBuyCashTest(){
         VendingMachine vm = new VendingMachine();
-        vm.readFromFile("saveFile.json");
+        vm.readFromFile("src/test/resources/testSaveFile.json");
 
         String[] inputString1 = {"buy", "cash", "water", "1", "1*$20"};
         ArrayList<String> input1 = new ArrayList<>(Arrays.asList(inputString1));
@@ -135,7 +136,7 @@ class AppTest {
     // ensure no duplicate users
     @Test void checkWriteUser(){
 
-        App.loadLogins("testUserLoginWrite.json");
+        App.loadLogins("src/test/resources/testUserLoginWrite.json");
 
         String[] inputString = {"signup", "test", "password"};
         ArrayList<String> input = new ArrayList<>(Arrays.asList(inputString));
@@ -148,6 +149,148 @@ class AppTest {
         App.removeUser(remove);
 
     }
+
+    @Test void checkCashCheck(){
+        VendingMachine vm = new VendingMachine();
+        vm.readFromFile("saveFile.json");
+        try{
+            App.cashCheck(vm);
+            assertTrue(true);
+        }
+        catch(Exception e){
+            assertTrue(false);
+        } 
+    }
+    
+    @Test void checkCashaddValid(){
+        VendingMachine vm = new VendingMachine();
+        vm.readFromFile("saveFile.json");
+        int currencyCounts = vm.getCurrencyCounts().get("$5");
+        String[] inputArr = {"Add", "3*$5"};
+        ArrayList<String> inputString = new ArrayList<String>();
+        for(String str : inputArr){
+            inputString.add(str);
+        }
+        try{
+            App.cashAdd(vm,inputString);
+            assertTrue(true);
+        }
+        catch(Exception e){
+            assertTrue(false);
+        }
+        HashMap<String, Integer> currencyCountsAfter = vm.getCurrencyCounts();
+        
+        assertEquals(currencyCounts + 3, currencyCountsAfter.get("$5"));
+    }
+
+    @Test void checkCashaddNeg(){
+        VendingMachine vm = new VendingMachine();
+        vm.readFromFile("saveFile.json");
+        int currencyCounts = vm.getCurrencyCounts().get("$5");
+        String[] inputArr = {"Add", "-3*$5"};
+        ArrayList<String> inputString = new ArrayList<String>();
+        for(String str : inputArr){
+            inputString.add(str);
+        }
+        try{
+            App.cashAdd(vm,inputString);
+            assertTrue(true);
+        }
+        catch(Exception e){
+            assertTrue(false);
+        }
+        HashMap<String, Integer> currencyCountsAfter = vm.getCurrencyCounts();
+        
+        assertEquals(currencyCounts, currencyCountsAfter.get("$5"));
+    }
+
+    @Test void checkCashaddbig(){
+        VendingMachine vm = new VendingMachine();
+        vm.readFromFile("saveFile.json");
+        int currencyCounts = vm.getCurrencyCounts().get("$5");
+        String[] inputArr = {"Add", "500000*$5"};
+        ArrayList<String> inputString = new ArrayList<String>();
+        for(String str : inputArr){
+            inputString.add(str);
+        }
+        try{
+            App.cashAdd(vm,inputString);
+            assertTrue(true);
+        }
+        catch(Exception e){
+            assertTrue(false);
+        }
+        HashMap<String, Integer> currencyCountsAfter = vm.getCurrencyCounts();
+        
+        assertEquals(currencyCounts + 500000, currencyCountsAfter.get("$5"));
+    }
+
+    @Test void checkCashaddinvalidSyntax(){
+        VendingMachine vm = new VendingMachine();
+        vm.readFromFile("saveFile.json");
+        int currencyCounts = vm.getCurrencyCounts().get("$5");
+        String[] inputArr = {"Add", "$5"};
+        ArrayList<String> inputString = new ArrayList<String>();
+        for(String str : inputArr){
+            inputString.add(str);
+        }
+        try{
+            App.cashAdd(vm,inputString);
+            assertTrue(true);
+        }
+        catch(Exception e){
+            assertTrue(false);
+        }
+        HashMap<String, Integer> currencyCountsAfter = vm.getCurrencyCounts();
+        
+        assertEquals(currencyCounts, currencyCountsAfter.get("$5"));
+    }
+
+    @Test void checkCashaddValidMultiple(){
+        VendingMachine vm = new VendingMachine();
+        vm.readFromFile("saveFile.json");
+        int currencyCountsfives = vm.getCurrencyCounts().get("$5");
+        int currencyCountstens = vm.getCurrencyCounts().get("$10");
+        String[] inputArr = {"Add", "3*$5", "4*$10"};
+        ArrayList<String> inputString = new ArrayList<String>();
+        for(String str : inputArr){
+            inputString.add(str);
+        }
+        try{
+            App.cashAdd(vm,inputString);
+            assertTrue(true);
+        }
+        catch(Exception e){
+            assertTrue(false);
+        }
+        HashMap<String, Integer> currencyCountsAfter = vm.getCurrencyCounts();
+        
+        assertEquals(currencyCountsfives + 3, currencyCountsAfter.get("$5"));
+        assertEquals(currencyCountstens + 4, currencyCountsAfter.get("$10"));
+    }
+
+    @Test void checkCashaddnoinput(){
+        VendingMachine vm = new VendingMachine();
+        vm.readFromFile("saveFile.json");
+        int currencyCounts = vm.getCurrencyCounts().get("$5");
+        String[] inputArr = {"Add"};
+        ArrayList<String> inputString = new ArrayList<String>();
+        for(String str : inputArr){
+            inputString.add(str);
+        }
+        try{
+            App.cashAdd(vm,inputString);
+            assertTrue(true);
+        }
+        catch(Exception e){
+            assertTrue(false);
+        }
+        HashMap<String, Integer> currencyCountsAfter = vm.getCurrencyCounts();
+        
+        assertEquals(currencyCounts, currencyCountsAfter.get("$5"));
+    }
+
+    
 
     // positive buying test case
     @Test void buyerValid() {
@@ -337,9 +480,23 @@ class AppTest {
 
     @Test void cashremoveValid() {}
 
-    @Test void cashremoveInvalidAmount() {}
+    @Test void cashremoveInvalidAmount() {
+        VendingMachine vm = new VendingMachine();
+        vm.addCurrencyCount("$10", 20);
+        assertFalse(App.cashRemove(vm, generateInput("remove 2*$30")));
+        assertFalse(App.cashRemove(vm, generateInput("remove $40")));
+        assertFalse(App.cashRemove(vm, generateInput("remove -4*$10")));
+        assertFalse(App.cashRemove(vm, generateInput("remove 2*$2 -1*$1")));
+    }
 
-    @Test void cashremoveValidDenom() {}
+    @Test void cashremoveValidDenom() {
+        VendingMachine vm = new VendingMachine();
+        vm.addCurrencyCount("$10", 3);
+        vm.addCurrencyCount("$20", 2);
+        assertTrue(App.cashRemove(vm, generateInput("remove 2*$10")));
+        assertFalse(App.cashRemove(vm, generateInput("remove 2*$10")));
+        
+    }
   
     @Test void addProductPositiveTest1() {
         String[] s = {"productadd", "Z1", "ZooperDooper", "$2.00", "candy", "5"};
