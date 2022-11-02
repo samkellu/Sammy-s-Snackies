@@ -24,12 +24,6 @@ class AppTest {
         return vm;
     }
 
-
-    @Test void appHasAGreeting() {
-        // App classUnderTest = new App();
-        assertNotNull(1,"nice");
-    }
-
     @Test void checkCardVerificationValid() {
         assertTrue(App.verifyCard(1010101010101010L, "12/22", 333));
     }
@@ -132,7 +126,9 @@ class AppTest {
 
     // Check cash/product stock
     @Test void buyerValid() {
-
+        VendingMachine vm = getVendingMachine();
+        assertTrue(App.buyer(generateInput("buy cash water 1 1*$10"), vm, new Scanner(System.in)));
+        assertEquals(9, vm.getContentCount("A1"));
     }
 
     @Test void buyerInvalidProduct() {
@@ -142,41 +138,71 @@ class AppTest {
 
     @Test void buyerInvalidAmount() {
         VendingMachine vm = getVendingMachine();
-        assertFalse(App.buyer(generateInput("buy card water -1"), vm, new Scanner(System.in)));
-        assertFalse(App.buyer(generateInput("buy card water a"), vm, new Scanner(System.in)));
-        assertFalse(App.buyer(generateInput("buy card water"), vm, new Scanner(System.in)));
-        assertFalse(App.buyer(generateInput("buy card water 100"), vm, new Scanner(System.in)));
+        assertFalse(App.buyer(generateInput("buy card water -1 1*$10"), vm, new Scanner(System.in)));
+        assertFalse(App.buyer(generateInput("buy card water a 1*$10"), vm, new Scanner(System.in)));
+        assertFalse(App.buyer(generateInput("buy card water 1*$10"), vm, new Scanner(System.in)));
+        assertFalse(App.buyer(generateInput("buy card water 100 1*$10"), vm, new Scanner(System.in)));
     }
 
     @Test void buyerInvalidCashDenom() {
         VendingMachine vm = getVendingMachine();
-        assertFalse(App.buyer(generateInput("buy cash water 1*$110"), vm, new Scanner(System.in)));
-        assertFalse(App.buyer(generateInput("buy cash water 1*1000"), vm, new Scanner(System.in)));
-        assertFalse(App.buyer(generateInput("buy cash water 1*cat"), vm, new Scanner(System.in)));
+        assertFalse(App.buyer(generateInput("buy cash water 1 1*$110"), vm, new Scanner(System.in)));
+        assertFalse(App.buyer(generateInput("buy cash water 1 1*1000"), vm, new Scanner(System.in)));
+        assertFalse(App.buyer(generateInput("buy cash water 1 1*cat"), vm, new Scanner(System.in)));
     }
 
     @Test void buyerInvalidCashDenomAmount() {
         VendingMachine vm = getVendingMachine();
-        assertFalse(App.buyer(generateInput("buy cash water a*$10"), vm, new Scanner(System.in)));
-        assertFalse(App.buyer(generateInput("buy cash water -1*1000"), vm, new Scanner(System.in)));
-        assertFalse(App.buyer(generateInput("buy cash water 0*cat"), vm, new Scanner(System.in)));
+        assertFalse(App.buyer(generateInput("buy cash water 1 a*$10"), vm, new Scanner(System.in)));
+        assertFalse(App.buyer(generateInput("buy cash water 1 -1*1000"), vm, new Scanner(System.in)));
+        assertFalse(App.buyer(generateInput("buy cash water 1 0*cat"), vm, new Scanner(System.in)));
     }
 
     @Test void restockProductValid() {
-        
+        VendingMachine vm = getVendingMachine();
+        App.restockProduct(generateInput("restock A1 3"), vm);
+        assertEquals(13, vm.getContentCount("A1"));
+        App.restockProduct(generateInput("restock A1 10"), vm);
+        assertEquals(13, vm.getContentCount("A1"));
     }
 
-    @Test void restockProductInvalidProduct() {}
+    @Test void restockProductInvalidSLot() {
+        VendingMachine vm = getVendingMachine();
+        assertFalse(App.restockProduct(generateInput("restock A2 3"), vm));
+    }
 
-    @Test void restockProductInvalidAmount() {}
+    @Test void restockProductInvalidAmount() {
+        VendingMachine vm = getVendingMachine();
+        assertFalse(App.restockProduct(generateInput("restock A1 -1"), vm));
+        assertFalse(App.restockProduct(generateInput("restock A1 a"), vm));
+        assertFalse(App.restockProduct(generateInput("restock A1 20"), vm));
+    }
 
-    @Test void addProductValid() {}
+    @Test void addProductValid() {
+        VendingMachine vm = getVendingMachine();
+        assertTrue(App.addProduct(generateInput("add A2 sprite $1.00 drink 11"), vm));
+        assertEquals(11, vm.getContentCount("A2"));
+        assertEquals("sprite", vm.getSlots().get("A2").getContents().getName());
+        assertEquals(1, vm.getSlots().get("A2").getContents().getPrice());
+    }
 
-    @Test void addProductInvalidName() {}
+    @Test void addProductInvalidName() {
+        VendingMachine vm = getVendingMachine();
+        assertFalse(App.addProduct(generateInput("add A2 $1.00 drink 11"), vm));
+    }
 
-    @Test void addProductInvalidPrice() {}
+    @Test void addProductInvalidPrice() {
+        VendingMachine vm = getVendingMachine();
+        assertFalse(App.addProduct(generateInput("add A2 Sprite cat drink 11"), vm));
+        assertFalse(App.addProduct(generateInput("add A2 Sprite -1 drink 11"), vm));
+    }
 
-    @Test void addProductInvalidAmount() {}
+    @Test void addProductInvalidAmount() {
+        VendingMachine vm = getVendingMachine();
+        assertFalse(App.addProduct(generateInput("add A2 Sprite $1.00 drink 100"), vm));
+        assertFalse(App.addProduct(generateInput("add A2 Sprite $1.00 drink cat"), vm));
+        assertFalse(App.addProduct(generateInput("add A2 Sprite $1.00 drink -1"), vm));
+    }
 
     @Test void removeProductValid() {}
 
