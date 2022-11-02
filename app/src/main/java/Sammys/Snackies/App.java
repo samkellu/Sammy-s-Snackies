@@ -19,7 +19,7 @@ public class App {
     
     // File paths for databases
     private static final String saveFilePath = "saveFile.json";
-    private static final String userLoginFilepath = "userLogins.json";
+    public static String userLoginFilepath = "userLogins.json";
     public static UserType currentType = UserType.BUYER;
     private static String currentUserName = "anonymous";
     private static ArrayList<UserLogin> userLogins = new ArrayList<UserLogin>();

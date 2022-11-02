@@ -13,74 +13,96 @@ import java.util.Scanner;
 
 class AppTest {
 
+    // generates array list from one string input
     ArrayList<String> generateInput(String input){
         String[] userInput = input.split(" ");
         ArrayList<String> inputs = new ArrayList<String>(Arrays.asList(userInput));
         return inputs;
     }
 
+    // returns a premade stocked standard vending machine for testing
     VendingMachine getVendingMachine() {
         VendingMachine vm = new VendingMachine();
         vm.addSlot("A1", new FoodItem("water", 1.5, Category.DRINK), 10);
         return vm;
     }
 
+    // ensures the verification of credit cards works for correctly formatted input
     @Test void checkCardVerificationValid() {
         assertTrue(App.verifyCard(1010101010101010L, "12/22", 333));
     }
 
+    // positive credit card verification test with the largest number
     @Test void checkCardVerificationLarge() {
         assertTrue(App.verifyCard(9999999999999999L, "12/22", 333));
     }
 
+    // negative credit card verification test, card number length is too short
     @Test void checkCardVerificationInvalidCardUnder() {
         assertFalse(App.verifyCard(999999999999999L, "12/22", 333));
     }
 
+    // negative credit card verifictaion test, card number length is too long
     @Test void checkCardVerificationInvalidCardOver() {
         assertFalse(App.verifyCard(99999999999999999L, "12/22", 333));
     }
 
+    // negative credit card verification test, cvc length too short
     @Test void checkCardVerificationInvalidCVCUnder() {
         assertFalse(App.verifyCard(1010101010101010L, "12/22", 33));
     }
 
+    // negative credit card verification test, cvc length too long
     @Test void checkCardVerificationInvalidCVCOver() {
         assertFalse(App.verifyCard(1010101010101010L, "12/22", 33123));
     }
 
-    @Test void checkCardVerificationInvalidCVC4() {
+    // positive credit card verification test, cvc length of 4
+    @Test void checkCardVerificationValidCVC4() {
         assertTrue(App.verifyCard(1010101010101010L, "12/22", 3312));
     }
 
+    // negative credit card verification test, card out of date
     @Test void checkCardVerificationInvalidDateUnder() {
         assertFalse(App.verifyCard(1010101010101010L, "12/21", 332));
     }
 
+    // negative credit card verification test, bad date format, negative month
     @Test void checkCardVerificationInvalidDateBadMonthUnder() {
         assertFalse(App.verifyCard(1010101010101010L, "-2/21", 332));
     }
 
+    // negative credit card verification test, bad date format, month > 12
     @Test void checkCardVerificationInvalidDateBadMonthOver() {
         assertFalse(App.verifyCard(1010101010101010L, "13/21", 332));
     }
 
+    // negative credit card verification test, bad date format, negative year
     @Test void checkCardVerificationInvalidDateBadYearUnder() {
         assertFalse(App.verifyCard(1010101010101010L, "11/-1", 332));
     }
 
+    // negative credit card verification test, bad date format, year too long
     @Test void checkCardVerificationInvalidDateBadYearOverLen() {
         assertFalse(App.verifyCard(1010101010101010L, "11/100", 332));
     }
 
+    // negative credit card verification test, bad date format, month too long
     @Test void checkCardVerificationInvalidDateBadMonthOverLen() {
         assertFalse(App.verifyCard(1010101010101010L, "111/50", 332));
     }
 
+    // positive credit card verification test, month length < 2
     @Test void checkCardVerificationValidDateMonthLen1() {
         assertTrue(App.verifyCard(1010101010101010L, "1/50", 332));
     }
 
+    // big buy tests: 
+    //  good input
+    //  bad denomination
+    //  buying more product than is stocked
+    //  not giving cash with cash payment type
+    //  purchasing negative amounts
     @Test void checkBuyCashTest(){
         VendingMachine vm = new VendingMachine();
         vm.readFromFile("src/test/resources/testSaveFile.json");
@@ -109,6 +131,9 @@ class AppTest {
 
     }
 
+    // positive and negative sign up test
+    // ensure sign up ability
+    // ensure no duplicate users
     @Test void checkWriteUser(){
 
         App.loadLogins("src/test/resources/testUserLoginWrite.json");
@@ -125,6 +150,7 @@ class AppTest {
 
     }
 
+    // checks that cash check will output the cash in the vending machine
     @Test void checkCashCheck(){
         VendingMachine vm = new VendingMachine();
         vm.readFromFile("saveFile.json");
@@ -137,6 +163,7 @@ class AppTest {
         } 
     }
     
+    // positive cash add test 
     @Test void checkCashaddValid(){
         VendingMachine vm = new VendingMachine();
         vm.readFromFile("saveFile.json");
@@ -158,6 +185,7 @@ class AppTest {
         assertEquals(currencyCounts + 3, currencyCountsAfter.get("$5"));
     }
 
+    // negative cash add test, negative add amount
     @Test void checkCashaddNeg(){
         VendingMachine vm = new VendingMachine();
         vm.readFromFile("saveFile.json");
@@ -179,6 +207,7 @@ class AppTest {
         assertEquals(currencyCounts, currencyCountsAfter.get("$5"));
     }
 
+    // positive cash add test, tries a large number of notes to add
     @Test void checkCashaddbig(){
         VendingMachine vm = new VendingMachine();
         vm.readFromFile("saveFile.json");
@@ -200,6 +229,7 @@ class AppTest {
         assertEquals(currencyCounts + 500000, currencyCountsAfter.get("$5"));
     }
 
+    // negative cash add test, bad format, no amount given
     @Test void checkCashaddinvalidSyntax(){
         VendingMachine vm = new VendingMachine();
         vm.readFromFile("saveFile.json");
@@ -221,6 +251,7 @@ class AppTest {
         assertEquals(currencyCounts, currencyCountsAfter.get("$5"));
     }
 
+    // positive cash add test, ensures multiple denominations at the same time
     @Test void checkCashaddValidMultiple(){
         VendingMachine vm = new VendingMachine();
         vm.readFromFile("saveFile.json");
@@ -244,6 +275,7 @@ class AppTest {
         assertEquals(currencyCountstens + 4, currencyCountsAfter.get("$10"));
     }
 
+    // negative cash add test, no input given
     @Test void checkCashaddnoinput(){
         VendingMachine vm = new VendingMachine();
         vm.readFromFile("saveFile.json");
@@ -267,18 +299,24 @@ class AppTest {
 
     
 
-    // Check cash/product stock
+    // positive buying test case
     @Test void buyerValid() {
         VendingMachine vm = getVendingMachine();
         assertTrue(App.buyer(generateInput("buy cash water 1 1*$10"), vm, new Scanner(System.in)));
         assertEquals(9, vm.getContentCount("A1"));
     }
 
+    // negative buying test case, product not in machine
     @Test void buyerInvalidProduct() {
         VendingMachine vm = getVendingMachine();
         assertFalse(App.buyer(generateInput("buy card sprite 1"), vm, new Scanner(System.in)));
     }
 
+    // negative buying test case:
+    //  negative amount
+    //  amount NaN
+    //  no amount given
+    //  amount > available
     @Test void buyerInvalidAmount() {
         VendingMachine vm = getVendingMachine();
         assertFalse(App.buyer(generateInput("buy card water -1 1*$10"), vm, new Scanner(System.in)));
@@ -287,6 +325,10 @@ class AppTest {
         assertFalse(App.buyer(generateInput("buy card water 100 1*$10"), vm, new Scanner(System.in)));
     }
 
+    // negative buying test case:
+    //  bad denomination
+    //  bad denomination
+    //  denomination NaN
     @Test void buyerInvalidCashDenom() {
         VendingMachine vm = getVendingMachine();
         assertFalse(App.buyer(generateInput("buy cash water 1 1*$110"), vm, new Scanner(System.in)));
@@ -294,6 +336,10 @@ class AppTest {
         assertFalse(App.buyer(generateInput("buy cash water 1 1*cat"), vm, new Scanner(System.in)));
     }
 
+    // negative buyer test case:
+    //  denomination amount NaN
+    //  negative denomination amount
+    //  denomination amount 0, denomination NaN
     @Test void buyerInvalidCashDenomAmount() {
         VendingMachine vm = getVendingMachine();
         assertFalse(App.buyer(generateInput("buy cash water 1 a*$10"), vm, new Scanner(System.in)));
@@ -301,6 +347,7 @@ class AppTest {
         assertFalse(App.buyer(generateInput("buy cash water 1 0*cat"), vm, new Scanner(System.in)));
     }
 
+    // positive restock test
     @Test void restockProductValid() {
         VendingMachine vm = getVendingMachine();
         App.restockProduct(generateInput("restock A1 3"), vm);
@@ -309,11 +356,16 @@ class AppTest {
         assertEquals(13, vm.getContentCount("A1"));
     }
 
+    // negative restock test, slot not in machine
     @Test void restockProductInvalidSLot() {
         VendingMachine vm = getVendingMachine();
         assertFalse(App.restockProduct(generateInput("restock A2 3"), vm));
     }
 
+    // negative restock test:
+    //  negative restock amount
+    //  restock amount NaN
+    //  restock amount more than the slot can hold
     @Test void restockProductInvalidAmount() {
         VendingMachine vm = getVendingMachine();
         assertFalse(App.restockProduct(generateInput("restock A1 -1"), vm));
@@ -321,6 +373,7 @@ class AppTest {
         assertFalse(App.restockProduct(generateInput("restock A1 20"), vm));
     }
 
+    // positive add product test
     @Test void addProductValid() {
         VendingMachine vm = getVendingMachine();
         assertTrue(App.addProduct(generateInput("add A2 sprite $1.00 drink 11"), vm));
@@ -329,17 +382,25 @@ class AppTest {
         assertEquals(1, vm.getSlots().get("A2").getContents().getPrice());
     }
 
+    // negative add product test, product name doesn't exist
     @Test void addProductInvalidName() {
         VendingMachine vm = getVendingMachine();
         assertFalse(App.addProduct(generateInput("add A2 $1.00 drink 11"), vm));
     }
 
+    // negative add product test:
+    //  add amount NaN
+    //  negative add amount
     @Test void addProductInvalidPrice() {
         VendingMachine vm = getVendingMachine();
         assertFalse(App.addProduct(generateInput("add A2 Sprite cat drink 11"), vm));
         assertFalse(App.addProduct(generateInput("add A2 Sprite -1 drink 11"), vm));
     }
 
+    // negative add product test:
+    //  add amount is more than the slot can fit
+    //  add amount NaN
+    //  negative add amount
     @Test void addProductInvalidAmount() {
         VendingMachine vm = getVendingMachine();
         assertFalse(App.addProduct(generateInput("add A2 Sprite $1.00 drink 100"), vm));
@@ -347,19 +408,21 @@ class AppTest {
         assertFalse(App.addProduct(generateInput("add A2 Sprite $1.00 drink -1"), vm));
     }
 
+    // positive remove product test
     @Test void removeProductValid() {
         VendingMachine vm = getVendingMachine();
         assertTrue(App.removeProduct(generateInput("remove A1"), vm));
         assertEquals(0, vm.getSlots().keySet().size());
     }
 
+    // negative remove product test, slot doesn't exist
     @Test void removeProductInvalidSlot() {
         VendingMachine vm = getVendingMachine();
         assertFalse(App.removeProduct(generateInput("remove A2"), vm));
     }
 
+    // positive add user test, one for each user type
     @Test void addUserValid() {
-        VendingMachine vm = getVendingMachine();
         App.currentType = UserType.OWNER;
         assertTrue(App.addUser(generateInput("add wow user cashier")));
         assertTrue(App.addUser(generateInput("add new1 user owner")));
@@ -367,8 +430,9 @@ class AppTest {
         assertTrue(App.addUser(generateInput("add new3 user buyer")));
     }
 
+    // negative add user test:
+    //  all ensure no duplicates
     @Test void addUserInvalidUserExists() {
-        VendingMachine vm = getVendingMachine();
         App.currentType = UserType.OWNER;
         assertTrue(App.addUser(generateInput("add new user buyer")));
         assertFalse(App.addUser(generateInput("add new user owner")));
@@ -377,26 +441,30 @@ class AppTest {
         assertFalse(App.addUser(generateInput("add new user cashier")));
     }
 
+    // negative add user test, bad format:
+    //  no user type given
+    //  too many args given
     @Test void addUserInvalidFormat() {
-        VendingMachine vm = getVendingMachine();
         App.currentType = UserType.OWNER;
         assertFalse(App.addUser(generateInput("add new user")));
         assertFalse(App.addUser(generateInput("add new user owner wwwww")));
     }
 
+    // positive sign up test
     @Test void signUpValid() {
-        VendingMachine vm = getVendingMachine();
         assertTrue(App.signupUser(generateInput("signup jack password")));
     }
 
+    // negative sign up test, ensure no duplicate users
     @Test void signUpInvalidUserExists() {
-        VendingMachine vm = getVendingMachine();
         assertFalse(App.signupUser(generateInput("signup jack password")));
         assertFalse(App.signupUser(generateInput("signup jack amn")));
     }
 
+    // negative sign up test, bad format:
+    // no password given
+    // no username or password given
     @Test void signUpInvalidUserName() {
-        VendingMachine vm = getVendingMachine();
         assertFalse(App.signupUser(generateInput("signup amn")));
         assertFalse(App.signupUser(generateInput("signup")));
     }
@@ -419,6 +487,11 @@ class AppTest {
 
     @Test void cashremoveValid() {}
 
+    // negative cash remove tests:
+    //  bad denomination
+    //  no amount & bad denomination
+    //  negative amount
+    //  negative amount, with multiple denominations
     @Test void cashremoveInvalidAmount() {
         VendingMachine vm = new VendingMachine();
         vm.addCurrencyCount("$10", 20);
@@ -428,6 +501,9 @@ class AppTest {
         assertFalse(App.cashRemove(vm, generateInput("remove 2*$2 -1*$1")));
     }
 
+    // positive and negative cash remove test
+    //  remove all of one denomination
+    //  try and remove more, should fail
     @Test void cashremoveValidDenom() {
         VendingMachine vm = new VendingMachine();
         vm.addCurrencyCount("$10", 3);
@@ -437,6 +513,7 @@ class AppTest {
         
     }
   
+    // positive add product test, price has $
     @Test void addProductPositiveTest1() {
         String[] s = {"productadd", "Z1", "ZooperDooper", "$2.00", "candy", "5"};
         ArrayList<String> inputs = new ArrayList<>(Arrays.asList(s));
@@ -445,6 +522,7 @@ class AppTest {
         assertTrue(result);
     }
 
+    // positive add product test, price does not have $, and is int
     @Test void addProductPositiveTest2() {
         String[] s = {"productadd", "W1", "WagonWheels", "1", "candy", "1"};
         ArrayList<String> inputs = new ArrayList<>(Arrays.asList(s));
@@ -453,6 +531,7 @@ class AppTest {
         assertTrue(result);
     }
 
+    // positive add product test, checks case insensitivity
     @Test void addProductTestCaseInsensitivity() {
         String[] s = {"ProductAdd", "X1", "XanderRoot", "1", "Candy", "1"};
         ArrayList<String> inputs = new ArrayList<>(Arrays.asList(s));
@@ -461,6 +540,7 @@ class AppTest {
         assertTrue(result);
     }
 
+    // negative add product test, negative price
     @Test void addProductNegativeTest1() {
         String[] s = {"productadd", "Z1", "ZooperDooper", "-2.00", "candy", "5"};
         ArrayList<String> inputs = new ArrayList<>(Arrays.asList(s));
@@ -469,6 +549,7 @@ class AppTest {
         assertFalse(result);
     }
     
+    // negative add product test, negative amount
     @Test void addProductNegativeTest2() {
         String[] s = {"productadd", "W1", "WagonWheels", "1", "candy", "-1"};
         ArrayList<String> inputs = new ArrayList<>(Arrays.asList(s));
@@ -477,6 +558,7 @@ class AppTest {
         assertFalse(result);
     }
 
+    // negative add product test, zero amount
     @Test void addProductNegativeTest3() {
         String[] s = {"productadd", "X1", "XanderRoot", "1", "candy", "0"};
         ArrayList<String> inputs = new ArrayList<>(Arrays.asList(s));
