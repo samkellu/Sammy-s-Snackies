@@ -1318,7 +1318,7 @@ public class App {
                         }
                     break;
                     case "products":
-                        litProducts(vm);
+                        products(vm);
                     break;
                     case "help":
                         helpCommand(inputs);
