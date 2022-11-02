@@ -552,6 +552,38 @@ public class App {
         return true;
     }
 
+
+    private static boolean signupUser(ArrayList<String> inputs) {
+        // Used to sign up a new buyer user.
+        if (inputs.size() != 3){
+            printColour(RED, "Invalid input.");
+            printColour(YELLOW, "Usage:");
+            printColour(GREEN, "signup <username> <password>");
+        }
+
+        String username = inputs.get(1);
+        boolean found = false;
+        for (UserLogin userLogin : userLogins){
+            if (userLogin.getUsername().toLowerCase().equals(username.toLowerCase())){
+                found = true;
+            }
+        }
+        if (found == true){
+            printColour(RED, "Username already exists. Please log in or choose a unique username");
+            return false;
+        }
+
+        String password = inputs.get(2);
+        userLogins.add(new UserLogin(username, password, UserType.BUYER));
+        UserLogin.writeUsersToFile(userLoginFilepath, userLogins);
+        printColour(GREEN, "New buyer user added. Logging in.");
+        currentType = UserType.BUYER;
+
+        return true;
+    }
+
+
+
     // Logs the user into the given account
     public static boolean userLogin(ArrayList<String> inputs) {
 
@@ -788,11 +820,12 @@ public class App {
     public static void helpCommand(ArrayList<String> inputs) {
 
         // Checks input size
-         if (inputs==null || inputs.size() == 1) {
+        if (inputs==null || inputs.size() == 1) {
             printColour(YELLOW, "---------------Available Commands:---------------");
             printColour(GREEN, "    buy -" + RESET + " purchase a product");
             printColour(GREEN, "    products -" + RESET + " list available products in the vending machine");
-            printColour(GREEN, "    login -" + RESET + " login to a cashier/owner/seller account");
+            printColour(GREEN, "    login -" + RESET + " login to a buyer/cashier/owner/seller account");
+            printColour(GREEN, "    signup -"+RESET+" sign up a new buyer account");
             printColour(GREEN, "    help -" + RESET + " display this screen");
             printColour(GREEN, "    quit -" + RESET + " quit the program");
 
@@ -1253,6 +1286,9 @@ public class App {
                         } else {
                             restockProduct(inputs, vm);
                         }
+                    break;
+                    case "signup":
+                        signupUser(inputs);
                     break;
                     case "product":
                         if (inputs.size() > 1) {
