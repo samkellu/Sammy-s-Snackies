@@ -21,6 +21,7 @@ public class App {
     private static final String saveFilePath = "saveFile.json";
     private static final String userLoginFilepath = "userLogins.json";
     private static UserType currentType = UserType.BUYER;
+    private static String currentUserName = null;
     private static ArrayList<UserLogin> userLogins;
 
     // Prints a given message in a given colour
@@ -333,7 +334,7 @@ public class App {
         // Removes purchased items from the machine
         slot.sellContents(Integer.valueOf(inputs.get(3)));
         // Adds the transaction to the database
-        vm.addTransaction(inputs.get(1).toLowerCase(), slot.getContents(), Integer.valueOf(inputs.get(3)));
+        vm.addTransaction(inputs.get(1).toLowerCase(), slot.getContents(), Integer.valueOf(inputs.get(3)), String.valueOf(currentUserName));
         return true;
     }
   
@@ -570,6 +571,7 @@ public class App {
                 printColour(GREEN, "Welcome, " + user.getUsername());
                 // Logs the user in
                 currentType = user.getType();
+                currentUserName = user.getUsername();
                 printColour(YELLOW, "You are now logged in as a " + user.getType());
                 return true;
             }
@@ -968,6 +970,7 @@ public class App {
         int maxID = 15;
         int maxPayment = 15;
         int maxPurchase = 9;
+        int maxUser = 9;
 
         // Checks if there are no transactions stored in the machine
         if (vm.getTransactions().size() == 0) {
@@ -980,24 +983,28 @@ public class App {
             String id = String.valueOf(transaction.getID());
             String payment = transaction.getPaymentMethod();
             String purchase = String.format("%dx %s -> $%.2f", transaction.getQty(), transaction.getProductBought().getName(), transaction.getTotalAmount());
+            String userName = transaction.getUserName();
 
             maxID = (id.length() > maxID) ? id.length() : maxID;
             maxPayment = (payment.length() > maxPayment) ? payment.length() : maxPayment;
             maxPurchase = (purchase.length() > maxPurchase) ? purchase.length() : maxPurchase;
+            maxUser = (userName.length() > maxUser) ? userName.length() : maxUser;
         }
 
         // Initialises and prints label row
         String idSub = String.format(RESET + YELLOW + "%-" + maxID + "s" + RESET + GREEN, "TRANSACTION ID");
         String paymentSub = String.format(RESET + YELLOW + "%-" + maxPayment + "s" + RESET + GREEN, "PAYMENT METHOD");
         String purchaseSub = String.format(RESET + YELLOW + "%-" + maxPurchase + "s" + RESET + GREEN, "PURCHASE");
+        String userSub = String.format(RESET + YELLOW + "%-" + maxUser + "s" + RESET + GREEN, "USERNAME");
         printColour(YELLOW, "Products available:\n");
-        printColour(GREEN, String.format("    | %s | %s | %s |", idSub, paymentSub, purchaseSub));
+        printColour(GREEN, String.format("    | %s | %s | %s | %s |", idSub, userSub, paymentSub, purchaseSub));
 
         // Initialises and prints spacing row
         String idSpace = String.format("%-" + maxID + "s", "").replace(' ', '-');
         String paymentSpace = String.format("%-" + maxPayment + "s", "").replace(' ', '-');
         String purchaseSpace = String.format("%-" + maxPurchase + "s", "").replace(' ', '-');
-        printColour(GREEN, "    |-" + idSpace + "-+-" + paymentSpace + "-+-" + purchaseSpace + "-|");
+        String userSpace = String.format("%-" + maxUser + "s", "").replace(' ', '-');
+        printColour(GREEN, "    |-" + idSpace + "-+-" + userSpace + "-+-" + paymentSpace + "-+-" + purchaseSpace + "-|");
 
         // Prints information rows
         for (Transaction transaction : vm.getTransactions()) {
@@ -1005,7 +1012,8 @@ public class App {
             String id = String.valueOf(transaction.getID());
             String payment = transaction.getPaymentMethod();
             String purchase = String.format("%dx %s -> $%.2f", transaction.getQty(), transaction.getProductBought().getName(), transaction.getTotalAmount());
-            printColour(GREEN, String.format("    | %-" + maxID + "s | %-" + maxPayment + "s | %-" + maxPurchase + "s |", id, payment, purchase));
+            String userName = transaction.getUserName();
+            printColour(GREEN, String.format("    | %-" + maxID + "s | %-" + maxUser + "s | %-" + maxPayment + "s | %-" + maxPurchase + "s |", id, userName, payment, purchase));
         }
     }
 
@@ -1111,7 +1119,11 @@ public class App {
 
     // Ends the program, and saves machine data to file
     private static void endProgram(VendingMachine vm) {
-        vm.writeToFile(saveFilePath);
+        try {
+            vm.writeToFile(saveFilePath);
+        } catch (Exception e) {
+            printColour(RED, "Error saving to file...");
+        }
         printColour(YELLOW, "Quitting...");
     }
 

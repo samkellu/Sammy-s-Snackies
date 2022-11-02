@@ -9,13 +9,21 @@ public class Transaction {
     private Integer transactionID;
     private String paymentMethod;
     private FoodItem productBought;
+    private String userName;
     private Integer qty;
 
-    public Transaction(Integer transactionID, String paymentMethod, FoodItem productBought, Integer qty) {
+    public Transaction(Integer transactionID, String paymentMethod, FoodItem productBought, Integer qty, String userName) {
         this.transactionID = transactionID;
         this.paymentMethod = paymentMethod;
         this.productBought = productBought;
         this.qty = qty;
+        if (userName == null) {
+            this.userName = "anonymous";
+        } else {
+            this.userName = userName;
+        }
+
+        System.out.println(this.toString());
 
         totalAmount = productBought.getPrice() * qty;
     }
@@ -32,6 +40,10 @@ public class Transaction {
         return this.qty;
     }
 
+    public String getUserName() {
+        return this.userName;
+    }
+
     public Double getTotalAmount() {
         return this.totalAmount;
     }
@@ -41,6 +53,6 @@ public class Transaction {
     }
 
     public String toString() {
-        return transactionID + "," + paymentMethod + "," + productBought.getName() + "," + qty;
+        return transactionID + "," + paymentMethod + "," + productBought.getName() + "," + qty + "," + userName;
     }
 }
