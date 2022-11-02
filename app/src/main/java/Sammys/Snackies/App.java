@@ -14,6 +14,7 @@ public class App {
     public static final String RED = "\u001B[31m";
     public static final String GREEN = "\u001B[32m";
     public static final String YELLOW = "\u001B[33m";
+    public static final String MAGENTABG = "\u001B[45;30m";
     public static final String RESET = "\u001B[0m";
     
     // File paths for databases
@@ -120,7 +121,7 @@ public class App {
     private static void printCardError() {
         printColour(RED, "Invalid card details entered, please try again or type \"quit\" to cancel this transaction.\nCard details must be of the form:\n");
         printColour(GREEN, "  CARD NUMBER (16) MM/YY CVC\n  **************** **/** ***");
-        System.out.print("> ");
+        System.out.print(MAGENTABG + currentType.toString().toUpperCase() + RESET + " > ");
     }
 
     // Processes the sale of items
@@ -285,7 +286,7 @@ public class App {
             // Gives card details prompt
             printColour(YELLOW, "Please enter your card details, or type \"quit\" to cancel this transaction.\nCard details must be of the form:\n");
             printColour(GREEN, "  CARD NUMBER (16) MM/YY CVC\n  **************** **/** ***");
-            System.out.print("> ");
+            System.out.print(MAGENTABG + currentType.toString().toUpperCase() + RESET + " > ");
 
             // Repeatedly gets card details from the user until a card is accepted, or the user quits
             while (attempting) {
@@ -570,10 +571,11 @@ public class App {
                 // Logs the user in
                 currentType = user.getType();
                 printColour(YELLOW, "You are now logged in as a " + user.getType());
-                return false;
+                return true;
             }
         }
         printColour(RED, "Login not found, try again");
+        return false;
     }
 
     // Removes a user from the system
@@ -1170,7 +1172,7 @@ public class App {
         }
         printColour(GREEN, "Welcome to Sammy's Snackies!");
         helpCommand(null);
-        System.out.print("\n> ");
+        System.out.print("\n" + MAGENTABG + currentType.toString().toUpperCase() + RESET + " > ");
         return vm;
     }
 
@@ -1323,7 +1325,7 @@ public class App {
                         unknownCommand(inputs);
                     break;
                 }
-                System.out.print("\n> ");
+                System.out.print("\n" + MAGENTABG + currentType.toString().toUpperCase() + RESET + " > ");
             }
         }
     }
