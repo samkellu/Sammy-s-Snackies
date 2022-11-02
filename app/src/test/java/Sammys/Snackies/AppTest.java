@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 class AppTest {
     @Test void appHasAGreeting() {
@@ -99,5 +100,17 @@ class AppTest {
 
     }
 
-    
+    @Test void addProductPositiveTest1() {
+        ArrayList<String> inputs = new ArrayList<>(Arrays.asList("productadd", "Z1", "ZooperDooper", "$2.00", "candy", "5"));
+        VendingMachine vm = new VendingMachine();
+        boolean result = App.addProduct(inputs, vm);
+        assertTrue(result);
+    }
+
+    @Test void addProductNegativeTest1() {
+        ArrayList<String> inputs = new ArrayList<>(Arrays.asList("productadd", "Z1", "ZooperDooper", "-2.00", "candy", "5"));
+        VendingMachine vm = new VendingMachine();
+        boolean result = App.addProduct((ArrayList<String>)inputs, vm);
+        assertFalse(result);
+    }
 }
