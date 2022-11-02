@@ -566,4 +566,15 @@ class AppTest {
         boolean result = App.addProduct(inputs, vm);
         assertFalse(result);
     }
+
+    @Test void listTransactionsTest() {
+        VendingMachine vm = new VendingMachine();
+        vm.addTransaction("card", new FoodItem("apple", 0.4, Category.CANDY), 4, "test");
+        try {
+            App.listTransactions(vm, true);
+            App.listTransactions(vm, false);
+        } catch (Exception e){
+            assertTrue(false);
+        }
+    }
 }

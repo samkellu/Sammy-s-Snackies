@@ -66,6 +66,8 @@ run {
 
 jar {
     manifest {
-        attributes 'Main-Class': 'com.foo.bar.App'
+        attributes(
+            "Main-Class": 'Sammys.Snackies.App'
+        )
     }
 }
