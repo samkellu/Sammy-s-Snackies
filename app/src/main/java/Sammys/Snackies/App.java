@@ -60,8 +60,7 @@ public class App {
         }
     }
 
-    // Displays a dynamically sized table of all products available to purchase in the machine
-    private static void litProducts(VendingMachine v) {
+    public static void products(VendingMachine v) {
 
         int maxSlot = 5;
         int maxName = 5;
@@ -118,14 +117,14 @@ public class App {
     }
 
     // Outputs a standard card parsing error
-    private static void printCardError() {
+    public static void printCardError() {
         printColour(RED, "Invalid card details entered, please try again or type \"quit\" to cancel this transaction.\nCard details must be of the form:\n");
         printColour(GREEN, "  CARD NUMBER (16) MM/YY CVC\n  **************** **/** ***");
         System.out.print(MAGENTABG + currentType.toString().toUpperCase() + RESET + " > ");
     }
 
     // Processes the sale of items
-    private static boolean buyer(ArrayList<String> inputs, VendingMachine vm) {
+    public static boolean buyer(ArrayList<String> inputs, VendingMachine vm) {
 
         // Ensure enough arguments
         if (inputs.size() < 4) {
@@ -140,7 +139,7 @@ public class App {
             cash = true;
 
             // Ensure enough arguments for cash payment
-            if (inputs.size() < 4) {
+            if (inputs.size() < 5) {
                 printColour(RED, "Not enough arguments.");
                 printColour(YELLOW, "Usage:");
                 printColour(GREEN, "    buy <cash/card> <product> <amount> [denominations...]");
@@ -362,7 +361,7 @@ public class App {
     }
 
     // Restock a given product in the machine
-    private static boolean restockProduct(ArrayList<String> inputs, VendingMachine vm){
+    public static boolean restockProduct(ArrayList<String> inputs, VendingMachine vm){
 
         // Check number of inputs
         if (inputs.size() != 3){
@@ -413,7 +412,7 @@ public class App {
     }
 
     // Adds a new product to the vending machine
-    private static boolean addProduct(ArrayList<String> inputs, VendingMachine vm){
+    public static boolean addProduct(ArrayList<String> inputs, VendingMachine vm){
 
         // Checks number of inputs
         if (inputs.size() != 6){
@@ -488,7 +487,7 @@ public class App {
     }
 
     // Removes a product from the machine
-    private static boolean removeProduct(ArrayList<String> inputs, VendingMachine vm){
+    public static boolean removeProduct(ArrayList<String> inputs, VendingMachine vm){
 
         // Checks input size
         if (inputs.size() != 2){
@@ -518,7 +517,7 @@ public class App {
     }
 
     // Adds a user of a given type to the system
-    private static boolean addUser(ArrayList<String> inputs) {
+    public static boolean addUser(ArrayList<String> inputs) {
         
         // Ensures that the user is logged in as an owner
         if (currentType != UserType.OWNER){
@@ -554,7 +553,7 @@ public class App {
     }
 
     // Logs the user into the given account
-    private static boolean userLogin(ArrayList<String> inputs) {
+    public static boolean userLogin(ArrayList<String> inputs) {
 
         // Checks input size
         if (inputs.size() != 3) {
@@ -579,7 +578,7 @@ public class App {
     }
 
     // Removes a user from the system
-    private static boolean removeUser(ArrayList<String> inputs) {
+    public static boolean removeUser(ArrayList<String> inputs){
 
         // Ensures that the user is logged in as an owner
         if (currentType != UserType.OWNER){
@@ -629,7 +628,7 @@ public class App {
     }
 
     // Sets the category of a slot
-    private static void setCategory(Slot s, String category) {
+    public static void setCategory(Slot s, String category) {
         switch (category) {
             case "drink":
                 s.getContents().setCategory(Category.DRINK);
@@ -647,7 +646,7 @@ public class App {
     }
 
     // Allows the user to modify a slot or product
-    private static String modify(ArrayList<String> inputs, VendingMachine vm) {
+    public static String modify(ArrayList<String> inputs, VendingMachine vm) {
 
         List<String> categories = Arrays.asList("drink","chocolate","chips","candy");
         String success = "successfully modified product(s)";
@@ -761,8 +760,7 @@ public class App {
         return RED + "\nIncorrect paramaters! Use \"help modify\" to recieve help!" + RESET;
     }
 
-
-    private static void userList(ArrayList<String> inputs){
+    public static void userList(ArrayList<String> inputs){
 
         // Checks input size
         if (inputs.size() != 1){
@@ -787,7 +785,7 @@ public class App {
     }
   
     // Displays the help commands
-    private static void helpCommand(ArrayList<String> inputs) {
+    public static void helpCommand(ArrayList<String> inputs) {
 
         // Checks input size
          if (inputs==null || inputs.size() == 1) {
@@ -930,7 +928,7 @@ public class App {
     }
 
     // Displays a dynamically sized table of cash denominations in the machine
-    private static void cashCheck(VendingMachine vm){
+    public static void cashCheck(VendingMachine vm){
 
         printColour(YELLOW, "Cash Reserves:\n");
 
@@ -962,7 +960,7 @@ public class App {
     }
 
     // Displays a dynamically sized table of transactions
-    private static void listTransactions(VendingMachine vm) {
+    public static void listTransactions(VendingMachine vm) {
 
         printColour(YELLOW, "Transaction History:\n");
         int maxID = 15;
@@ -1010,7 +1008,7 @@ public class App {
     }
 
     // Adds cash to the machine
-    private static boolean cashAdd(VendingMachine vm, ArrayList<String> inputs){
+    public static boolean cashAdd(VendingMachine vm, ArrayList<String> inputs){
 
         // Checks input size
         if(inputs.size() < 2){
@@ -1058,7 +1056,7 @@ public class App {
     }
 
     // Removes cash from the machine
-    private static boolean cashRemove(VendingMachine vm, ArrayList<String> inputs) {
+    public static boolean cashRemove(VendingMachine vm, ArrayList<String> inputs) {
 
         // Checks input size
         if(inputs.size() < 2){
@@ -1110,13 +1108,13 @@ public class App {
     }
 
     // Ends the program, and saves machine data to file
-    private static void endProgram(VendingMachine vm) {
+    public static void endProgram(VendingMachine vm) {
         vm.writeToFile(saveFilePath);
         printColour(YELLOW, "Quitting...");
     }
 
     // Runs the startup sequence for the machine
-    private static VendingMachine initProgram() {
+    public static VendingMachine initProgram() {
 
         // Restores the state of the vending machine to the latest save
         VendingMachine vm = new VendingMachine();
@@ -1177,7 +1175,7 @@ public class App {
     }
 
     // Unknown command error message
-    private static void unknownCommand(ArrayList<String> inputs) {
+    public static void unknownCommand(ArrayList<String> inputs) {
         printColour(RED, "Unknown Command, use the help command to see available commands.");
     }
 
