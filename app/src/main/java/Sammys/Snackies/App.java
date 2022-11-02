@@ -125,7 +125,7 @@ public class App {
     }
 
     // Processes the sale of items
-    private static boolean buyer(ArrayList<String> inputs, VendingMachine vm, Scanner scan) {
+    public static boolean buyer(ArrayList<String> inputs, VendingMachine vm, Scanner scan) {
 
         // Ensure enough arguments
         if (inputs.size() < 4) {
