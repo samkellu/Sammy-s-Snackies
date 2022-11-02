@@ -212,9 +212,23 @@ class AppTest {
 
     @Test void cashremoveValid() {}
 
-    @Test void cashremoveInvalidAmount() {}
+    @Test void cashremoveInvalidAmount() {
+        VendingMachine vm = new VendingMachine();
+        vm.addCurrencyCount("$10", 20);
+        assertFalse(App.cashRemove(vm, generateInput("remove 2*$30")));
+        assertFalse(App.cashRemove(vm, generateInput("remove $40")));
+        assertFalse(App.cashRemove(vm, generateInput("remove -4*$10")));
+        assertFalse(App.cashRemove(vm, generateInput("remove 2*$2 -1*$1")));
+    }
 
-    @Test void cashremoveValidDenom() {}
+    @Test void cashremoveValidDenom() {
+        VendingMachine vm = new VendingMachine();
+        vm.addCurrencyCount("$10", 3);
+        vm.addCurrencyCount("$20", 2);
+        assertTrue(App.cashRemove(vm, generateInput("remove 2*$10")));
+        assertFalse(App.cashRemove(vm, generateInput("remove 2*$10")));
+        
+    }
   
     @Test void addProductPositiveTest1() {
         String[] s = {"productadd", "Z1", "ZooperDooper", "$2.00", "candy", "5"};
