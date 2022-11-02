@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Scanner;
 
 class AppTest {
     @Test void appHasAGreeting() {
@@ -77,25 +78,25 @@ class AppTest {
 
         String[] inputString1 = {"buy", "cash", "water", "1", "1*$20"};
         ArrayList<String> input1 = new ArrayList<>(Arrays.asList(inputString1));
-        assertTrue(App.buyer(input1, vm));
+        assertTrue(App.buyer(input1, vm, new Scanner(System.in)));
 
         String[] inputString2 = {"buy", "cash", "water", "1", "1*$2031"};
         ArrayList<String> input2 = new ArrayList<>(Arrays.asList(inputString2));
-        assertFalse(App.buyer(input2, vm));
+        assertFalse(App.buyer(input2, vm, new Scanner(System.in)));
 
         String[] inputString3 = {"buy", "cash", "water", "5", "1*20"};
         ArrayList<String> input3 = new ArrayList<>(Arrays.asList(inputString3));
-        assertFalse(App.buyer(input3, vm), "Should be insufficient waters remaining");
+        assertFalse(App.buyer(input3, vm, new Scanner(System.in)), "Should be insufficient waters remaining");
 
 
         String[] inputString4 = {"buy", "cash", "water", "5"};
         ArrayList<String> input4 = new ArrayList<>(Arrays.asList(inputString4));
-        assertFalse(App.buyer(input4, vm), "Not enough inputs");
+        assertFalse(App.buyer(input4, vm, new Scanner(System.in)), "Not enough inputs");
 
 
         String[] inputString5 = {"buy", "cash", "water", "-5", "1*$2"};
         ArrayList<String> input5= new ArrayList<>(Arrays.asList(inputString5));
-        assertFalse(App.buyer(input5, vm), "Negative product count");
+        assertFalse(App.buyer(input5, vm, new Scanner(System.in)), "Negative product count");
 
     }
 
