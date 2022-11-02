@@ -108,7 +108,11 @@ public class App {
         printColour(GREEN, "    |-" + slotSpace + "-+-" + nameSpace + "-+-" + qtySpace + "-+-" + priceSpace + "-|");
 
         // Prints all formatted rows of the table
-        for (String key : v.getSlots().keySet()) {
+        String[] slotNames = v.getSlots().keySet().toArray(new String[0]);
+        Arrays.sort(slotNames);
+
+
+        for (String key : slotNames) {
 
             String name = v.getSlots().get(key).getContents().getName();
             String qty = String.valueOf(v.getSlots().get(key).getCount());
