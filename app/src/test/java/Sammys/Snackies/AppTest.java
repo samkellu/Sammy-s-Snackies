@@ -18,6 +18,12 @@ class AppTest {
         return inputs;
     }
 
+    VendingMachine getVendingMachine() {
+        VendingMachine vm = new VendingMachine();
+        vm.addSlot("A1", new FoodItem("water", 1.5, Category.DRINK), 10);
+        return vm;
+    }
+
 
     @Test void appHasAGreeting() {
         // App classUnderTest = new App();
@@ -125,17 +131,40 @@ class AppTest {
     }
 
     // Check cash/product stock
-    @Test void buyerValid() {}
+    @Test void buyerValid() {
 
-    @Test void buyerInvalidProduct() {}
+    }
 
-    @Test void buyerInvalidAmount() {}
+    @Test void buyerInvalidProduct() {
+        VendingMachine vm = getVendingMachine();
+        assertFalse(App.buyer(generateInput("buy card sprite 1"), vm, new Scanner(System.in)));
+    }
 
-    @Test void buyerInvalidCashDenom() {}
+    @Test void buyerInvalidAmount() {
+        VendingMachine vm = getVendingMachine();
+        assertFalse(App.buyer(generateInput("buy card water -1"), vm, new Scanner(System.in)));
+        assertFalse(App.buyer(generateInput("buy card water a"), vm, new Scanner(System.in)));
+        assertFalse(App.buyer(generateInput("buy card water"), vm, new Scanner(System.in)));
+        assertFalse(App.buyer(generateInput("buy card water 100"), vm, new Scanner(System.in)));
+    }
 
-    @Test void buyerInvalidCashDenomAmount() {}
+    @Test void buyerInvalidCashDenom() {
+        VendingMachine vm = getVendingMachine();
+        assertFalse(App.buyer(generateInput("buy cash water 1*$110"), vm, new Scanner(System.in)));
+        assertFalse(App.buyer(generateInput("buy cash water 1*1000"), vm, new Scanner(System.in)));
+        assertFalse(App.buyer(generateInput("buy cash water 1*cat"), vm, new Scanner(System.in)));
+    }
 
-    @Test void restockProductValid() {}
+    @Test void buyerInvalidCashDenomAmount() {
+        VendingMachine vm = getVendingMachine();
+        assertFalse(App.buyer(generateInput("buy cash water a*$10"), vm, new Scanner(System.in)));
+        assertFalse(App.buyer(generateInput("buy cash water -1*1000"), vm, new Scanner(System.in)));
+        assertFalse(App.buyer(generateInput("buy cash water 0*cat"), vm, new Scanner(System.in)));
+    }
+
+    @Test void restockProductValid() {
+        
+    }
 
     @Test void restockProductInvalidProduct() {}
 
