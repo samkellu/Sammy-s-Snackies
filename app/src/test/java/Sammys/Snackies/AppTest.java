@@ -114,5 +114,17 @@ class AppTest {
 
     }
 
+    @Test void checkCashCheck(){
+        VendingMachine vm = new VendingMachine();
+        vm.readFromFile("testSaveFile.json");
+        try{
+            App.cashCheck(vm);
+            assertTrue(true);
+        }
+        catch(Exception e){
+            assertTrue(false);
+        } 
+    }
+
     
 }
