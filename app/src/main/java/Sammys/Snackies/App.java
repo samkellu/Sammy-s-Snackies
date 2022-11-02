@@ -472,16 +472,28 @@ public class App {
             }
     
             // Creates new footItem
-            FoodItem newFood = new FoodItem(inputs.get(2).toLowerCase(), price, foodCategory);
+            FoodItem newFood = new FoodItem(inputs.get(2), price, foodCategory);
             if (currentSlot != null){
                 vm.getSlots().remove(currentSlot.getName());
             }
 
             // Creates new slot
-            currentSlot = new Slot(slotName, newFood,Integer.parseInt(inputs.get(5)));
-            if (currentSlot.getCount() > 15){
-                printColour(RED, "Slots can only hold up to 15 items! Please try again");
+            int count = -1;
+            try {
+                count = Integer.parseInt(inputs.get(5));
+            } catch (NumberFormatException e) {
+                printColour(RED, "Product count must be a positive integer! Please try again");
+                return false;
             }
+
+            if (count > 15){
+                printColour(RED, "Slots can only hold up to 15 items! Please try again");
+                return false;
+            } else if (count <= 0) {
+                printColour(RED, "Product count must be a positive number! Please try again");
+                return false;
+            }
+            currentSlot = new Slot(slotName, newFood, count);
 
             // Adds new slot to the machine
             vm.getSlots().put(slotName, currentSlot);
