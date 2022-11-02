@@ -99,5 +99,20 @@ class AppTest {
 
     }
 
+    @Test void checkWriteUser(){
+        App.userLoginFilepath = "testUserLoginWrite.json";
+
+        String[] inputString = {"signup", "test", "password"};
+        ArrayList<String> input = new ArrayList<>(Arrays.asList(inputString));
+        assertTrue(App.signupUser(input), "could not sign up test user");
+
+        assertFalse(App.signupUser(input), "Should not be able to sign up a duplicate");
+
+        String[] removeString = {"removeUser", "test"};
+        ArrayList<String> remove = new ArrayList<>(Arrays.asList(removeString));
+        App.removeUser(remove);
+
+    }
+
     
 }

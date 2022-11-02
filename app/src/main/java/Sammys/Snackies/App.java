@@ -19,7 +19,7 @@ public class App {
     
     // File paths for databases
     private static final String saveFilePath = "saveFile.json";
-    private static final String userLoginFilepath = "userLogins.json";
+    public static String userLoginFilepath = "userLogins.json";
     private static UserType currentType = UserType.BUYER;
     private static ArrayList<UserLogin> userLogins;
 
@@ -553,12 +553,13 @@ public class App {
     }
 
 
-    private static boolean signupUser(ArrayList<String> inputs) {
+    public static boolean signupUser(ArrayList<String> inputs) {
         // Used to sign up a new buyer user.
         if (inputs.size() != 3){
             printColour(RED, "Invalid input.");
             printColour(YELLOW, "Usage:");
             printColour(GREEN, "signup <username> <password>");
+            return false;
         }
 
         String username = inputs.get(1);
@@ -581,7 +582,6 @@ public class App {
 
         return true;
     }
-
 
 
     // Logs the user into the given account
@@ -612,11 +612,11 @@ public class App {
     // Removes a user from the system
     public static boolean removeUser(ArrayList<String> inputs){
 
-        // Ensures that the user is logged in as an owner
-        if (currentType != UserType.OWNER){
-            printColour(RED, "You are unauthorised!! Owner role is required, please log in.");
-            return false;
-        }
+        // // Ensures that the user is logged in as an owner
+        // if (currentType != UserType.OWNER){
+        //     printColour(RED, "You are unauthorised!! Owner role is required, please log in.");
+        //     return false;
+        // }
 
         // Checks input size
         if (inputs.size() != 2){
