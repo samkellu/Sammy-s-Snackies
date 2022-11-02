@@ -555,6 +555,21 @@ class AppTest {
 
     @Test void cashremoveValid() {}
 
+    // just run the help command, ensure it doesn't crash
+    @Test void runHelpCommand() {
+        App.helpCommand(null);
+        String[] strs = {
+            "help", "help buy", "help user", "help list", "help login", "help restock",
+            "help signup", "help product", "help modify", "help products", "help help",
+            "help cash", "help buyer", "help exit", "help quit", "help cashcheck","helpcashadd",
+            "help cashremove", "help productadd", "help productremove","help userremove", "help useradd",
+            "help userlist",
+        };
+        for (String s : strs) {
+            App.helpCommand(generateInput(s));
+        }
+    }
+
     // negative cash remove tests:
     //  bad denomination
     //  no amount & bad denomination
