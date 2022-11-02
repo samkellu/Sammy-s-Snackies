@@ -689,7 +689,7 @@ public class App {
     public static String modify(ArrayList<String> inputs, VendingMachine vm) {
 
         List<String> categories = Arrays.asList("drink","chocolate","chips","candy");
-        String success = "successfully modified product(s)";
+        String success = GREEN + "successfully modified product(s)" + RESET;
 
         /*
         To change a slot's name:

@@ -58,6 +58,6 @@ run {
 
 jar {
     manifest {
-        attributes 'App': 'com.foo.bar.App'
+        attributes 'Main-Class': 'com.foo.bar.App'
     }
 }
