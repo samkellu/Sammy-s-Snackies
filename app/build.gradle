@@ -55,3 +55,9 @@ jacocoTestReport {
 run {
     standardInput = System.in
 }
+
+jar {
+    manifest {
+        attributes 'App': 'com.foo.bar.App'
+    }
+}
