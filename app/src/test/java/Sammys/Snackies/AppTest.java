@@ -6,6 +6,9 @@ package Sammys.Snackies;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 class AppTest {
     @Test void appHasAGreeting() {
         // App classUnderTest = new App();
@@ -67,4 +70,49 @@ class AppTest {
     @Test void checkCardVerificationValidDateMonthLen1() {
         assertTrue(App.verifyCard(1010101010101010L, "1/50", 332));
     }
+
+    @Test void checkBuyCashTest(){
+        VendingMachine vm = new VendingMachine();
+        vm.readFromFile("saveFile.json");
+
+        String[] inputString1 = {"buy", "cash", "water", "1", "1*$20"};
+        ArrayList<String> input1 = new ArrayList<>(Arrays.asList(inputString1));
+        assertTrue(App.buyer(input1, vm));
+
+        String[] inputString2 = {"buy", "cash", "water", "1", "1*$2031"};
+        ArrayList<String> input2 = new ArrayList<>(Arrays.asList(inputString2));
+        assertFalse(App.buyer(input2, vm));
+
+        String[] inputString3 = {"buy", "cash", "water", "5", "1*20"};
+        ArrayList<String> input3 = new ArrayList<>(Arrays.asList(inputString3));
+        assertFalse(App.buyer(input3, vm), "Should be insufficient waters remaining");
+
+
+        String[] inputString4 = {"buy", "cash", "water", "5"};
+        ArrayList<String> input4 = new ArrayList<>(Arrays.asList(inputString4));
+        assertFalse(App.buyer(input4, vm), "Not enough inputs");
+
+
+        String[] inputString5 = {"buy", "cash", "water", "-5", "1*$2"};
+        ArrayList<String> input5= new ArrayList<>(Arrays.asList(inputString5));
+        assertFalse(App.buyer(input5, vm), "Negative product count");
+
+    }
+
+    @Test void checkWriteUser(){
+        App.loadLogins("testUserLoginWrite.json");
+
+        String[] inputString = {"signup", "test", "password"};
+        ArrayList<String> input = new ArrayList<>(Arrays.asList(inputString));
+        assertTrue(App.signupUser(input), "could not sign up test user");
+
+        assertFalse(App.signupUser(input), "Should not be able to sign up a duplicate");
+
+        String[] removeString = {"removeUser", "test"};
+        ArrayList<String> remove = new ArrayList<>(Arrays.asList(removeString));
+        App.removeUser(remove);
+
+    }
+
+    
 }
