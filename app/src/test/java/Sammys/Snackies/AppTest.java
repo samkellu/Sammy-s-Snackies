@@ -11,6 +11,14 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 class AppTest {
+
+    ArrayList<String> generateInput(String input){
+        String[] userInput = input.split(" ");
+        ArrayList<String> inputs = new ArrayList<String>(Arrays.asList(userInput));
+        return inputs;
+    }
+
+
     @Test void appHasAGreeting() {
         // App classUnderTest = new App();
         assertNotNull(1,"nice");
