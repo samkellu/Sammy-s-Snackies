@@ -19,7 +19,7 @@ public class App {
     
     // File paths for databases
     private static final String saveFilePath = "saveFile.json";
-    public static String userLoginFilepath = "userLogins.json";
+    private static final String userLoginFilepath = "userLogins.json";
     private static UserType currentType = UserType.BUYER;
     private static ArrayList<UserLogin> userLogins;
 
@@ -1212,6 +1212,10 @@ public class App {
         printColour(RED, "Unknown Command, use the help command to see available commands.");
     }
 
+
+    public static void loadLogins(String filepath){
+        userLogins = UserLogin.readFromFile(filepath);
+    }
     public static void main(String[] args) {
         
         Scanner s = new Scanner(System.in);
@@ -1220,7 +1224,8 @@ public class App {
         VendingMachine vm = initProgram();
         vm.addSlot("A1", f, 5);
 
-        userLogins = UserLogin.readFromFile(userLoginFilepath);
+        loadLogins(userLoginFilepath);
+        // userLogins = UserLogin.readFromFile(userLoginFilepath);
 
         // Continually takes input from the user
         while (true){
