@@ -17,11 +17,7 @@ public class Transaction {
         this.paymentMethod = paymentMethod;
         this.productBought = productBought;
         this.qty = qty;
-        if (userName == null) {
-            this.userName = "anonymous";
-        } else {
-            this.userName = userName;
-        }
+        this.userName = userName;
 
         System.out.println(this.toString());
 

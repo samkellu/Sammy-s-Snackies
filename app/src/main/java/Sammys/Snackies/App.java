@@ -21,7 +21,7 @@ public class App {
     private static final String saveFilePath = "saveFile.json";
     private static final String userLoginFilepath = "userLogins.json";
     private static UserType currentType = UserType.BUYER;
-    private static String currentUserName = null;
+    private static String currentUserName = "anonymous";
     private static ArrayList<UserLogin> userLogins;
 
     // Prints a given message in a given colour
@@ -77,7 +77,7 @@ public class App {
                 empty = (v.getSlots().get(key).getCount() == 0) ? true : false;
             }
                 
-            String name = v.getSlots().get(key).getName();
+            String name = v.getSlots().get(key).getContents().getName();
             String qty = String.valueOf(v.getSlots().get(key).getCount());
             String price = String.format("$%.2f", v.getSlots().get(key).getContents().getPrice());
 
@@ -111,7 +111,7 @@ public class App {
         // Prints all formatted rows of the table
         for (String key : v.getSlots().keySet()) {
 
-            String name = v.getSlots().get(key).getName();
+            String name = v.getSlots().get(key).getContents().getName();
             String qty = String.valueOf(v.getSlots().get(key).getCount());
             String price = String.format("$%.2f", v.getSlots().get(key).getContents().getPrice());
             printColour(GREEN, String.format("    | %-" + maxSlot + "s | %-" + maxName + "s | %-" + maxQty + "s | %-" + maxPrice + "s |", key, name, qty, price));

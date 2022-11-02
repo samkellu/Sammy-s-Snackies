@@ -174,7 +174,7 @@ public class VendingMachine {
         for (Transaction transaction : transactions) {
             System.out.println(String.format("%s,%s",String.valueOf(transaction.getID()), transaction.toString()));
             System.out.flush();
-            transactionData.put(String.valueOf(transaction.getID()), transaction.toString());
+            transactionData.put(String.valueOf(transaction.getID()), (Object) transaction.toString());
         }
         jsonData.add(transactionData);
 
@@ -191,7 +191,6 @@ public class VendingMachine {
         // Attempts to write the JSONArray to file
         try (FileWriter fw = new FileWriter(fPath)) {
             org.json.simple.JSONArray.writeJSONString(jsonData, fw);
-            fw.flush();
             fw.close();
         } catch(IOException e) {
             System.out.println("Failed to write to file");
