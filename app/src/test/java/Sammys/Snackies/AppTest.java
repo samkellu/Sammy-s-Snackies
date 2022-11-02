@@ -577,8 +577,7 @@ class AppTest {
         vm.addCurrencyCount("$10", 3);
         vm.addCurrencyCount("$20", 2);
         assertTrue(App.cashRemove(vm, generateInput("remove 2*$10")));
-        assertFalse(App.cashRemove(vm, generateInput("remove 2*$10")));
-        
+        assertFalse(App.cashRemove(vm, generateInput("remove 7*$10")));
     }
   
     // positive add product test, price has $
