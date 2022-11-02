@@ -12,16 +12,14 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import java.io.BufferedWriter;
+import java.io.File;
 
 public class VendingMachine {
     private HashMap<String, Slot> allSlots;
     private HashMap<String, Integer> currencyCounts;
     private final String[] currencyNames = {"5c", "10c", "20c", "50c", "$1", "$2", "$5", "$10", "$20", "$50", "$100"};
     private final double[] currencyValues = {0.05, 0.10, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100};
-    
-    // TODO
-    // private final String fp = "data.json"; // unsued, if needed again, just uncomment this
-    
     private Integer currentTransactionID = 0;
     private ArrayList<Transaction> transactions;
 
@@ -47,8 +45,8 @@ public class VendingMachine {
         return false;
     }
     
-    public void addTransaction(String paymentMethod, FoodItem productBought, Integer qty) {
-        transactions.add(new Transaction(currentTransactionID++, paymentMethod, productBought, qty));
+    public void addTransaction(String paymentMethod, FoodItem productBought, Integer qty, String userName) {
+        transactions.add(new Transaction(currentTransactionID++, paymentMethod, productBought, qty, userName));
     }
 
     public void addSlot(String slotName, FoodItem slotContents, int contentCount){
@@ -85,7 +83,6 @@ public class VendingMachine {
             throw new NoSuchElementException("Not enough of this denomination in the machine");
         }
         this.currencyCounts.put(currencyName, this.currencyCounts.get(currencyName) - currencyCount);
-        
     }
 
     public HashMap<String, Integer> getCurrencyCounts() {
@@ -117,7 +114,8 @@ public class VendingMachine {
         this.allSlots = new HashMap<String, Slot>();
         JSONParser parser = new JSONParser();
 
-        try (FileReader fr = new FileReader(fPath)) {
+        try {
+            FileReader fr = new FileReader(fPath);
             Object obj = parser.parse(fr);
             JSONArray jsonData = (JSONArray) obj;
 
@@ -142,20 +140,21 @@ public class VendingMachine {
 
             for (Object key : transactionData.keySet()) {
                 this.currentTransactionID = Integer.valueOf((String) key) + 1;
-                List<String> l = Arrays.asList(((String) transactionData.get((String) key)).split("\\s*,\\s*"));
+                String l[] = ((String) transactionData.get((String) key)).split(",");
 
                 FoodItem foodItem = null;
                 for (Slot s : allSlots.values()) {
-                    if (s.getContents().getName().toLowerCase().equals(l.get(2).toLowerCase())) {
+                    if (s.getContents().getName().toLowerCase().equals(l[2].toLowerCase())) {
                         foodItem = s.getContents();
                     }
                 }
                 if (foodItem == null) {
-                    System.out.println("Error loading product from file. Please check .json file itegrity.\n\n");
+                    System.out.println("Error loading product from file. Please check .json file integrity.\n\n");
                     continue;
                 }
-                this.transactions.add(new Transaction(Integer.valueOf(l.get(0)), l.get(1), foodItem, Integer.valueOf(l.get(3))));
+                this.transactions.add(new Transaction(Integer.valueOf(l[0]), l[1], foodItem, Integer.valueOf(l[3]), l[4]));
             }
+            fr.close();
 
         } catch(IOException e) {
             e.printStackTrace();
@@ -176,7 +175,7 @@ public class VendingMachine {
 
         HashMap<String, Object> transactionData = new HashMap<String, Object>();
         for (Transaction transaction : transactions) {
-            transactionData.put(String.valueOf(transaction.getID()), transaction.toString());
+            transactionData.put(String.valueOf(transaction.getID()), (Object) transaction.toString());
         }
         jsonData.add(transactionData);
 
@@ -191,10 +190,11 @@ public class VendingMachine {
         }
         
         // Attempts to write the JSONArray to file
-        try (FileWriter fw = new FileWriter(fPath)) {
-            org.json.simple.JSONArray.writeJSONString(jsonData, fw);
-            fw.flush();
-            fw.close();
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(new File("File.txt"), true));
+            org.json.simple.JSONArray.writeJSONString(jsonData, writer);
+            writer.flush();
+            writer.close();
         } catch(IOException e) {
             System.out.println("Failed to write to file");
             e.printStackTrace();

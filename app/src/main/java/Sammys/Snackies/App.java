@@ -21,6 +21,7 @@ public class App {
     private static final String saveFilePath = "saveFile.json";
     private static final String userLoginFilepath = "userLogins.json";
     private static UserType currentType = UserType.BUYER;
+    private static String currentUserName = "anonymous";
     private static ArrayList<UserLogin> userLogins;
 
     // Prints a given message in a given colour
@@ -75,7 +76,7 @@ public class App {
                 empty = (v.getSlots().get(key).getCount() == 0) ? true : false;
             }
                 
-            String name = v.getSlots().get(key).getName();
+            String name = v.getSlots().get(key).getContents().getName();
             String qty = String.valueOf(v.getSlots().get(key).getCount());
             String price = String.format("$%.2f", v.getSlots().get(key).getContents().getPrice());
 
@@ -109,7 +110,7 @@ public class App {
         // Prints all formatted rows of the table
         for (String key : v.getSlots().keySet()) {
 
-            String name = v.getSlots().get(key).getName();
+            String name = v.getSlots().get(key).getContents().getName();
             String qty = String.valueOf(v.getSlots().get(key).getCount());
             String price = String.format("$%.2f", v.getSlots().get(key).getContents().getPrice());
             printColour(GREEN, String.format("    | %-" + maxSlot + "s | %-" + maxName + "s | %-" + maxQty + "s | %-" + maxPrice + "s |", key, name, qty, price));
@@ -124,7 +125,7 @@ public class App {
     }
 
     // Processes the sale of items
-    public static boolean buyer(ArrayList<String> inputs, VendingMachine vm) {
+    private static boolean buyer(ArrayList<String> inputs, VendingMachine vm, Scanner scan) {
 
         // Ensure enough arguments
         if (inputs.size() < 4) {
@@ -279,7 +280,6 @@ public class App {
         } else {
 
             boolean attempting = true;
-            Scanner s = new Scanner(System.in);
             String input = new String();
 
             // Gives card details prompt
@@ -289,12 +289,11 @@ public class App {
 
             // Repeatedly gets card details from the user until a card is accepted, or the user quits
             while (attempting) {
-                input = s.nextLine();
                 System.out.println();
+                input = scan.nextLine();
                 // Cancels a transaction
                 if (input.toLowerCase().equals("quit")) {
                     printColour(GREEN, "Transaction cancelled.");
-                    s.close();
                     return false;
                 }
 
@@ -313,14 +312,12 @@ public class App {
                     } else {
                         printColour(GREEN, "Card is valid!");
                         attempting = false;
-                        break;
                     }
                 } catch (Exception e) {
                     printCardError();
                     continue;
                 }
             }
-            s.close();
         }
 
         // Print receipt
@@ -332,7 +329,7 @@ public class App {
         // Removes purchased items from the machine
         slot.sellContents(Integer.valueOf(inputs.get(3)));
         // Adds the transaction to the database
-        vm.addTransaction(inputs.get(1).toLowerCase(), slot.getContents(), Integer.valueOf(inputs.get(3)));
+        vm.addTransaction(inputs.get(1).toLowerCase(), slot.getContents(), Integer.parseInt(inputs.get(3)), currentUserName);
         return true;
     }
   
@@ -606,6 +603,7 @@ public class App {
                 printColour(GREEN, "Welcome, " + user.getUsername());
                 // Logs the user in
                 currentType = user.getType();
+                currentUserName = user.getUsername();
                 printColour(YELLOW, "You are now logged in as a " + user.getType());
                 return true;
             }
@@ -1004,6 +1002,7 @@ public class App {
         int maxID = 15;
         int maxPayment = 15;
         int maxPurchase = 9;
+        int maxUser = 9;
 
         // Checks if there are no transactions stored in the machine
         if (vm.getTransactions().size() == 0) {
@@ -1016,24 +1015,28 @@ public class App {
             String id = String.valueOf(transaction.getID());
             String payment = transaction.getPaymentMethod();
             String purchase = String.format("%dx %s -> $%.2f", transaction.getQty(), transaction.getProductBought().getName(), transaction.getTotalAmount());
+            String userName = transaction.getUserName();
 
             maxID = (id.length() > maxID) ? id.length() : maxID;
             maxPayment = (payment.length() > maxPayment) ? payment.length() : maxPayment;
             maxPurchase = (purchase.length() > maxPurchase) ? purchase.length() : maxPurchase;
+            maxUser = (userName.length() > maxUser) ? userName.length() : maxUser;
         }
 
         // Initialises and prints label row
         String idSub = String.format(RESET + YELLOW + "%-" + maxID + "s" + RESET + GREEN, "TRANSACTION ID");
         String paymentSub = String.format(RESET + YELLOW + "%-" + maxPayment + "s" + RESET + GREEN, "PAYMENT METHOD");
         String purchaseSub = String.format(RESET + YELLOW + "%-" + maxPurchase + "s" + RESET + GREEN, "PURCHASE");
+        String userSub = String.format(RESET + YELLOW + "%-" + maxUser + "s" + RESET + GREEN, "USERNAME");
         printColour(YELLOW, "Products available:\n");
-        printColour(GREEN, String.format("    | %s | %s | %s |", idSub, paymentSub, purchaseSub));
+        printColour(GREEN, String.format("    | %s | %s | %s | %s |", idSub, userSub, paymentSub, purchaseSub));
 
         // Initialises and prints spacing row
         String idSpace = String.format("%-" + maxID + "s", "").replace(' ', '-');
         String paymentSpace = String.format("%-" + maxPayment + "s", "").replace(' ', '-');
         String purchaseSpace = String.format("%-" + maxPurchase + "s", "").replace(' ', '-');
-        printColour(GREEN, "    |-" + idSpace + "-+-" + paymentSpace + "-+-" + purchaseSpace + "-|");
+        String userSpace = String.format("%-" + maxUser + "s", "").replace(' ', '-');
+        printColour(GREEN, "    |-" + idSpace + "-+-" + userSpace + "-+-" + paymentSpace + "-+-" + purchaseSpace + "-|");
 
         // Prints information rows
         for (Transaction transaction : vm.getTransactions()) {
@@ -1041,7 +1044,8 @@ public class App {
             String id = String.valueOf(transaction.getID());
             String payment = transaction.getPaymentMethod();
             String purchase = String.format("%dx %s -> $%.2f", transaction.getQty(), transaction.getProductBought().getName(), transaction.getTotalAmount());
-            printColour(GREEN, String.format("    | %-" + maxID + "s | %-" + maxPayment + "s | %-" + maxPurchase + "s |", id, payment, purchase));
+            String userName = transaction.getUserName();
+            printColour(GREEN, String.format("    | %-" + maxID + "s | %-" + maxUser + "s | %-" + maxPayment + "s | %-" + maxPurchase + "s |", id, userName, payment, purchase));
         }
     }
 
@@ -1146,8 +1150,12 @@ public class App {
     }
 
     // Ends the program, and saves machine data to file
-    public static void endProgram(VendingMachine vm) {
-        vm.writeToFile(saveFilePath);
+    private static void endProgram(VendingMachine vm) {
+        try {
+            vm.writeToFile(saveFilePath);
+        } catch (Exception e) {
+            printColour(RED, "Error saving to file...");
+        }
         printColour(YELLOW, "Quitting...");
     }
 
@@ -1223,10 +1231,11 @@ public class App {
     }
     public static void main(String[] args) {
         
+        VendingMachine vm = initProgram();
+
         Scanner s = new Scanner(System.in);
         FoodItem f = new FoodItem("water", 1.50, Category.DRINK);
 
-        VendingMachine vm = initProgram();
         vm.addSlot("A1", f, 5);
 
         loadLogins(userLoginFilepath);
@@ -1246,7 +1255,7 @@ public class App {
                 switch(cmd.toLowerCase()) {
 
                     case "buy":
-                        buyer(inputs, vm);
+                        buyer(inputs, vm, s);
                     break;
                     case "user":
                         if (inputs.size() > 1) {
@@ -1362,8 +1371,8 @@ public class App {
                     case "quit":
                     case ":wq":
                     case ":q!":
-                        endProgram(vm);
                         s.close();
+                        endProgram(vm);
                         return;
                     default:
                         unknownCommand(inputs);

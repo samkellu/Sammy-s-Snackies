@@ -133,10 +133,10 @@ class VendingMachineTest {
         vm.addSlot("A2", sprite, 200);
         vm.addSlot("A3", doritos, 55);
 
-        vm.addTransaction("card", sprite, 4);
-        vm.addTransaction("card", sprite, 2);
-        vm.addTransaction("card", marsBar, 4);
-        vm.addTransaction("card", doritos, 15);
+        vm.addTransaction("card", sprite, 4, "person1");
+        vm.addTransaction("card", sprite, 2, null);
+        vm.addTransaction("card", marsBar, 4, null);
+        vm.addTransaction("card", doritos, 15, "person2");
 
         // Attempts to write to file
         try {
@@ -145,8 +145,7 @@ class VendingMachineTest {
         } catch (Exception e) {
             assertEquals(false, true, "Failed to write");
         }
-
-        String control = "[{\"$5\":777,\"$20\":999,\"$10\":888,\"10c\":222,\"20c\":333,\"50c\":444,\"$100\":2222,\"$1\":555,\"5c\":111,\"$2\":666,\"$50\":1111},{\"0\":\"0,card,Sprite,4\",\"1\":\"1,card,Sprite,2\",\"2\":\"2,card,Mars Bar,4\",\"3\":\"3,card,Doritos,15\"},{\"slotName\":\"A1\",\"itemName\":\"Mars Bar\",\"itemCategory\":\"CHOCOLATE\",\"slotCount\":9,\"itemPrice\":1.0199999809265137},{\"slotName\":\"A2\",\"itemName\":\"Sprite\",\"itemCategory\":\"DRINK\",\"slotCount\":200,\"itemPrice\":2.0},{\"slotName\":\"A3\",\"itemName\":\"Doritos\",\"itemCategory\":\"CHIPS\",\"slotCount\":55,\"itemPrice\":221.0}]";
+        String control = "[{\"$5\":777,\"$20\":999,\"$10\":888,\"10c\":222,\"20c\":333,\"50c\":444,\"$100\":2222,\"$1\":555,\"5c\":111,\"$2\":666,\"$50\":1111},{\"0\":\"0,card,Sprite,4,person1\",\"1\":\"1,card,Sprite,2,null\",\"2\":\"2,card,Mars Bar,4,null\",\"3\":\"3,card,Doritos,15,person2\"},{\"slotName\":\"A1\",\"itemName\":\"Mars Bar\",\"itemCategory\":\"CHOCOLATE\",\"slotCount\":9,\"itemPrice\":1.0199999809265137},{\"slotName\":\"A2\",\"itemName\":\"Sprite\",\"itemCategory\":\"DRINK\",\"slotCount\":200,\"itemPrice\":2.0},{\"slotName\":\"A3\",\"itemName\":\"Doritos\",\"itemCategory\":\"CHIPS\",\"slotCount\":55,\"itemPrice\":221.0}]";
 
         // Checks actual file contents against the control string
         try (FileReader fr = new FileReader(fp)) {
@@ -164,8 +163,9 @@ class VendingMachineTest {
     @Test void readFromFileTransactions() {
 
         // Writes the set vending machine state to file
-        String fp = "testRead.json";
-        String toWrite = "[{\"$5\":777,\"$20\":999,\"$10\":888,\"10c\":222,\"20c\":333,\"50c\":444,\"$100\":2222,\"$1\":555,\"5c\":111,\"$2\":666,\"$50\":1111},{\"0\":\"0,card,Sprite,4\",\"1\":\"1,card,Sprite,2\",\"2\":\"2,card,Mars Bar,4\",\"3\":\"3,card,Doritos,15\"},{\"slotName\":\"A1\",\"itemName\":\"Mars Bar\",\"itemCategory\":\"CHOCOLATE\",\"slotCount\":9,\"itemPrice\":1.0199999809265137},{\"slotName\":\"A2\",\"itemName\":\"Sprite\",\"itemCategory\":\"DRINK\",\"slotCount\":200,\"itemPrice\":2.0},{\"slotName\":\"A3\",\"itemName\":\"Doritos\",\"itemCategory\":\"CHIPS\",\"slotCount\":55,\"itemPrice\":221.0}]";
+        String fp = "testReadTransactions.json";
+        String toWrite = "[{\"$5\":777,\"$20\":999,\"$10\":888,\"10c\":222,\"20c\":333,\"50c\":444,\"$100\":2222,\"$1\":555,\"5c\":111,\"$2\":666,\"$50\":1111},{\"0\":\"0,card,Sprite,4,person1\",\"1\":\"1,card,Sprite,2,anonymous\",\"2\":\"2,card,Mars Bar,4,anonymous\",\"3\":\"3,card,Doritos,15,person2\"},{\"slotName\":\"A1\",\"itemName\":\"Mars Bar\",\"itemCategory\":\"CHOCOLATE\",\"slotCount\":9,\"itemPrice\":1.0199999809265137},{\"slotName\":\"A2\",\"itemName\":\"Sprite\",\"itemCategory\":\"DRINK\",\"slotCount\":200,\"itemPrice\":2.0},{\"slotName\":\"A3\",\"itemName\":\"Doritos\",\"itemCategory\":\"CHIPS\",\"slotCount\":55,\"itemPrice\":221.0}]";
+
         // Attempts to write the JSONArray to file
         try (FileWriter fw = new FileWriter(fp)) {
             fw.write(toWrite);
