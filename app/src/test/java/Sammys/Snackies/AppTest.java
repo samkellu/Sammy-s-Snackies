@@ -82,7 +82,7 @@ class AppTest {
 
     @Test void checkBuyCashTest(){
         VendingMachine vm = new VendingMachine();
-        vm.readFromFile("saveFile.json");
+        vm.readFromFile("src/test/resources/testSaveFile.json");
 
         String[] inputString1 = {"buy", "cash", "water", "1", "1*$20"};
         ArrayList<String> input1 = new ArrayList<>(Arrays.asList(inputString1));
@@ -110,7 +110,7 @@ class AppTest {
 
     @Test void checkWriteUser(){
 
-        App.loadLogins("testUserLoginWrite.json");
+        App.loadLogins("src/test/resources/testUserLoginWrite.json");
 
         String[] inputString = {"signup", "test", "password"};
         ArrayList<String> input = new ArrayList<>(Arrays.asList(inputString));
