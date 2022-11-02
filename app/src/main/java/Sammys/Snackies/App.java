@@ -120,7 +120,7 @@ public class App {
     // Outputs a standard card parsing error
     public static void printCardError() {
         printColour(RED, "Invalid card details entered, please try again or type \"quit\" to cancel this transaction.\nCard details must be of the form:\n");
-        printColour(GREEN, "  CARD NUMBER (16) MM/YY CVC\n  **************** **/** ***");
+        printColour(GREEN, String.format("%-"+ String.valueOf(currentType.toString().length()+2) + "s CARD NUMBER (16) MM/YY CVC\n%-"+ String.valueOf(currentType.toString().length()+3) + "s**************** **/** ***", "",""));
         System.out.print(MAGENTABG + currentType.toString().toUpperCase() + RESET + " > ");
     }
 
@@ -282,15 +282,16 @@ public class App {
             boolean attempting = true;
             String input = new String();
 
+
             // Gives card details prompt
             printColour(YELLOW, "Please enter your card details, or type \"quit\" to cancel this transaction.\nCard details must be of the form:\n");
-            printColour(GREEN, "  CARD NUMBER (16) MM/YY CVC\n  **************** **/** ***");
+            printColour(GREEN, String.format("%-"+ String.valueOf(currentType.toString().length()+2) + "s CARD NUMBER (16) MM/YY CVC\n%-"+ String.valueOf(currentType.toString().length()+3) + "s**************** **/** ***", "",""));
             System.out.print(MAGENTABG + currentType.toString().toUpperCase() + RESET + " > ");
 
             // Repeatedly gets card details from the user until a card is accepted, or the user quits
             while (attempting) {
-                System.out.println();
                 input = scan.nextLine();
+                System.out.println();
                 // Cancels a transaction
                 if (input.toLowerCase().equals("quit")) {
                     printColour(GREEN, "Transaction cancelled.");
@@ -996,7 +997,7 @@ public class App {
     }
 
     // Displays a dynamically sized table of transactions
-    public static void listTransactions(VendingMachine vm) {
+    public static void listTransactions(VendingMachine vm, boolean owner) {
 
         printColour(YELLOW, "Transaction History:\n");
         int maxID = 15;
@@ -1038,14 +1039,31 @@ public class App {
         String userSpace = String.format("%-" + maxUser + "s", "").replace(' ', '-');
         printColour(GREEN, "    |-" + idSpace + "-+-" + userSpace + "-+-" + paymentSpace + "-+-" + purchaseSpace + "-|");
 
-        // Prints information rows
-        for (Transaction transaction : vm.getTransactions()) {
 
-            String id = String.valueOf(transaction.getID());
-            String payment = transaction.getPaymentMethod();
-            String purchase = String.format("%dx %s -> $%.2f", transaction.getQty(), transaction.getProductBought().getName(), transaction.getTotalAmount());
-            String userName = transaction.getUserName();
-            printColour(GREEN, String.format("    | %-" + maxID + "s | %-" + maxUser + "s | %-" + maxPayment + "s | %-" + maxPurchase + "s |", id, userName, payment, purchase));
+        if (owner) {
+            
+            // Prints information rows for owner
+            for (Transaction transaction : vm.getTransactions()) {
+    
+                String id = String.valueOf(transaction.getID());
+                String payment = transaction.getPaymentMethod();
+                String purchase = String.format("%dx %s -> $%.2f", transaction.getQty(), transaction.getProductBought().getName(), transaction.getTotalAmount());
+                String userName = transaction.getUserName();
+                printColour(GREEN, String.format("    | %-" + maxID + "s | %-" + maxUser + "s | %-" + maxPayment + "s | %-" + maxPurchase + "s |", id, userName, payment, purchase));
+            }
+        } else  {
+            // Prints information rows for non owner
+            for (Transaction transaction : vm.getTransactions()) {
+                
+                if (transaction.getUserName().toLowerCase() == currentUserName.toLowerCase()) {
+                    
+                    String id = String.valueOf(transaction.getID());
+                    String payment = transaction.getPaymentMethod();
+                    String purchase = String.format("%dx %s -> $%.2f", transaction.getQty(), transaction.getProductBought().getName(), transaction.getTotalAmount());
+                    String userName = transaction.getUserName();
+                    printColour(GREEN, String.format("    | %-" + maxID + "s | %-" + maxUser + "s | %-" + maxPayment + "s | %-" + maxPurchase + "s |", id, userName, payment, purchase));
+                }
+            }
         }
     }
 
@@ -1285,9 +1303,10 @@ public class App {
                         if (inputs.size() > 1) {
                             if (inputs.get(1).equals("transactions")) {
                                 if (currentType != UserType.OWNER) {
-                                    unknownCommand(inputs);
+                                    printColour(YELLOW, String.format("%s's transactions:", currentUserName));
+                                    listTransactions(vm, false);
                                 } else {
-                                    listTransactions(vm);
+                                    listTransactions(vm, true);
                                 }
                             } else {
                                 unknownCommand(inputs);
