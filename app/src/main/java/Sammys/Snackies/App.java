@@ -465,7 +465,7 @@ public class App {
             Double price = Double.parseDouble(priceStr);
     
             // Creates new footItem
-            FoodItem newFood = new FoodItem(inputs.get(2).toLowerCase(), price, foodCategory);
+            FoodItem newFood = new FoodItem(inputs.get(2), price, foodCategory);
             if (currentSlot != null){
                 vm.getSlots().remove(currentSlot.getName());
             }
