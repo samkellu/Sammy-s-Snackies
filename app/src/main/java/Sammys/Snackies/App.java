@@ -126,7 +126,7 @@ public class App {
     }
 
     // Processes the sale of items
-    private static boolean buyer(ArrayList<String> inputs, VendingMachine vm) {
+    private static boolean buyer(ArrayList<String> inputs, VendingMachine vm, Scanner scan) {
 
         // Ensure enough arguments
         if (inputs.size() < 4) {
@@ -281,7 +281,6 @@ public class App {
         } else {
 
             boolean attempting = true;
-            Scanner s = new Scanner(System.in);
             String input = new String();
 
             // Gives card details prompt
@@ -291,12 +290,11 @@ public class App {
 
             // Repeatedly gets card details from the user until a card is accepted, or the user quits
             while (attempting) {
-                input = s.nextLine();
                 System.out.println();
+                input = scan.nextLine();
                 // Cancels a transaction
                 if (input.toLowerCase().equals("quit")) {
                     printColour(GREEN, "Transaction cancelled.");
-                    s.close();
                     return false;
                 }
 
@@ -315,14 +313,12 @@ public class App {
                     } else {
                         printColour(GREEN, "Card is valid!");
                         attempting = false;
-                        break;
                     }
                 } catch (Exception e) {
                     printCardError();
                     continue;
                 }
             }
-            s.close();
         }
 
         // Print receipt
@@ -334,7 +330,7 @@ public class App {
         // Removes purchased items from the machine
         slot.sellContents(Integer.valueOf(inputs.get(3)));
         // Adds the transaction to the database
-        vm.addTransaction(inputs.get(1).toLowerCase(), slot.getContents(), Integer.valueOf(inputs.get(3)), String.valueOf(currentUserName));
+        vm.addTransaction(inputs.get(1).toLowerCase(), slot.getContents(), Integer.parseInt(inputs.get(3)), currentUserName);
         return true;
     }
   
@@ -1195,10 +1191,11 @@ public class App {
 
     public static void main(String[] args) {
         
+        VendingMachine vm = initProgram();
+
         Scanner s = new Scanner(System.in);
         FoodItem f = new FoodItem("water", 1.50, Category.DRINK);
 
-        VendingMachine vm = initProgram();
         vm.addSlot("A1", f, 5);
 
         userLogins = UserLogin.readFromFile(userLoginFilepath);
@@ -1217,7 +1214,7 @@ public class App {
                 switch(cmd.toLowerCase()) {
 
                     case "buy":
-                        buyer(inputs, vm);
+                        buyer(inputs, vm, s);
                     break;
                     case "user":
                         if (inputs.size() > 1) {
@@ -1330,8 +1327,8 @@ public class App {
                     case "quit":
                     case ":wq":
                     case ":q!":
-                        endProgram(vm);
                         s.close();
+                        endProgram(vm);
                         return;
                     default:
                         unknownCommand(inputs);

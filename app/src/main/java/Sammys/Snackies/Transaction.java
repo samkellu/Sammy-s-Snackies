@@ -18,9 +18,6 @@ public class Transaction {
         this.productBought = productBought;
         this.qty = qty;
         this.userName = userName;
-
-        System.out.println(this.toString());
-
         totalAmount = productBought.getPrice() * qty;
     }
 

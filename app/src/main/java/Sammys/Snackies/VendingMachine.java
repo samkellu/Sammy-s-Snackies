@@ -12,6 +12,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import java.io.BufferedWriter;
+import java.io.File;
 
 public class VendingMachine {
     private HashMap<String, Slot> allSlots;
@@ -112,7 +114,8 @@ public class VendingMachine {
         this.allSlots = new HashMap<String, Slot>();
         JSONParser parser = new JSONParser();
 
-        try (FileReader fr = new FileReader(fPath)) {
+        try {
+            FileReader fr = new FileReader(fPath);
             Object obj = parser.parse(fr);
             JSONArray jsonData = (JSONArray) obj;
 
@@ -172,8 +175,6 @@ public class VendingMachine {
 
         HashMap<String, Object> transactionData = new HashMap<String, Object>();
         for (Transaction transaction : transactions) {
-            System.out.println(String.format("%s,%s",String.valueOf(transaction.getID()), transaction.toString()));
-            System.out.flush();
             transactionData.put(String.valueOf(transaction.getID()), (Object) transaction.toString());
         }
         jsonData.add(transactionData);
@@ -189,9 +190,11 @@ public class VendingMachine {
         }
         
         // Attempts to write the JSONArray to file
-        try (FileWriter fw = new FileWriter(fPath)) {
-            org.json.simple.JSONArray.writeJSONString(jsonData, fw);
-            fw.close();
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(new File("File.txt"), true));
+            org.json.simple.JSONArray.writeJSONString(jsonData, writer);
+            writer.flush();
+            writer.close();
         } catch(IOException e) {
             System.out.println("Failed to write to file");
             e.printStackTrace();
