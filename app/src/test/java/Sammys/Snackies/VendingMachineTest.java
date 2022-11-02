@@ -14,7 +14,7 @@ class VendingMachineTest {
     // Tests the file writing module by creating a machine, and making it write its state to file.
     @Test void writeToFileNoTransactions() {
 
-        String fp = "testWrite.json";
+        String fp = "src/test/resources/testWrite.json";
 
         // Creates a new vending machine and populates its contents/ cash
         FoodItem marsBar = new FoodItem("Mars Bar", 1.02f, Category.CHOCOLATE);
@@ -68,7 +68,7 @@ class VendingMachineTest {
     @Test void readFromFileNoTransactions() {
 
         // Writes the set vending machine state to file
-        String fp = "testRead.json";
+        String fp = "src/test/resources/testRead.json";
         String toWrite = "[{\"$5\":777,\"$20\":999,\"$10\":888,\"10c\":222,\"20c\":333,\"50c\":444,\"$100\":2222,\"$1\":555,\"5c\":111,\"$2\":666,\"$50\":1111},{},{\"slotName\":\"A1\",\"itemName\":\"Mars Bar\",\"itemCategory\":\"CHOCOLATE\",\"slotCount\":9,\"itemPrice\":1.0199999809265137},{\"slotName\":\"A2\",\"itemName\":\"Sprite\",\"itemCategory\":\"DRINK\",\"slotCount\":200,\"itemPrice\":2.0},{\"slotName\":\"A3\",\"itemName\":\"Doritos\",\"itemCategory\":\"CHIPS\",\"slotCount\":55,\"itemPrice\":221.0}]";
         // Attempts to write the JSONArray to file
         try (FileWriter fw = new FileWriter(fp)) {
@@ -106,7 +106,7 @@ class VendingMachineTest {
      // Tests the file writing module by creating a machine, and making it write its state to file.
     @Test void writeToFileTransactions() {
 
-        String fp = "testWriteTransaction.json";
+        String fp = "src/test/resources/testWriteTransaction.json";
 
         // Creates a new vending machine and populates its contents/ cash
         FoodItem marsBar = new FoodItem("Mars Bar", 1.02f, Category.CHOCOLATE);
@@ -163,7 +163,7 @@ class VendingMachineTest {
     @Test void readFromFileTransactions() {
 
         // Writes the set vending machine state to file
-        String fp = "testReadTransactions.json";
+        String fp = "src/test/resources/testReadTransactions.json";
         String toWrite = "[{\"$5\":777,\"$20\":999,\"$10\":888,\"10c\":222,\"20c\":333,\"50c\":444,\"$100\":2222,\"$1\":555,\"5c\":111,\"$2\":666,\"$50\":1111},{\"0\":\"0,card,Sprite,4,person1\",\"1\":\"1,card,Sprite,2,anonymous\",\"2\":\"2,card,Mars Bar,4,anonymous\",\"3\":\"3,card,Doritos,15,person2\"},{\"slotName\":\"A1\",\"itemName\":\"Mars Bar\",\"itemCategory\":\"CHOCOLATE\",\"slotCount\":9,\"itemPrice\":1.0199999809265137},{\"slotName\":\"A2\",\"itemName\":\"Sprite\",\"itemCategory\":\"DRINK\",\"slotCount\":200,\"itemPrice\":2.0},{\"slotName\":\"A3\",\"itemName\":\"Doritos\",\"itemCategory\":\"CHIPS\",\"slotCount\":55,\"itemPrice\":221.0}]";
 
         // Attempts to write the JSONArray to file
