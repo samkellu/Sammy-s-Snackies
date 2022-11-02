@@ -100,7 +100,7 @@ class AppTest {
     }
 
     @Test void checkWriteUser(){
-        App.userLoginFilepath = "testUserLoginWrite.json";
+        App.loadLogins("testUserLoginWrite.json");
 
         String[] inputString = {"signup", "test", "password"};
         ArrayList<String> input = new ArrayList<>(Arrays.asList(inputString));
