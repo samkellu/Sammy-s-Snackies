@@ -73,7 +73,7 @@ class AppTest {
 
     @Test void checkBuyCashTest(){
         VendingMachine vm = new VendingMachine();
-        vm.readFromFile("testRead.json");
+        vm.readFromFile("saveFile.json");
 
         String[] inputString1 = {"buy", "cash", "water", "1", "1*$20"};
         ArrayList<String> input1 = new ArrayList<>(Arrays.asList(inputString1));
