@@ -477,7 +477,75 @@ class AppTest {
 
     @Test void setCategoryInvalid() {}
     
-    @Test void modify() {} // fill this in as reasonable
+    @Test void modifySlotNameValid() {
+        VendingMachine vm = getVendingMachine();
+        assertEquals(App.GREEN + "successfully modified product(s)" + App.RESET, App.modify(generateInput("modify A1 slot name to new"), vm));
+        assertEquals("NEW", vm.getSlots().get("A1").getName());
+    }
+
+    @Test void modifySlotNameInvalid() {
+        VendingMachine vm = getVendingMachine();
+        assertEquals(App.RED + "\nSlot name doesn't exist." + App.RESET, App.modify(generateInput("modify A2 slot name to new"), vm));
+        assertEquals("water", vm.getSlots().get("A1").getContents().getName());
+    }
+
+    @Test void modifySlotProductNameValid() {
+        VendingMachine vm = getVendingMachine();
+        assertEquals(App.GREEN + "successfully modified product(s)" + App.RESET, App.modify(generateInput("modify A1 product name to new"), vm));
+        assertEquals("new", vm.getSlots().get("A1").getContents().getName());
+    }
+
+    @Test void modifySlotProductNameInvalid() {
+        VendingMachine vm = getVendingMachine();
+        assertEquals(App.RED + "\nSlot name doesn't exist." + App.RESET, App.modify(generateInput("modify A2 product name to new"), vm));
+        assertEquals("water", vm.getSlots().get("A1").getContents().getName());
+    }
+
+    @Test void modifySlotProductPriceValid() {
+        VendingMachine vm = getVendingMachine();
+        assertEquals(App.GREEN + "successfully modified product(s)" + App.RESET, App.modify(generateInput("modify A1 product price to $100.55"), vm));
+        assertEquals(100.55, vm.getSlots().get("A1").getContents().getPrice());
+    }
+
+    @Test void modifySlotProductPriceInvalid() {
+        VendingMachine vm = getVendingMachine();
+        assertEquals(App.RED + "\nPlease ensure new price is a valid price." + App.RESET, App.modify(generateInput("modify A1 product price to -1"), vm));
+        assertEquals(App.RED + "\nPlease ensure new price is a valid price." + App.RESET, App.modify(generateInput("modify A1 product price to cat"), vm));
+        assertEquals(1.5, vm.getSlots().get("A1").getContents().getPrice());
+    }
+
+    @Test void modifySlotProductCategoryValid() {
+        VendingMachine vm = getVendingMachine();
+        assertEquals(Category.DRINK, vm.getSlots().get("A1").getContents().getCategory());
+        assertEquals(App.GREEN + "successfully modified product(s)" + App.RESET, App.modify(generateInput("modify A1 product category to candy"), vm));
+        assertEquals(Category.CANDY, vm.getSlots().get("A1").getContents().getCategory());
+    }
+
+    @Test void modifySlotProductCategoryInvalid() {
+        VendingMachine vm = getVendingMachine();
+        assertEquals(Category.DRINK, vm.getSlots().get("A1").getContents().getCategory());
+        assertEquals(App.RED + "\nPlease ensure the category is a valid category." + App.RESET, App.modify(generateInput("modify A1 product category to notACategory"), vm));
+        assertEquals(Category.DRINK, vm.getSlots().get("A1").getContents().getCategory());
+    }
+
+    @Test void modifyProductNameValid() {
+        VendingMachine vm = getVendingMachine();
+        assertEquals(App.GREEN + "successfully modified product(s)" + App.RESET, App.modify(generateInput("modify water name to notWater"), vm));
+        assertEquals("notWater", vm.getSlots().get("A1").getContents().getName());
+    }
+
+    @Test void modifyProductPriceValid() {
+        VendingMachine vm = getVendingMachine();
+        assertEquals(App.GREEN + "successfully modified product(s)" + App.RESET, App.modify(generateInput("modify water price to $100.55"), vm));
+        assertEquals(100.55, vm.getSlots().get("A1").getContents().getPrice());
+    }
+
+    @Test void modifyProductPriceInvalid() {
+        VendingMachine vm = getVendingMachine();
+        assertEquals(App.RED + "\nPlease ensure new price is a valid price." + App.RESET, App.modify(generateInput("modify water price to -1"), vm));
+        assertEquals(App.RED + "\nPlease ensure new price is a valid price." + App.RESET, App.modify(generateInput("modify water price to cat"), vm));
+        assertEquals(1.5, vm.getSlots().get("A1").getContents().getPrice());
+    }
 
     @Test void cashAddValid() {}
 
@@ -486,6 +554,21 @@ class AppTest {
     @Test void cashAddInvalidDenom() {}
 
     @Test void cashremoveValid() {}
+
+    // just run the help command, ensure it doesn't crash
+    @Test void runHelpCommand() {
+        App.helpCommand(null);
+        String[] strs = {
+            "help", "help buy", "help user", "help list", "help login", "help restock",
+            "help signup", "help product", "help modify", "help products", "help help",
+            "help cash", "help buyer", "help exit", "help quit", "help cashcheck","helpcashadd",
+            "help cashremove", "help productadd", "help productremove","help userremove", "help useradd",
+            "help userlist",
+        };
+        for (String s : strs) {
+            App.helpCommand(generateInput(s));
+        }
+    }
 
     // negative cash remove tests:
     //  bad denomination
@@ -509,8 +592,7 @@ class AppTest {
         vm.addCurrencyCount("$10", 3);
         vm.addCurrencyCount("$20", 2);
         assertTrue(App.cashRemove(vm, generateInput("remove 2*$10")));
-        assertFalse(App.cashRemove(vm, generateInput("remove 2*$10")));
-        
+        assertFalse(App.cashRemove(vm, generateInput("remove 7*$10")));
     }
   
     // positive add product test, price has $
