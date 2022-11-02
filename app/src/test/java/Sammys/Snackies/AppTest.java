@@ -204,21 +204,59 @@ class AppTest {
         assertFalse(App.addProduct(generateInput("add A2 Sprite $1.00 drink -1"), vm));
     }
 
-    @Test void removeProductValid() {}
+    @Test void removeProductValid() {
+        VendingMachine vm = getVendingMachine();
+        assertTrue(App.removeProduct(generateInput("remove A1"), vm));
+        assertEquals(0, vm.getSlots().keySet().size());
+    }
 
-    @Test void removeProductInvalidProduct() {}
+    @Test void removeProductInvalidSlot() {
+        VendingMachine vm = getVendingMachine();
+        assertFalse(App.removeProduct(generateInput("remove A2"), vm));
+    }
 
-    @Test void addUserValid() {}
+    @Test void addUserValid() {
+        VendingMachine vm = getVendingMachine();
+        App.currentType = UserType.OWNER;
+        assertTrue(App.addUser(generateInput("add wow user cashier")));
+        assertTrue(App.addUser(generateInput("add new1 user owner")));
+        assertTrue(App.addUser(generateInput("add new2 user seller")));
+        assertTrue(App.addUser(generateInput("add new3 user buyer")));
+    }
 
-    @Test void addUserInvalidUserExists() {}
+    @Test void addUserInvalidUserExists() {
+        VendingMachine vm = getVendingMachine();
+        App.currentType = UserType.OWNER;
+        assertTrue(App.addUser(generateInput("add new user buyer")));
+        assertFalse(App.addUser(generateInput("add new user owner")));
+        assertFalse(App.addUser(generateInput("add new user seller")));
+        assertFalse(App.addUser(generateInput("add new user buyer")));
+        assertFalse(App.addUser(generateInput("add new user cashier")));
+    }
 
-    @Test void addUserInvalidUserName() {}
+    @Test void addUserInvalidFormat() {
+        VendingMachine vm = getVendingMachine();
+        App.currentType = UserType.OWNER;
+        assertFalse(App.addUser(generateInput("add new user")));
+        assertFalse(App.addUser(generateInput("add new user owner wwwww")));
+    }
 
-    @Test void signUpValid() {}
+    @Test void signUpValid() {
+        VendingMachine vm = getVendingMachine();
+        assertTrue(App.signupUser(generateInput("signup jack password")));
+    }
 
-    @Test void signUpInvalidUserExists() {}
+    @Test void signUpInvalidUserExists() {
+        VendingMachine vm = getVendingMachine();
+        assertFalse(App.signupUser(generateInput("signup jack password")));
+        assertFalse(App.signupUser(generateInput("signup jack amn")));
+    }
 
-    @Test void signUpInvalidUserName() {}
+    @Test void signUpInvalidUserName() {
+        VendingMachine vm = getVendingMachine();
+        assertFalse(App.signupUser(generateInput("signup amn")));
+        assertFalse(App.signupUser(generateInput("signup")));
+    }
 
     @Test void removeUserValid() {}
 
