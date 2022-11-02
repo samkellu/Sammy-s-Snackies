@@ -127,7 +127,7 @@ class AppTest {
 
     @Test void checkCashCheck(){
         VendingMachine vm = new VendingMachine();
-        vm.readFromFile("testSaveFile.json");
+        vm.readFromFile("saveFile.json");
         try{
             App.cashCheck(vm);
             assertTrue(true);
@@ -139,8 +139,8 @@ class AppTest {
     
     @Test void checkCashaddValid(){
         VendingMachine vm = new VendingMachine();
-        //vm.readFromFile("testSaveFile.json");
-        HashMap<String, Integer> currencyCounts = vm.getCurrencyCounts();
+        vm.readFromFile("saveFile.json");
+        int currencyCounts = vm.getCurrencyCounts().get("$5");
         String[] inputArr = {"Add", "3*$5"};
         ArrayList<String> inputString = new ArrayList<String>();
         for(String str : inputArr){
@@ -155,7 +155,7 @@ class AppTest {
         }
         HashMap<String, Integer> currencyCountsAfter = vm.getCurrencyCounts();
         
-        assertEquals(currencyCounts.get("$5")+3, currencyCountsAfter.get("$5"));
+        assertEquals(currencyCounts + 3, currencyCountsAfter.get("$5"));
     }
 
     // Check cash/product stock
