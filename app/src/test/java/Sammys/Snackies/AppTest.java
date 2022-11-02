@@ -216,7 +216,7 @@ class AppTest {
     }
 
     @Test void addUserValid() {
-        VendingMachine vm = getVendingMachine();
+        App.userLoginFilepath = "test.json";
         App.currentType = UserType.OWNER;
         assertTrue(App.addUser(generateInput("add wow user cashier")));
         assertTrue(App.addUser(generateInput("add new1 user owner")));
@@ -225,7 +225,7 @@ class AppTest {
     }
 
     @Test void addUserInvalidUserExists() {
-        VendingMachine vm = getVendingMachine();
+        App.userLoginFilepath = "test.json";
         App.currentType = UserType.OWNER;
         assertTrue(App.addUser(generateInput("add new user buyer")));
         assertFalse(App.addUser(generateInput("add new user owner")));
@@ -235,50 +235,120 @@ class AppTest {
     }
 
     @Test void addUserInvalidFormat() {
-        VendingMachine vm = getVendingMachine();
+        App.userLoginFilepath = "test.json";
         App.currentType = UserType.OWNER;
         assertFalse(App.addUser(generateInput("add new user")));
         assertFalse(App.addUser(generateInput("add new user owner wwwww")));
     }
 
     @Test void signUpValid() {
-        VendingMachine vm = getVendingMachine();
+        App.userLoginFilepath = "test.json";
         assertTrue(App.signupUser(generateInput("signup jack password")));
     }
 
     @Test void signUpInvalidUserExists() {
-        VendingMachine vm = getVendingMachine();
         assertFalse(App.signupUser(generateInput("signup jack password")));
         assertFalse(App.signupUser(generateInput("signup jack amn")));
     }
 
     @Test void signUpInvalidUserName() {
-        VendingMachine vm = getVendingMachine();
+        App.userLoginFilepath = "test.json";
         assertFalse(App.signupUser(generateInput("signup amn")));
         assertFalse(App.signupUser(generateInput("signup")));
     }
 
-    @Test void removeUserValid() {}
+    @Test void removeUserValid() {
+        App.userLoginFilepath = "test.json";
+        App.currentType = UserType.OWNER;
+        assertTrue(App.addUser(generateInput("add wow user cashier")));
+        assertTrue(App.addUser(generateInput("add new1 user owner")));
+        assertTrue(App.addUser(generateInput("add new2 user seller")));
+        assertTrue(App.addUser(generateInput("add new3 user buyer")));
+        assertTrue(App.removeUser(generateInput("remove wow")));
+        assertTrue(App.removeUser(generateInput("remove new1")));
+        assertTrue(App.removeUser(generateInput("remove new2")));
+        assertTrue(App.removeUser(generateInput("remove new3")));
+    }
 
-    @Test void removeUserinvalid() {}
+    @Test void removeUserinvalid() {
+        App.userLoginFilepath = "test.json";
+        App.currentType = UserType.OWNER;
+        assertFalse(App.removeUser(generateInput("remove")));
+        assertFalse(App.removeUser(generateInput("remove notInSystem")));
+        assertTrue(App.addUser(generateInput("add new3 user buyer")));
+    }
 
-    @Test void setCategoryValid() {}
+    @Test void setCategoryValid() {
+        Slot s = new Slot("A2", new FoodItem("food", 100, Category.DRINK), 10);
+        App.setCategory(s, "candy");
+        assertEquals(Category.CANDY, s.getContents().getCategory());
+        App.setCategory(s, "drink");
+        assertEquals(Category.DRINK, s.getContents().getCategory());
+        App.setCategory(s, "chocolate");
+        assertEquals(Category.CHOCOLATE, s.getContents().getCategory());
+        App.setCategory(s, "chips");
+        assertEquals(Category.CHIPS, s.getContents().getCategory());
+    }
 
-    @Test void setCategoryInvalid() {}
+    @Test void setCategoryInvalid() {
+        Slot s = new Slot("A2", new FoodItem("food", 100, Category.DRINK), 10);
+        App.setCategory(s, "can");
+        assertEquals(Category.DRINK, s.getContents().getCategory());
+    }
     
     @Test void modify() {} // fill this in as reasonable
 
-    @Test void cashAddValid() {}
+    @Test void cashAddValid() {
+        VendingMachine vm = getVendingMachine();
+        assertEquals(5, vm.getCurrencyCounts().get("5c"));
+        assertEquals(5, vm.getCurrencyCounts().get("10c"));
+        App.cashAdd(vm, generateInput("add 199*5c 22*10c"));
+        assertEquals(204, vm.getCurrencyCounts().get("5c"));
+        assertEquals(27, vm.getCurrencyCounts().get("10c"));
+    }
 
-    @Test void cashAddInvalidAmount() {}
+    @Test void cashAddInvalidAmount() {
+        VendingMachine vm = getVendingMachine();
+        assertEquals(5, vm.getCurrencyCounts().get("5c"));
+        App.cashAdd(vm, generateInput("add -1*5c"));
+        assertEquals(5, vm.getCurrencyCounts().get("5c"));
+        App.cashAdd(vm, generateInput("add a*5c"));
+        assertEquals(5, vm.getCurrencyCounts().get("5c"));
+    }
 
-    @Test void cashAddInvalidDenom() {}
+    @Test void cashAddInvalidDenom() {
+        VendingMachine vm = getVendingMachine();
+        assertFalse(App.cashAdd(vm, generateInput("add 2*15c")));
+        assertFalse(App.cashAdd(vm, generateInput("add 2*10")));
+        assertFalse(App.cashAdd(vm, generateInput("add 2*a")));
+    }
 
-    @Test void cashremoveValid() {}
+    @Test void cashRemoveValid() {
+        VendingMachine vm = getVendingMachine();
+        assertEquals(5, vm.getCurrencyCounts().get("5c"));
+        assertEquals(5, vm.getCurrencyCounts().get("10c"));
+        App.cashRemove(vm, generateInput("remove 1*5c 3*10c"));
+        assertEquals(4, vm.getCurrencyCounts().get("5c"));
+        assertEquals(2, vm.getCurrencyCounts().get("10c"));
+    }
 
-    @Test void cashremoveInvalidAmount() {}
+    @Test void cashRemoveInvalidAmount() {
+        VendingMachine vm = getVendingMachine();
+        assertEquals(5, vm.getCurrencyCounts().get("5c"));
+        App.cashRemove(vm, generateInput("remove -1*5c"));
+        App.cashRemove(vm, generateInput("remove a*5c"));
+        App.cashRemove(vm, generateInput("remove 6*5c"));
+        assertEquals(5, vm.getCurrencyCounts().get("5c"));
+    }
 
-    @Test void cashremoveValidDenom() {}
+    @Test void cashRemoveValidDenom() {
+        VendingMachine vm = getVendingMachine();
+        assertEquals(5, vm.getCurrencyCounts().get("5c"));
+        App.cashRemove(vm, generateInput("remove 1*8c"));
+        App.cashRemove(vm, generateInput("remove 1*5"));
+        App.cashRemove(vm, generateInput("remove 1*a"));
+        assertEquals(5, vm.getCurrencyCounts().get("5c"));
+    }
   
     @Test void addProductPositiveTest1() {
         String[] s = {"productadd", "Z1", "ZooperDooper", "$2.00", "candy", "5"};
