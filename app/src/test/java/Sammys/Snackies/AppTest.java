@@ -109,6 +109,7 @@ class AppTest {
     }
 
     @Test void checkWriteUser(){
+
         App.loadLogins("testUserLoginWrite.json");
 
         String[] inputString = {"signup", "test", "password"};
@@ -123,6 +124,69 @@ class AppTest {
 
     }
 
+    // Check cash/product stock
+    @Test void buyerValid() {}
+
+    @Test void buyerInvalidProduct() {}
+
+    @Test void buyerInvalidAmount() {}
+
+    @Test void buyerInvalidCashDenom() {}
+
+    @Test void buyerInvalidCashDenomAmount() {}
+
+    @Test void restockProductValid() {}
+
+    @Test void restockProductInvalidProduct() {}
+
+    @Test void restockProductInvalidAmount() {}
+
+    @Test void addProductValid() {}
+
+    @Test void addProductInvalidName() {}
+
+    @Test void addProductInvalidPrice() {}
+
+    @Test void addProductInvalidAmount() {}
+
+    @Test void removeProductValid() {}
+
+    @Test void removeProductInvalidProduct() {}
+
+    @Test void addUserValid() {}
+
+    @Test void addUserInvalidUserExists() {}
+
+    @Test void addUserInvalidUserName() {}
+
+    @Test void signUpValid() {}
+
+    @Test void signUpInvalidUserExists() {}
+
+    @Test void signUpInvalidUserName() {}
+
+    @Test void removeUserValid() {}
+
+    @Test void removeUserinvalid() {}
+
+    @Test void setCategoryValid() {}
+
+    @Test void setCategoryInvalid() {}
+    
+    @Test void modify() {} // fill this in as reasonable
+
+    @Test void cashAddValid() {}
+
+    @Test void cashAddInvalidAmount() {}
+
+    @Test void cashAddInvalidDenom() {}
+
+    @Test void cashremoveValid() {}
+
+    @Test void cashremoveInvalidAmount() {}
+
+    @Test void cashremoveValidDenom() {}
+  
     @Test void addProductPositiveTest1() {
         String[] s = {"productadd", "Z1", "ZooperDooper", "$2.00", "candy", "5"};
         ArrayList<String> inputs = new ArrayList<>(Arrays.asList(s));
