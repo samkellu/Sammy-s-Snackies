@@ -51,7 +51,7 @@ class slotTest {
     @Test void toStringCorrectness() {
         FoodItem marsBar = new FoodItem("Mars Bar", 1.02f, Category.CHOCOLATE);
         Slot marsSlot = new Slot("A1", marsBar, 2);
-        assertEquals("A1    | Mars Bar    | 2    | $1.02 |", marsSlot.toString());
+        assertEquals("| A1   | Mars Bar    | 2    | $1.02     |", marsSlot.toString());
         assertEquals(2,  marsSlot.getCount());
     }
 }

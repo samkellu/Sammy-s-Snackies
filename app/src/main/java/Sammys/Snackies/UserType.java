@@ -39,9 +39,6 @@ public enum UserType {
                 return BUYER;
         }
     }
-
-
-
 }
 
 class UserLogin {
@@ -95,7 +92,8 @@ class UserLogin {
         }
         
         // Attempts to write the JSONArray to file
-        try (FileWriter fw = new FileWriter(fp)) {
+        try {
+            FileWriter fw = new FileWriter(fp);
             org.json.simple.JSONArray.writeJSONString(jsonData, fw);
             fw.flush();
             fw.close();
@@ -110,7 +108,8 @@ class UserLogin {
         ArrayList<UserLogin> retval = new ArrayList<UserLogin>();
         JSONParser parser = new JSONParser();
 
-        try (FileReader fr = new FileReader(fp)) {
+        try {
+            FileReader fr = new FileReader(fp);
             Object obj = parser.parse(fr);
             JSONArray jsonData = (JSONArray) obj;
 
@@ -121,6 +120,7 @@ class UserLogin {
                 UserType type = UserType.fromName(((String) jObj.get("type")));
                 retval.add(new UserLogin(username, password, type));
             }
+            fr.close();
 
         } catch(IOException e) {
             e.printStackTrace();
@@ -129,6 +129,4 @@ class UserLogin {
         }
         return retval;
     }
-    
-
 }
