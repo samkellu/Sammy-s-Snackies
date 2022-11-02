@@ -1008,6 +1008,7 @@ public class App {
         // Checks if there are no transactions stored in the machine
         if (vm.getTransactions().size() == 0) {
             printColour(RED, "There are no transactions to display.");
+            return;
         }
 
         // Gets spacing for each column
@@ -1024,23 +1025,21 @@ public class App {
             maxUser = (userName.length() > maxUser) ? userName.length() : maxUser;
         }
 
-        // Initialises and prints label row
-        String idSub = String.format(RESET + YELLOW + "%-" + maxID + "s" + RESET + GREEN, "TRANSACTION ID");
-        String paymentSub = String.format(RESET + YELLOW + "%-" + maxPayment + "s" + RESET + GREEN, "PAYMENT METHOD");
-        String purchaseSub = String.format(RESET + YELLOW + "%-" + maxPurchase + "s" + RESET + GREEN, "PURCHASE");
-        String userSub = String.format(RESET + YELLOW + "%-" + maxUser + "s" + RESET + GREEN, "USERNAME");
-        printColour(YELLOW, "Products available:\n");
-        printColour(GREEN, String.format("    | %s | %s | %s | %s |", idSub, userSub, paymentSub, purchaseSub));
-
-        // Initialises and prints spacing row
-        String idSpace = String.format("%-" + maxID + "s", "").replace(' ', '-');
-        String paymentSpace = String.format("%-" + maxPayment + "s", "").replace(' ', '-');
-        String purchaseSpace = String.format("%-" + maxPurchase + "s", "").replace(' ', '-');
-        String userSpace = String.format("%-" + maxUser + "s", "").replace(' ', '-');
-        printColour(GREEN, "    |-" + idSpace + "-+-" + userSpace + "-+-" + paymentSpace + "-+-" + purchaseSpace + "-|");
-
-
         if (owner) {
+
+            // Initialises and prints label row
+            String idSub = String.format(RESET + YELLOW + "%-" + maxID + "s" + RESET + GREEN, "TRANSACTION ID");
+            String paymentSub = String.format(RESET + YELLOW + "%-" + maxPayment + "s" + RESET + GREEN, "PAYMENT METHOD");
+            String purchaseSub = String.format(RESET + YELLOW + "%-" + maxPurchase + "s" + RESET + GREEN, "PURCHASE");
+            String userSub = String.format(RESET + YELLOW + "%-" + maxUser + "s" + RESET + GREEN, "USERNAME");
+            printColour(GREEN, String.format("    | %s | %s | %s | %s |", idSub, userSub, paymentSub, purchaseSub));
+
+            // Initialises and prints spacing row
+            String idSpace = String.format("%-" + maxID + "s", "").replace(' ', '-');
+            String paymentSpace = String.format("%-" + maxPayment + "s", "").replace(' ', '-');
+            String purchaseSpace = String.format("%-" + maxPurchase + "s", "").replace(' ', '-');
+            String userSpace = String.format("%-" + maxUser + "s", "").replace(' ', '-');
+            printColour(GREEN, "    |-" + idSpace + "-+-" + userSpace + "-+-" + paymentSpace + "-+-" + purchaseSpace + "-|");
             
             // Prints information rows for owner
             for (Transaction transaction : vm.getTransactions()) {
@@ -1052,8 +1051,35 @@ public class App {
                 printColour(GREEN, String.format("    | %-" + maxID + "s | %-" + maxUser + "s | %-" + maxPayment + "s | %-" + maxPurchase + "s |", id, userName, payment, purchase));
             }
         } else  {
+
+            boolean empty = true;
+            for (Transaction transaction : vm.getTransactions()) {
+                if (transaction.getUserName().toLowerCase() == currentUserName.toLowerCase()) {
+                    empty = false;
+                    break;
+                }
+            }
+            
+            if (empty) {
+                printColour(RED, "There are no transactions to display.");
+                return;
+            }
+            // Initialises and prints label row
+            String idSub = String.format(RESET + YELLOW + "%-" + maxID + "s" + RESET + GREEN, "TRANSACTION ID");
+            String paymentSub = String.format(RESET + YELLOW + "%-" + maxPayment + "s" + RESET + GREEN, "PAYMENT METHOD");
+            String purchaseSub = String.format(RESET + YELLOW + "%-" + maxPurchase + "s" + RESET + GREEN, "PURCHASE");
+            String userSub = String.format(RESET + YELLOW + "%-" + maxUser + "s" + RESET + GREEN, "USERNAME");
+            printColour(GREEN, String.format("    | %s | %s | %s | %s |", idSub, userSub, paymentSub, purchaseSub));
+
+            // Initialises and prints spacing row
+            String idSpace = String.format("%-" + maxID + "s", "").replace(' ', '-');
+            String paymentSpace = String.format("%-" + maxPayment + "s", "").replace(' ', '-');
+            String purchaseSpace = String.format("%-" + maxPurchase + "s", "").replace(' ', '-');
+            String userSpace = String.format("%-" + maxUser + "s", "").replace(' ', '-');
+            printColour(GREEN, "    |-" + idSpace + "-+-" + userSpace + "-+-" + paymentSpace + "-+-" + purchaseSpace + "-|");
             // Prints information rows for non owner
             for (Transaction transaction : vm.getTransactions()) {
+
                 
                 if (transaction.getUserName().toLowerCase() == currentUserName.toLowerCase()) {
                     
@@ -1303,7 +1329,10 @@ public class App {
                         if (inputs.size() > 1) {
                             if (inputs.get(1).equals("transactions")) {
                                 if (currentType != UserType.OWNER) {
-                                    printColour(YELLOW, String.format("%s's transactions:", currentUserName));
+                                    if (currentUserName == "anonymous") {
+                                        printColour(RED, "You must be logged in to access this feature.");
+                                        break;
+                                    }
                                     listTransactions(vm, false);
                                 } else {
                                     listTransactions(vm, true);
